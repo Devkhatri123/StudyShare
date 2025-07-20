@@ -131,7 +131,7 @@ export default function StudyShareHomepage() {
            {!loading ? (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
            {subjects.length > 0 ? subjects.map((subject) => (
-                <div key={subject.subjectId} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg transition-shadow cursor-pointer active:scale-95 transform transition-transform">
+                <div key={subject.subjectId} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
                   <Link to={`/${subject.subjectName.replace(" ","")}/${subject.code}/notes`} className="block">
                   <div className="flex items-center gap-2 text-sm text-blue-600 mb-3">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
