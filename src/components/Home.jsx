@@ -8,7 +8,7 @@ import Loader from "./Loader";
 import { API_BACKEND_URL } from "../utils/API.JSX";
 
 export default function StudyShareHomepage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
   const [subjects, setSubjects] = useState([]);
   const [loading,setLoading] = useState(true);
 
@@ -28,10 +28,8 @@ export default function StudyShareHomepage() {
    },[]);
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-       <Navbar/>
+      <Navbar/>
 
-      {/* Hero Section */}
       <section className="bg-gradient-to-r from-blue-600 to-blue-700 px-4 py-12 sm:py-16 text-white">
         <div className="mx-auto max-w-4xl text-center">
           <h1 className="mb-4 text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">
