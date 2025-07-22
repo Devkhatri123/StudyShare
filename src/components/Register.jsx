@@ -6,7 +6,7 @@ import { useError } from "../ContextApi/ErrorContext"
 import { isValidEmail } from "../utils/Validation";
 import ErrorMessage from "./ErrorMessage";
 import axios from "axios";
-import { API_BACKEND_URL } from "../utils/API.JSX";
+import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
 
 export default function Register() {

@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
     <div className="w-1/1 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
     style={{maxWidth:"-webkit-fill-available"}}
     >
-      <Link to={`/${note.id}/note`}>
+      <Link to={`/note/${note.id}`}>
       {/* Hero Section */}
       <div className="relative h-48 sm:h-52 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden"
       >

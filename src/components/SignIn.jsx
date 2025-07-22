@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff, BookOpen, ChevronDown } from "lucide-react"
 import axios from "axios";
 import Loader from "./Loader";
-import { API_BACKEND_URL } from "../utils/API.JSX";
+import API_BACKEND_URL from "../utils/API";
 import { isValidEmail } from "../utils/Validation";
 import ErrorMessage from "./ErrorMessage";
 import { toast } from "react-toastify";

@@ -5,7 +5,7 @@ import Navbar from "./Navbar"
 import axios from "axios";
 import { Link } from "react-router-dom"
 import Loader from "./Loader";
-import { API_BACKEND_URL } from "../utils/API.JSX";
+import API_BACKEND_URL from "../utils/API";
 
 export default function StudyShareHomepage() {
   const [searchQuery, setSearchQuery] = useState("");

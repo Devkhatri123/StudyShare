@@ -47,7 +47,7 @@ return (
           <Route path='/signIn' element={<SignIn />} />
           <Route path='/register' element={<Register />} />
           <Route path="/:subjectName/:subjectCode/notes" element={<Notes />} />
-          <Route path="/:noteID/note" element={<ViewNote />} />
+          <Route path="/note/:noteID" element={<ViewNote />} />
         </Routes>
      </>
   )
