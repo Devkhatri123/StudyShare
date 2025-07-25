@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
       <div className="relative h-48 sm:h-52 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-hidden"
       >
      <img src={`data:image/jpeg;base64,${note.thumbnail}`}
-      className="w-full h-52"
+      className="w-full h-52 " style={{objectFit:"cover"}}
       />
         
         {/* Fallback when image fails to load */}

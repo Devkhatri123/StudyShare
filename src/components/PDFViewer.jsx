@@ -6,10 +6,12 @@ import '@react-pdf-viewer/default-layout/lib/styles/index.css';
 export default function PDFViewer(props){
     const defaultPluginInstance = defaultLayoutPlugin();
     return (
-       <>
+      <div>
        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
+       
        <Viewer fileUrl={props.pdfURL} plugins={[defaultPluginInstance]}/>
+       
        </Worker>
-       </>
+     </div>
     )
 }

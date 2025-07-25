@@ -11,6 +11,8 @@ import { useContext, useEffect } from 'react';
 import { AuthContext } from './ContextApi/AuthContext';
 import { useError } from './ContextApi/ErrorContext';
 import axios from 'axios';
+import { ToggleContextProvider } from './utils/Toggle';
+import EmailVerificationCode from './components/EmailVerificationCode';
 function App() {
   const useAuth = useContext(AuthContext);
   const {handleError} = useError();
@@ -46,8 +48,13 @@ return (
           <Route path="/" element={<Home />} />
           <Route path='/signIn' element={<SignIn />} />
           <Route path='/register' element={<Register />} />
-          <Route path="/:subjectName/:subjectCode/notes" element={<Notes />} />
+          <Route path="/:subjectName/:subjectCode/notes" element={
+            <ToggleContextProvider>
+              <Notes />
+              </ToggleContextProvider>}
+               />
           <Route path="/note/:noteID" element={<ViewNote />} />
+          <Route path="/verify" element={<EmailVerificationCode />} />
         </Routes>
      </>
   )

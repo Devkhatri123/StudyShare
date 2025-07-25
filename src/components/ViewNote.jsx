@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import Navbar from "./Navbar";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
@@ -12,9 +12,11 @@ const ViewNote = () => {
   const [note,setNote] = useState(null);
   const [loading,setLoading] = useState(true);
   const [pdfURL,setpdfURL] = useState(null);
+  const [error,setError] = useState(false);
+  const [errorMsg,seterrorMsg] = useState(null);
   useEffect(()=>{
     const getNote = async () => {
-  await axios.get(`${API_BACKEND_URL}/notes/note/${noteID}`)
+    await axios.get(`${API_BACKEND_URL}/notes/note/${noteID}`)
    .then((response)=>{
     console.log(response);
     setNote(response.data);
@@ -31,7 +33,9 @@ const ViewNote = () => {
     const url = URL.createObjectURL(blob);
     setpdfURL(url);
    }).catch((error)=>{
-     console.log(error)
+     console.log(error);
+     if(error.response.data.message) seterrorMsg(error.response.data.message);
+     setError(true);
    }).finally(()=>{
     setLoading(false);
    })
@@ -40,12 +44,13 @@ const ViewNote = () => {
   },[noteID])
     return (
       !loading ?
+      !error ? (
         <div className="viewNote" style={{fontFamily:"Arial, Helvetica, sans-serif"}}>
             <Navbar />
             <div className="body max-w-7xl mx-auto p-5" style={{background:"#f9fafb"}}>
                 <div className="back_Option w-fit flex p-3 hover:bg-blue-200 rounded-md transition-all duration-300 cursor-pointer">
                     <ArrowLeft/>
-                    <p className="ml-2.5 overflow-ellipsis overflow-hidden">Back to Computer Programming</p>
+                    <Link to={`/${note.subject.subjectName}/${note.subject.code}/notes`} className="ml-2.5 overflow-ellipsis overflow-hidden">Back to {note.subject.subjectName}</Link>
                 </div>
                 <div className="course_header bg-white shadow-sm mt-3 rounded-md p-6">
                   <h1 className="mb-1 text-[21px] font-semibold overflow-ellipsis overflow-hidden">{note.title}</h1>
@@ -62,7 +67,8 @@ const ViewNote = () => {
                 </div>
             </div>
         </div>
-    : <div className="h-[100vh] flex items-center"><Loader/></div>
+      ):<div className="h-[100vh] flex items-center justify-center text-2xl font-semibold">{errorMsg}</div>
+    : <div className="h-[100vh] flex items-center justify-center"><Loader/></div>
     )
 }
 export default ViewNote;

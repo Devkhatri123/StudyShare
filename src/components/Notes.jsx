@@ -1,11 +1,15 @@
 import { useParams } from "react-router-dom"
 import Navbar from "./Navbar"
 import Note from "./Note"
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Loader from "./Loader";
+import UploadNote from "./UploadNote";
+import { ToggleContext } from "../utils/Toggle";
 
 export default function Notes() {
+  const bodyRef = useRef();
+  const toggleContext = useContext(ToggleContext);
    const [notes, setNotes] = useState([]);
    const [loading,setLoading] = useState(true);
    const {subjectCode,subjectName} = useParams();
@@ -26,11 +30,11 @@ export default function Notes() {
     fetchNotes();
    },[subjectCode,subjectName])
   return (
+    !loading ? (
     <>
-      <Navbar />
-      {!loading ?(
-        notes.length > 0 ?(
-      <div className="min-h-screen bg-gray-50">
+    <Navbar />
+  
+      <div className="min-h-screen bg-gray-50" ref={bodyRef}>
         <div className="bg-white border-b border-gray-200 shadow-sm">
           <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 sm:py-6 space-y-3 sm:space-y-0">
@@ -43,10 +47,12 @@ export default function Notes() {
                   DHA Suffa University
                 </span>
                 <span className="text-gray-300">/</span>
-                <span className="text-gray-900 font-medium whitespace-nowrap">{notes[0]?.subject.subjectName}</span>
+                <span className="text-gray-900 font-medium whitespace-nowrap">{subjectName}</span>
               </nav>
 
-              <button className="bg-gray-900 text-white px-4 sm:px-6 py-2.5 sm:py-2.5 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base w-full sm:w-auto">
+              <button className="bg-gray-900 text-white px-4 sm:px-6 py-2.5 sm:py-2.5 rounded-lg flex items-center justify-center space-x-2 hover:bg-gray-800 transition-all duration-200 shadow-sm hover:shadow-md font-medium text-sm sm:text-base w-full sm:w-auto"
+               onClick={()=>{toggleContext.setIsUploadModalVisible(true);}}
+              >
                 <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
@@ -60,7 +66,9 @@ export default function Notes() {
             </div>
           </div>
         </div>
-
+        {toggleContext.isUploadModalVisible && <UploadNote/>}
+        {notes.length > 0 ?(
+          <>
          <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6">
             <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 mb-4 sm:mb-6">
@@ -86,7 +94,7 @@ export default function Notes() {
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 leading-tight">
                 {notes[0]?.subject.subjectName}
                 </h1>
-                 <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{notes[0]?.description}</p>
+                 <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{notes[0]?.subject.shortDescription}</p>
               </div>
             </div>
 
@@ -230,9 +238,11 @@ export default function Notes() {
         </button>
       </div>
        </div>
+       </>
+        ):<p className="text-center flex items-center justify-center text-xl font-bold" style={{height:"50dvh"}}>No Notes found of {subjectName}</p>
+}
       </div>
-        ):<p className="text-center flex items-center justify-center text-xl font-bold" style={{height:"50dvh"}}>No Subject found of  {subjectName}</p>
-      ):<Loader/>}
     </>
+    ):<Loader/>
   )
 }

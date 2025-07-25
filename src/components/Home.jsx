@@ -11,21 +11,35 @@ export default function StudyShareHomepage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [subjects, setSubjects] = useState([]);
   const [loading,setLoading] = useState(true);
-
+  const [limit,setLimit] = useState(0);
   useEffect(() => {
     const getSubjects = async () => {
-   //   axios.defaults.withCredentials=true;
-     await axios.get(`${API_BACKEND_URL}/subject/all`,{withCredentials:true})
+     await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=2`)
     .then((response)=>{
-      setSubjects(response.data);
-     }).catch((error)=>{
+       setSubjects((prev) =>[...prev,...response.data]);
+      }).catch((error)=>{
       console.log("Error in fetching subjects:", error);
     }).finally(()=>{
       setLoading(false);
     })
   }
-  getSubjects();
-   },[]);
+    getSubjects();
+   },[limit]);
+
+
+   const handleScroll = () => {
+     if(window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
+      setLimit((Prev) => Prev + 1);
+    }
+   }
+
+   useEffect(()=>{
+    window.addEventListener("scroll",handleScroll);
+    return () => window.removeEventListener("scroll",handleScroll);
+   },[])
+
+
+
   return (
     <div className="min-h-screen bg-white">
       <Navbar/>
@@ -127,10 +141,10 @@ export default function StudyShareHomepage() {
             <p className="mt-2 text-sm text-gray-500">{subjects.length} subjects available</p>
           </div>
            {!loading ? (
-          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-           {subjects.length > 0 ? subjects.map((subject) => (
-                <div key={subject.subjectId} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
-                  <Link to={`/${subject.subjectName.replace(" ","")}/${subject.code}/notes`} className="block">
+           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+           {subjects.length > 0 ? subjects.map((subject,i) => (
+                <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
+                  <Link to={`/${subject.subjectName}/${subject.code}/notes`} className="block">
                   <div className="flex items-center gap-2 text-sm text-blue-600 mb-3">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path

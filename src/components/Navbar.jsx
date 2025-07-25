@@ -8,7 +8,9 @@ export default function Navbar() {
      <header className="border-b bg-white px-4 py-3 sticky top-0 z-50">
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-4">
+             <Link to={"/"}>
             <div className="flex items-center gap-2">
+             
               <div className="bg-blue-600 p-2 rounded-lg">
                <svg
                     className="w-6 h-6 sm:w-7 sm:h-7 text-white"
@@ -25,7 +27,9 @@ export default function Navbar() {
                   </svg>
                   </div>
               <span className="text-lg sm:text-xl font-semibold text-gray-900">Study Share</span>
+           
             </div>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -43,7 +47,7 @@ export default function Navbar() {
 
           {/* Desktop Search & Auth */}
           <div className="hidden lg:flex items-center gap-4">
-            <div className="relative">
+            {/* <div className="relative">
               <svg
                 className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
                 fill="none"
@@ -62,7 +66,7 @@ export default function Navbar() {
                 placeholder="Search notes by subject..."
                 className="w-64 xl:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-            </div>
+            </div> */}
             {/*  */}
            {authContext.AuthenticatedUser == null ? (
             <>
