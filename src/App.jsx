@@ -13,6 +13,7 @@ import { useError } from './ContextApi/ErrorContext';
 import axios from 'axios';
 import { ToggleContextProvider } from './utils/Toggle';
 import EmailVerificationCode from './components/EmailVerificationCode';
+import Profile from './components/Profile';
 function App() {
   const useAuth = useContext(AuthContext);
   const {handleError} = useError();
@@ -55,6 +56,7 @@ return (
                />
           <Route path="/note/:noteID" element={<ViewNote />} />
           <Route path="/verify" element={<EmailVerificationCode />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
      </>
   )

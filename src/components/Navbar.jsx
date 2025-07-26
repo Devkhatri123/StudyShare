@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../ContextApi/AuthContext';
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [showDropDown,setShowDropDown] = useState(false);
     const authContext = useContext(AuthContext);
     return(
      <header className="border-b bg-white px-4 py-3 sticky top-0 z-50">
@@ -82,9 +83,16 @@ export default function Navbar() {
             </button>
             </>
            ):<>
-           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-            <span className="text-xs sm:text-sm font-semibold text-white">{authContext.AuthenticatedUser.name.substring(0,1)}</span>
+           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm cursor-pointer" onClick={()=>setShowDropDown(!showDropDown)}>
+            <span className="text-xs sm:text-sm font-semibold text-white" >{authContext.AuthenticatedUser.name.substring(0,1)}</span>
+            
            </div>
+           {showDropDown && (
+           <div className="absolute right-3 top-16 py-2.5 px-6 dropdown shadow-lg bg-white  rounded-lg">
+            <li className='list-none cursor-pointer'><Link to={"/profile"}>Profile</Link></li>
+            <li className='list-none cursor-pointer'>SignOut</li>
+           </div>
+    )}
            </>
            }
           </div>

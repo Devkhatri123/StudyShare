@@ -1,5 +1,5 @@
 import { Upload, X } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ToggleContext } from "../utils/Toggle";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
@@ -7,6 +7,8 @@ import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
 export default function UploadNote() {
+    const thumbnailInputRef = useRef();
+    const notePdfRef = useRef();
     const {subjectName,subjectCode} = useParams();
     const toggleContext = useContext(ToggleContext);
     const [isDragging, setIsDragging] = useState(false);
@@ -51,9 +53,15 @@ export default function UploadNote() {
         }
         const droppedThumbnail = e.dataTransfer.files[0];
         setnoteData({...noteData,imgThumbNail:droppedThumbnail});
+}
 
-
-    }
+   const pickThumbnail = (e) => {
+    if (!e.target.files[0].type.startsWith("image/")) {
+            toast.error("Only png/jpg/jpeg images are allowed for thumbnail");
+            return;
+        }
+        setnoteData({...noteData,imgThumbNail:e.target.files[0]});
+   }
 
     // Pdf Upload Drag And Drop
     const handleNotePdfDragEnter = (e) => {
@@ -76,7 +84,23 @@ export default function UploadNote() {
         }
     }
 
+
+   const pickNotePdf = (e) => {
+    if (e.target.files[0].type === "application/pdf") {
+            setnoteData({...noteData,notePdfData:e.target.files[0]});
+        } else {
+            toast.error("Only pdf file is allowed for notes");
+        }
+   }
+
    const uploadNote = async() => {
+    if(noteData.title.length == 0){
+         toast.error("Title is empty");
+         return;
+    } if(noteData.description.length == 0){
+         toast.error("Description is empty");
+         return;
+    }
     const formData = new FormData();
     formData.append("thumbnail",noteData.imgThumbNail);
     formData.append("notes",noteData.notePdfData);
@@ -91,6 +115,7 @@ export default function UploadNote() {
     })
    .then((response)=>{
     toast.success(response.data.message);
+    window.location.reload();
    }).catch((error)=>{
     if(error.response.data.error) toast.error(error.response.data.error);
     else toast.error(error.message);
@@ -127,19 +152,19 @@ export default function UploadNote() {
                 <div className="upload_thumbnail mt-3 px-5 py-3">
                     <div htmlFor="upload_thumbnail">Upload Thumbnail *</div>
                     <div className="upload_Area_Thumbnail mt-2 border-2 border-gray-300 border-dashed w-full rounded-lg" style={{ border: `${isDragging ? "1px solid green" : ""}` }} onDragEnter={(e) => { handleDrag(e) }} onDragLeave={(e) => { handleDrageLeave(e) }} onDragOver={(e) => { handleDrag(e) }} onDrop={(e) => { handleDrop(e) }} accept="image/*">
-                        <div className="flex justify-center flex-col items-center py-5 rounded-md">
+                        <div className="flex justify-center flex-col items-center py-5 rounded-md" onClick={()=>thumbnailInputRef.current.click()}>
                             <Upload />
                             <p className="mt-3">Drop files here or click to browse</p>
                             <p className="text-sm mb-2" style={{ color: "gray" }}>Note: Only Png/Jpg/Jpeg Files are allowed</p>
                             <button className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md py-1.5 px-2.5 text-sm font-medium">Chose File</button>
-                            <input type="file" className="hidden" />
+                            <input ref={thumbnailInputRef} onChange={(e) => pickThumbnail(e)} type="file" className="hidden" />
                         </div>
                     </div>
                     {noteData.imgThumbNail != null &&
                         <div className="flex justify-between mt-4 rounded-sm p-3.5 shadow-md" style={{ border: "0.2px gray" }}>
                             <div className="flex gap-3">
                                 <img src={URL.createObjectURL(noteData.imgThumbNail)} style={{ height: "30px", width: "30px" }} />
-                                <p>{noteData.imgThumbNail.name}</p>
+                                <p className="truncate">{noteData.imgThumbNail.name}</p>
                             </div>
                             <X />
                         </div>
@@ -150,13 +175,13 @@ export default function UploadNote() {
                 {/* pdfUpload */}
                 <div className="upload_Note mt-3 px-5 py-3">
                     <div htmlFor="upload_Note">Upload Notes *</div>
-                    <div className="upload_Area_note mt-2 border-2 border-gray-300 border-dashed w-full rounded-lg" style={{ border: `${isNoteDragging ? "1px solid green" : "2px solid gray"}`, borderStyle: `${isNoteDragging ? "solid" : "dashed"}` }} onDragEnter={(e) => { handleNotePdfDragEnter(e) }} onDragOver={(e) => { handleNotePdfDragEnter(e) }} onDragLeave={(e) => { handleNotePdfLeave(e) }} onDrop={(e) => { handlePDFDrop(e) }}>
+                    <div className="upload_Area_note mt-2 border-2 border-gray-300 border-dashed w-full rounded-lg" onClick={()=>notePdfRef.current.click()} style={{ border: `${isNoteDragging ? "1px solid green" : "2px solid gray"}`, borderStyle: `${isNoteDragging ? "solid" : "dashed"}` }} onDragEnter={(e) => { handleNotePdfDragEnter(e) }} onDragOver={(e) => { handleNotePdfDragEnter(e) }} onDragLeave={(e) => { handleNotePdfLeave(e) }} onDrop={(e) => { handlePDFDrop(e) }}>
                         <div className="flex justify-center flex-col items-center py-5 rounded-md">
                             <Upload />
                             <p className="mt-3">Drop files here or click to browse</p>
                             <p className="text-sm mb-2" style={{ color: "gray" }}>Note: Only Pdf File are allowed</p>
                             <button className="bg-blue-600 hover:bg-blue-700 cursor-pointer text-white rounded-md py-1.5 px-2.5 text-sm font-medium">Chose File</button>
-                            <input type="file" className="hidden" />
+                            <input onChange={(e)=>pickNotePdf(e)} ref={notePdfRef} type="file" className="hidden" />
                         </div>
                     </div>
                     {noteData.notePdfData != null &&

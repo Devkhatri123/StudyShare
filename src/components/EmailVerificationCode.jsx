@@ -1,8 +1,13 @@
+import axios from "axios";
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import API_BACKEND_URL from "../utils/API.JSX";
+import { toast } from "react-toastify";
 
 export default function EmailVerificationCode() {
     const inputsRef = useRef();
+    const navigate = useNavigate();
+    const location = useLocation();
     const [otp, setOtp] = useState('');
     const handleNumberOnlyInput = (e) => {
         if (isNaN(e.key)) {
@@ -34,7 +39,33 @@ export default function EmailVerificationCode() {
 
 
     const sendOtp = () =>{
+        if(location.state == null){
+            toast.error("Email is not present");
+            return;
+        }
         getOtp();
+        if(otp === ''){
+             toast.error("Otp not provided");
+            return;
+        }
+        const verification = {
+            email:location.state.email,
+            verificationCode:Number(otp)
+        }
+        axios.post(`${API_BACKEND_URL}/auth/verify`,verification)
+        .then((response)=>{
+            toast.success(response.data.message);
+            if(location?.state?.PrevURL != null){
+                navigate("/signIn");
+            }
+          }).catch((error)=>{
+            if(error.response.data.status == 200){
+                toast.success("Account is already verified");
+                return;
+            }
+            toast.error(error.response.data.message)
+            console.log(error);
+        })
     }
     const getOtp = () => {
         let inputs = document.querySelectorAll(".input");
@@ -43,6 +74,22 @@ export default function EmailVerificationCode() {
             setOtp((prev) => prev + e.value);
         });
     }
+
+    const resendVerificationCode = () => {
+         if(location.state == null){
+            toast.error("Email is not present");
+            return;
+        }
+        axios.post(`${API_BACKEND_URL}/auth/resendVerificationCode?email=${location.state.email}`)
+        .then((response)=>{
+            toast.success(response.data.message);
+            console.log(response)
+        }).catch((error)=>{
+            toast.error(response.data.message);
+            console.log(error);
+        })
+    }
+
     return (
         <div className="flex items-center h-[100dvh] bg-slate-50">
             <div className="max-w-10/12 bg-white shadow-lg sm:max-w-7xl mx-auto text-center rounded-2xl">
@@ -56,7 +103,7 @@ export default function EmailVerificationCode() {
                         <input type="text" id="3" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
                     </div>
                     <button onClick={()=>sendOtp()} className="rounded-lg bg-indigo-500 text-white font-medium px-[2em] sm:px-28 py-1.5 mb-3 hover:bg-indigo-600 transition-colors duration-150 cursor-pointer">Verify</button>
-                    <p className="mb-12">Didn't receive code? <Link to={"#"} className="font-medium text-indigo-600">Resend</Link></p>
+                    <p className="mb-12">Didn't receive code? <span onClick={()=>{resendVerificationCode()}} className="font-medium text-indigo-600 hover:cursor-pointer">Resend</span></p>
                 </div>
             </div>
         </div>

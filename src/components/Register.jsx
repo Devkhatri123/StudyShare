@@ -8,8 +8,11 @@ import ErrorMessage from "./ErrorMessage";
 import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Register() {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [selectedSemester, setselectedSemester] = useState("")
@@ -18,9 +21,9 @@ export default function Register() {
   const [isDropdownOpen3, setIsDropdownOpen3] = useState(false)
   const [selectedDepartment, setselectedDepartment] = useState("")
   const [isDropdownOpen4, setIsDropdownOpen4] = useState(false);
-  const { error, handleError } = useError();
   const [ErrorMsg, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [isRegistrationCompleted, setIsRegistrationCompleted] = useState(false);
 
   const [user, setUser] = useState({
     fullname: "",
@@ -50,7 +53,9 @@ export default function Register() {
     setLoading(true);
     await axios.post(`${API_BACKEND_URL}/auth/signUp`, user).then((response) => {
       console.log(response);
+      navigate("/verify",{state:{email:user.universityEmail,PrevURL:location.pathname}});
     }).catch((error) => {
+      toast.error(error.response.data.message);
       console.log(error);
     }).finally(() => {
       setLoading(false);
