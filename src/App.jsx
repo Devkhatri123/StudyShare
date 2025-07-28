@@ -7,32 +7,35 @@ import Register from './components/Register';
 import ViewNote from './components/ViewNote'
 import ProtectedRoute from "./utils/ProtectedRoute";
 import SignIn from './components/SignIn';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './ContextApi/AuthContext';
 import { useError } from './ContextApi/ErrorContext';
 import axios from 'axios';
 import { ToggleContextProvider } from './utils/Toggle';
 import EmailVerificationCode from './components/EmailVerificationCode';
 import Profile from './components/Profile';
+import { toast } from 'react-toastify';
+import Loader from './components/Loader';
 function App() {
   const useAuth = useContext(AuthContext);
+  const [loading,setLoading] = useState(true);
   const {handleError} = useError();
   useEffect(() => {
     const getUser = async () => {
      //  axios.defaults.withCredentials=true;
+     
       await axios.get("http://localhost:8080/v1/auth/loggedInUser",
         {withCredentials:true}
       )
         .then((response) => {
-          console.log(response);
+          console.log(response)
           useAuth.setIsAuthenticated(response.data.isLoggedIn);
           useAuth.setAuthenticatedUser(response.data.user)
           //user
         }).catch((error) => {
           console.log(error)
-          
-          handleError(error.response);
-        }).finally(() => {
+         }).finally(() => {
+          setLoading(false);
         })
     }
     getUser();
@@ -40,6 +43,7 @@ function App() {
 
 return (
     <>
+    {!loading ? (
       <Routes>
          
           <Route element={<ProtectedRoute />}>
@@ -58,6 +62,7 @@ return (
           <Route path="/verify" element={<EmailVerificationCode />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
+    ):<Loader/>}
      </>
   )
 }

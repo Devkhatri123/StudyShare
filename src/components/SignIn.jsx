@@ -113,9 +113,10 @@ export default function SignIn() {
                   <input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="Create a strong password"
+                    placeholder="Enter password"
                     className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={user.password}
+                    autoComplete="none"
                     onChange={(e) => setUser({ ...user, password: e.target.value })}
                  />
                   <button

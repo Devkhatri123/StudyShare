@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
+import { AuthContext } from "../ContextApi/AuthContext";
 export default function UploadNote() {
     const thumbnailInputRef = useRef();
     const notePdfRef = useRef();
@@ -14,6 +15,7 @@ export default function UploadNote() {
     const [isDragging, setIsDragging] = useState(false);
     const [isNoteDragging, setIsNoteDragging] = useState(false);
     const [loading,setLoading] = useState(false);
+    const authContext = useContext(AuthContext);
     const [noteData,setnoteData] = useState(
         {
          title:"",
@@ -94,6 +96,11 @@ export default function UploadNote() {
    }
 
    const uploadNote = async() => {
+     if(authContext.isAuthenticated == false){
+        toast.error("You are not logged in");
+        return;
+    }
+
     if(noteData.title.length == 0){
          toast.error("Title is empty");
          return;
