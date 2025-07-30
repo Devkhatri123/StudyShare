@@ -16,6 +16,7 @@ import EmailVerificationCode from './components/EmailVerificationCode';
 import Profile from './components/Profile';
 import { toast } from 'react-toastify';
 import Loader from './components/Loader';
+import AdminHome from './components/Admin/AdminHome';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading,setLoading] = useState(true);
@@ -58,6 +59,12 @@ return (
               <Notes />
               </ToggleContextProvider>}
                />
+          
+          <Route path='/admin/home' element={
+            <ToggleContextProvider>
+            <AdminHome/>
+            </ToggleContextProvider>
+            }/>
           <Route path="/note/:noteID" element={<ViewNote />} />
           <Route path="/verify" element={<EmailVerificationCode />} />
           <Route path="/profile" element={<Profile />} />

@@ -30,6 +30,8 @@ export default function Profile() {
    await axios.put(`${API_BACKEND_URL}/auth/${tempAuthenticatedUser.id}`,tempAuthenticatedUser,{withCredentials:true})
     .then((response)=>{
       console.log(response);
+      toast.success(response.data.message);
+      setIsDisabled(true);
     }).catch((error)=>{
       console.log(error);
     })
@@ -88,11 +90,11 @@ export default function Profile() {
              </div>
             ):
             <div className="right_enabled flex gap-2.5 mt-5 flex-col sm:mt-0 sm:flex-row w-full sm:w-fit">
-               <div className="flex text-white p-2.5 rounded-md justify-center" style={{background:"#16a34a"}}>
+               <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" style={{background:"#16a34a"}}>
                <Save className="w-4"/>
                <button className="ml-1" onClick={()=>{updateInfo()}}>Save</button>
                </div>
-               <div className="flex items-center text-white p-2.5 rounded-md justify-center" style={{background:"#6b7280"}} onClick={()=>setIsDisabled(true)}>
+               <div className="flex items-center text-white p-2.5 rounded-md justify-center cursor-pointer" style={{background:"#6b7280"}} onClick={()=>setIsDisabled(true)}>
                 <X className="w-4"/>
                 <button className="ml-2">Cancel</button>
                </div>
