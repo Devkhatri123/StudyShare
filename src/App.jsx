@@ -23,8 +23,7 @@ function App() {
   const {handleError} = useError();
   useEffect(() => {
     const getUser = async () => {
-     //  axios.defaults.withCredentials=true;
-     
+      axios.defaults.withCredentials=true;
       await axios.get("http://localhost:8080/v1/auth/loggedInUser",
         {withCredentials:true}
       )
@@ -60,11 +59,7 @@ return (
               </ToggleContextProvider>}
                />
           
-          <Route path='/admin/home' element={
-            <ToggleContextProvider>
-            <AdminHome/>
-            </ToggleContextProvider>
-            }/>
+          <Route path='/admin/home' element={<AdminHome/>}/>
           <Route path="/note/:noteID" element={<ViewNote />} />
           <Route path="/verify" element={<EmailVerificationCode />} />
           <Route path="/profile" element={<Profile />} />

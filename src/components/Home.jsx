@@ -24,6 +24,7 @@ export default function StudyShareHomepage() {
     })
   }
     getSubjects();
+    console.log(limit)
    },[limit]);
 
 
@@ -36,7 +37,7 @@ export default function StudyShareHomepage() {
    useEffect(()=>{
     window.addEventListener("scroll",handleScroll);
     return () => window.removeEventListener("scroll",handleScroll);
-   },[])
+   },[]);
 
 
 

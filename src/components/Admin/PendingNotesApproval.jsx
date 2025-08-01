@@ -3,16 +3,17 @@ import { Clock, Eye, FileText, UserCheck, X } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
-import { ToggleContext } from "../../utils/Toggle";
 import RemarkModal from "./RemarkModal";
 import PreviewNote from "./PreviewNote";
+import { toast } from "react-toastify";
 
 export default function PendingNotesApproval() {
   const[ApprovalPendingNotes,setApprovalPendingNotes] = useState([]);
-  const toggle = useContext(ToggleContext);
   const [showPreviewModal,setShowPreviewModal] = useState(false);
   const[loading,setLoading] = useState(true);
   const [curretNoteIndex,setCurretNoteIndex] = useState(null);
+  const [approveLoading,setApproveLoading] = useState(false);
+  const [remarkModal,setRemarkModal] = useState(false);
 
   useEffect(()=>{
     axios.get(`${API_BACKEND_URL}/notes/admin/ApprovalPendingNotes`,{withCredentials:true})
@@ -27,12 +28,32 @@ export default function PendingNotesApproval() {
 
 
   useEffect(()=>{
-   if(showPreviewModal){
+   if(remarkModal){
     document.body.style.overflow = "hidden";
    }else{
      document.body.style.overflow = "scroll";
    }
-  },[showPreviewModal])
+   console.log(remarkModal)
+  },[remarkModal]);
+
+
+   const approveNote = async(i) => {
+     setApproveLoading(true);
+     const remaininArray = ApprovalPendingNotes.filter((item)=>{
+      return item.id != ApprovalPendingNotes[i].id;
+     });
+     await axios.post(`${API_BACKEND_URL}/notes/${ApprovalPendingNotes[i].id}/approve`)
+     .then((response)=>{
+      toast.success(response.data.message);
+      window.location.reload() 
+    }).catch((error)=>{
+      console.log(error);
+     }).finally(()=>{
+      setApproveLoading(false);
+      setCurretNoteIndex(null);
+     });
+   }
+
 
   return (
     <div>
@@ -41,18 +62,19 @@ export default function PendingNotesApproval() {
           <FileText className="text-[#1e3a8a]" />
           <h1 className="text-[#1e3a8a] text-2xl font-semibold">Pending Note Approvals</h1>
         </div>
-        <p className="text-[#2e5cdb]">Review and approve user-submitted notes • {ApprovalPendingNotes.length} pending submissions</p>
+        <p className="text-[#2e5cdb]">Review and approve user-submitted notes • {ApprovalPendingNotes?.length} pending submissions</p>
+        
       </div>
       <div className="PendingNotesApproval_body border-b-[1px] mt-4 p-5 bg-white flex flex-wrap">
        {!loading ? (
        ApprovalPendingNotes && ApprovalPendingNotes.map((note,i)=>{
-       return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(50%_-_16px)] shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
+       return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(50%_-_16px)] 2xl:flex-[0_0_calc(33.333%_-_16px)] shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
           style={{ maxWidth: "-webkit-fill-available"}}
         >
-          <div className="relative h-48 sm:h-52 bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden"
+          <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden"
           >
             <img src={`data:image/jpeg;base64,${note.thumbnail}`}
-              className="w-full h-52 " style={{ objectFit: "cover" }}
+              className="w-full h-[50vh] w-48 " style={{ objectFit: "cover" }}
             />
           </div>
 
@@ -82,21 +104,28 @@ export default function PendingNotesApproval() {
             </div>
              <div className="card_footer">
                 <div className="flex gap-2.5">
-                  <div className="w-[50%] gap-3 bg-[#15843e] px-3.5 py-2 text-white flex items-center shadow-sm rounded-md">
+                  { curretNoteIndex != i && (
+                  <div className="w-[50%] gap-3 bg-[#15843e] px-3.5 py-2 text-white flex items-center shadow-sm rounded-md " onClick={()=>{approveNote(i);setCurretNoteIndex(i)}} >
                     <UserCheck className="w-5"/>
-                  <button >Approve</button>
-                  </div>
+                     <button>Approve</button>
+                    </div>
+                   )}
+      
+                   {curretNoteIndex == i && approveLoading &&
+                   <div className="w-[50%] gap-3 bg-[#15843e] px-3.5 py-2 text-white flex items-center shadow-sm rounded-md " >
+                    <Loader/>
+                    </div>}
+
                   <div className="w-[50%] gap-3 flex items-center px-3.5 py-2 bg-[#be1d1d] text-white shadow-sm rounded-md" onClick={(e) => {
-                    toggle.setIsUploadModalVisible(true);
+                    setRemarkModal(true);
                     setCurretNoteIndex(i);
-                   
                   }}
                     >
                     <X className="w-5"/>
                   <button >Decline</button>
                   </div>
                 </div>
-                <div className=" mt-3 rounded-md p-2.5 justify-center flex items-center bg-transparent hover:bg-blue-50 border-blue-200 text-blue-700" onClick={()=>{
+                <div className="border-blue-200 border mt-3 rounded-md p-2.5 justify-center flex items-center bg-transparent hover:bg-blue-50 border-blue-200 text-blue-700" onClick={()=>{
                   setShowPreviewModal(true); 
                   setCurretNoteIndex(i)
                   }}>
@@ -105,8 +134,8 @@ export default function PendingNotesApproval() {
                 </div>
               </div>
           </div>
-          {toggle.isUploadModalVisible && curretNoteIndex == i && <RemarkModal currentNote={note}/>}
-          {showPreviewModal && curretNoteIndex == i && <PreviewNote currentNote={note} setShowPreviewModal={setShowPreviewModal}/>}
+          {remarkModal && curretNoteIndex == i && <RemarkModal currentNote={note} setCurretNoteIndex={setCurretNoteIndex} setRemarkModal={setRemarkModal}/>}
+          {showPreviewModal && curretNoteIndex == i && <PreviewNote currentNote={note} setShowPreviewModal={setShowPreviewModal} setCurretNoteIndex={setCurretNoteIndex}/>}
         </div>
         
        })

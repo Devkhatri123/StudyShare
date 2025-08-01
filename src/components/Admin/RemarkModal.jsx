@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react"
-import { ToggleContext } from "../../utils/Toggle"
 import { Upload, X } from "lucide-react";
 import Note from "../Note";
 import axios from "axios";
@@ -7,15 +6,14 @@ import API_BACKEND_URL from "../../utils/API";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 
-export default function RemarkModal({currentNote}){
-    const toggle = useContext(ToggleContext);
+export default function RemarkModal({currentNote,setCurretNoteIndex,setRemarkModal}){
     const [loading,setLoading] = useState(false);
     const [remarkRequest,setremarkRequest] = useState({
         id:currentNote.id,
         message:''
     });
     useEffect(()=>{
-        if(toggle.isUploadModalVisible){ 
+        if(currentNote){ 
             setremarkRequest({...remarkRequest,id:currentNote.id});
             document.body.style.overflow="hidden";
           //  document.body.style.pointerEvents = "none"
@@ -24,7 +22,7 @@ export default function RemarkModal({currentNote}){
              document.body.style.overflow="scroll";
           //  document.body.style.pointerEvents = "auto"
         }
-    },[toggle.isUploadModalVisible,currentNote]);
+    },[currentNote]);
 
     const sendRemark = async() =>{
         if(remarkRequest.message.length==0){
@@ -46,13 +44,12 @@ export default function RemarkModal({currentNote}){
     } 
     
     return (
-        toggle.isUploadModalVisible &&
-        <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
+       <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
         <div className="h-full sm:h-fit overflow-scroll absolute w-[100%] top-0 z-[9999] modal bg-white rounded-lg sm:top-[50%] sm:translate-y-[-50%]  mx-auto shadow-2xl md:max-w-[46rem] left-0 right-0  lg:max-w-4xl xl:max-w-5xl ">
                     <div className="modal_header shadow-sm w-full border-b-[1px] " style={{ borderBottom: "1px solid #f8f9fa" }}>
                         <div className="flex justify-between px-4 py-5">
                             <h1 className="text-xl font-bold">Send Remark - {currentNote.title}</h1>
-                            <X onClick={()=>toggle.setIsUploadModalVisible(false)}/>
+                            <X onClick={()=>{setCurretNoteIndex(null);setRemarkModal(false)}}/>
                         </div>
                     </div>
                     <div className="modal_body">

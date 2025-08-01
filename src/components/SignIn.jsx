@@ -136,7 +136,7 @@ export default function SignIn() {
                 className="w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                 onClick={login}
               >
-               Login In
+               Log In
               </button>
                ):<button
                 type="button"

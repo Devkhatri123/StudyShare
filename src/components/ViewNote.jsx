@@ -54,7 +54,7 @@ const ViewNote = () => {
                 </div>
                 <div className="course_header bg-white shadow-sm mt-3 rounded-md p-6">
                   <h1 className="mb-1 text-[21px] font-semibold overflow-ellipsis overflow-hidden">{note.title}</h1>
-                  <p className="mb-2 text-base text-gray-600 overflow-ellipsis overflow-hidden">{note.description}</p>
+                  <p className="mb-2 text-base text-gray-600 overflow-ellipsis overflow-hidden line-clamp-3">{note.description}</p>
                   <div className="user_profile flex items-center gap-2 mt-5">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
                       <span className="text-xs sm:text-sm font-semibold text-white">D</span>  
