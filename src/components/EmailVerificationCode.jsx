@@ -85,7 +85,7 @@ export default function EmailVerificationCode() {
             toast.success(response.data.message);
             console.log(response)
         }).catch((error)=>{
-            toast.error(response.data.message);
+            toast.error(error.response.data.message);
             console.log(error);
         })
     }

@@ -134,6 +134,7 @@ export default function UploadNote() {
 
     return (
         toggleContext.isUploadModalVisible &&
+        <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
         <div className="h-full overflow-scroll absolute w-[100%] top-0 z-[9999] modal bg-white rounded-lg   mx-auto shadow-2xl md:max-w-[46rem] md:h-[65%] left-0 right-0 md:translate-y-[25%] lg:max-w-4xl lg:max-h-[700px] xl:max-w-5xl">
             <div className="modal_header shadow-sm w-full border-b-[1px] " style={{ borderBottom: "1px solid #f8f9fa" }}>
                 <div className="flex justify-between px-4 py-5">
@@ -221,6 +222,7 @@ export default function UploadNote() {
                 </div>
 
             </div>
+        </div>
         </div>
     )
 }

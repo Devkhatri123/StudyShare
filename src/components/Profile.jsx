@@ -5,9 +5,13 @@ import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
+import DeleteNoteModal from "./DeleteNoteModal";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const [isDisbaled, setIsDisabled] = useState(true);
+  const [showDeleteModal,setShowDeleteModal] = useState(false);
+  const [currentNoteIndex,setcurrentNoteIndex] = useState(null);
   const authContext = useContext(AuthContext);
   const [myNotes, setMyNotes] = useState([]);
   const [noteStatus,setNoteStatus] = useState({status:"All",temp:"All"});
@@ -15,9 +19,9 @@ export default function Profile() {
   const [tempAuthenticatedUser, setAuthenticatedUser] = useState({});
   const [pageNumber,setPageNumber] = useState(0);
   const [notesCount,setnotesCount] = useState({
-    approved:0,
-    pending:0,
-    declined:0
+    Approved:0,
+    Pending:0,
+    Declined:0
   })
 
   useEffect(() => {
@@ -30,22 +34,22 @@ export default function Profile() {
   }, []);
 
   useEffect(()=>{
-     getMyNotes(noteStatus.temp);
+     getMyNotes();
   },[tempAuthenticatedUser,pageNumber])
 
-   const getMyNotes = async(type) => {
+   const getMyNotes = async() => {
     await axios.get(`${API_BACKEND_URL}/notes/myNotes?userId=${tempAuthenticatedUser?.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
         .then((response) => {
-          if(response.data.length > 0){
+          setCount(response.data.count)
           if(noteStatus.temp === noteStatus.status){
-          setMyNotes((prev) => [...prev,...response.data]);
+          setMyNotes((prev) => [...prev,...response.data.myNotes]);
           }else if(noteStatus.status !== noteStatus.temp) {
-            setMyNotes([...response.data]);
-            setNoteStatus((prev) => ({...prev,
+            setMyNotes([...response.data.myNotes]);
+            setNoteStatus((prev) => ({
+            ...prev,
             temp:prev.status,
       }));
           }
-        }
         }).catch((error) => {
           console.log(error);
         }).finally(()=>{
@@ -56,14 +60,12 @@ export default function Profile() {
   const updateInfo = async () => {
     await axios.put(`${API_BACKEND_URL}/auth/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
       .then((response) => {
-        console.log(response);
         toast.success(response.data.message);
         setIsDisabled(true);
       }).catch((error) => {
         console.log(error);
       })
   }
-
 
   useEffect(()=>{
  
@@ -91,27 +93,36 @@ export default function Profile() {
 
   const getApprovedNotes = (type) => {
     if(type !== noteStatus.status){
-      setPageNumber(0);
+       setPageNumber(0);
        setNoteStatus((prev) => ({...prev,
         temp:prev.status,
         status:type
       }));
+      // getMyNotes()
       }
      
-     // getMyNotes(type)
   }
 
   const handleScroll = () => {
   if(window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
       setPageNumber((Prev) => Prev + 1);
-     // getMyNotes(undefined);
-    }
+     }
    }
 
    useEffect(()=>{
     window.addEventListener("scroll",handleScroll);
     return () => window.removeEventListener("scroll",handleScroll);
     },[]);
+
+   const setCount = (count) => {
+     if(!count.Approved) setnotesCount((prev) => ({...prev,Approved:0}));
+     else if (count.Approved) setnotesCount((prev) => ({...prev,Approved:count.Approved}));
+      if (!count.Declined) setnotesCount((prev) => ({...prev,Declined:0}));
+     else if (count.Declined) setnotesCount((prev) => ({...prev,Approved:count.Declined}));
+      if (!count.Pending) setnotesCount((prev) => ({...prev,Pending:0}));
+     else setnotesCount((prev) => ({...prev,Pending:count.Pending}));
+   }
+
 
   return (
     authContext.AuthenticatedUser ? (
@@ -120,7 +131,7 @@ export default function Profile() {
 
           <div className="flex items-center justify-between max-w-6xl mx-auto">
             <div className="left flex items-center">
-
+             <Link to={"/"}>
               <div className="bg-blue-600 max-w-fit p-2.5 rounded-lg">
                 <svg
                   className="w-6 h-6 sm:w-6 sm:h-6 text-white"
@@ -137,6 +148,7 @@ export default function Profile() {
                 </svg>
 
               </div>
+              </Link>
               <h1 className="text-[1.3em] hidden sm:block  font-bold ml-3">My Profile</h1>
             </div>
 
@@ -270,15 +282,15 @@ export default function Profile() {
               <p className="text-gray-500">6 notes uploaded</p>
             </div>
             <div className="notes_Filter flex flex-col md:flex-row gap-2.5 mt-4 mb-5">
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("All")}}>All Notes ({myNotes.length})</button>
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Approved")}}>Approved ({notesCount.approved})</button>
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Pending")}}>Pending ({notesCount.pending})</button>
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Declined")}}>Declined ({notesCount.declined})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("All")}}>All Notes ({notesCount.Approved + notesCount.Pending + notesCount.Declined})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Approved")}}>Approved ({notesCount.Approved})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Pending")}}>Pending ({notesCount.Pending})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Declined")}}>Declined ({notesCount.Declined})</button>
               <input type="text" name="" id="" placeholder="Search notes" className="border border-gray-200 rounded-md w-[44%] px-2.5" />
             </div>
             <hr className="text-gray-400" />
             {!loading ? (
-            myNotes.length > 0 ? (
+              myNotes.length > 0 ? (
               <div className="notesContainer grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
                 {myNotes.map((note, i) => {
                   return <div key={i} className="border rounded-xl border-green-200 p-4" style={{
@@ -289,8 +301,9 @@ export default function Profile() {
                       <h1 className="font-bold text-xl line-clamp-2">{note.title}</h1>
                       <div className="flex items-center">
                         <Edit className="text-gray-600 w-5 cursor-pointer mr-2" />
-                        <Delete className="text-gray-600 w-5 cursor-pointer" />
+                        <Delete className="text-gray-600 w-5 cursor-pointer" onClick={()=>{setShowDeleteModal(true);setcurrentNoteIndex(i)}}/>
                       </div>
+                      {showDeleteModal && currentNoteIndex == i && <DeleteNoteModal setShowDeleteModal={setShowDeleteModal} setcurrentNoteIndex={setcurrentNoteIndex}noteID={note.id}/>}
                     </div>
                     <p className="mt-2 text-blue-600">{note.subject.department}</p>
                     <p className="mt-4 text-gray-600 text-ellipsis overflow-hidden line-clamp-2">{note.description}</p>
