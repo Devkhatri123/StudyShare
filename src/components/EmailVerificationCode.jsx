@@ -8,7 +8,6 @@ export default function EmailVerificationCode() {
     const inputsRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
-    const [otp, setOtp] = useState('');
     const handleNumberOnlyInput = (e) => {
         if (isNaN(e.key)) {
             e.preventDefault();
@@ -36,21 +35,23 @@ export default function EmailVerificationCode() {
             }
         }
     }
-
+    
+    useEffect(()=>{
+     if(location.state == null){
+           navigate("/")
+        }
+    },[]);
 
     const sendOtp = () =>{
-        if(location.state == null){
-            toast.error("Email is not present");
-            return;
-        }
-        getOtp();
-        if(otp === ''){
+        
+       const o = getOtp();
+         if(o === ''){
              toast.error("Otp not provided");
             return;
         }
         const verification = {
             email:location.state.email,
-            verificationCode:Number(otp)
+            verificationCode:Number(o)
         }
         axios.post(`${API_BACKEND_URL}/auth/verify`,verification)
         .then((response)=>{
@@ -64,15 +65,15 @@ export default function EmailVerificationCode() {
                 return;
             }
             toast.error(error.response.data.message)
-            console.log(error);
         })
     }
     const getOtp = () => {
         let inputs = document.querySelectorAll(".input");
-        if(otp != null) setOtp("");
-        inputs.forEach((e)=>{
-            setOtp((prev) => prev + e.value);
+        let o = "";
+         inputs.forEach((e)=>{
+            o += e.value 
         });
+        return o;
     }
 
     const resendVerificationCode = () => {
@@ -83,7 +84,6 @@ export default function EmailVerificationCode() {
         axios.post(`${API_BACKEND_URL}/auth/resendVerificationCode?email=${location.state.email}`)
         .then((response)=>{
             toast.success(response.data.message);
-            console.log(response)
         }).catch((error)=>{
             toast.error(error.response.data.message);
             console.log(error);

@@ -33,7 +33,6 @@ export default function PendingNotesApproval() {
    }else{
      document.body.style.overflow = "scroll";
    }
-   console.log(remarkModal)
   },[remarkModal]);
 
 

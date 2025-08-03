@@ -24,7 +24,6 @@ export default function StudyShareHomepage() {
     })
   }
     getSubjects();
-    console.log(limit)
    },[limit]);
 
 
