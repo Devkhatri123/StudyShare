@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react"
 import { Upload, X } from "lucide-react";
-import Note from "../Note";
 import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { toast } from "react-toastify";

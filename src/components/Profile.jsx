@@ -1,4 +1,4 @@
-import { CircleX, Clock, Cross, Delete, Edit, Loader, Save, Settings, Timer, User, Verified, Watch, X } from "lucide-react";
+import { Check, CircleX, Clock, Cross, Delete, Edit, Info, Loader, Save, Settings, Timer, User, Verified, Watch, X } from "lucide-react";
 import { useContext, useState } from "react";
 import { AuthContext } from "../ContextApi/AuthContext";
 import axios from "axios";
@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { toast } from "react-toastify";
 import DeleteNoteModal from "./DeleteNoteModal";
 import { Link } from "react-router-dom";
+import UploadNote from "./UploadNote";
 
 export default function Profile() {
   const [isDisbaled, setIsDisabled] = useState(true);
@@ -18,11 +19,15 @@ export default function Profile() {
   const [loading,setLoading] = useState(true);
   const [tempAuthenticatedUser, setAuthenticatedUser] = useState({});
   const [pageNumber,setPageNumber] = useState(0);
+  const [saveLoading,setSaveLoading] = useState(false);
+  const [noteToUpdate,setNoteToUpdate] = useState(null);
+  const [showUploadModal,setShowUploadModal] = useState(false);
   const [notesCount,setnotesCount] = useState({
     Approved:0,
     Pending:0,
     Declined:0
-  })
+  });
+  const [accountStatus,setAccountStatus] = useState({});
 
   useEffect(() => {
     if (authContext.AuthenticatedUser) {
@@ -32,6 +37,10 @@ export default function Profile() {
       toast.info("Please signIn to access this page.")
     }
   }, []);
+
+  useEffect(()=>{
+    getAccountStatus();
+  },[tempAuthenticatedUser]);
 
   useEffect(()=>{
      getMyNotes();
@@ -58,12 +67,15 @@ export default function Profile() {
    }
 
   const updateInfo = async () => {
+    setSaveLoading(true);
     await axios.put(`${API_BACKEND_URL}/auth/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
       .then((response) => {
         toast.success(response.data.message);
         setIsDisabled(true);
       }).catch((error) => {
         console.log(error);
+      }).finally(()=>{
+        setSaveLoading(false);
       })
   }
 
@@ -85,10 +97,7 @@ export default function Profile() {
      return note.status === "Declined"
    });
    setnotesCount((Prev) => ({...Prev,declined:declinedNotes.length}));
-
-
-
-  },[myNotes]);
+},[myNotes]);
 
 
   const getApprovedNotes = (type) => {
@@ -118,9 +127,41 @@ export default function Profile() {
      if(!count.Approved) setnotesCount((prev) => ({...prev,Approved:0}));
      else if (count.Approved) setnotesCount((prev) => ({...prev,Approved:count.Approved}));
       if (!count.Declined) setnotesCount((prev) => ({...prev,Declined:0}));
-     else if (count.Declined) setnotesCount((prev) => ({...prev,Approved:count.Declined}));
+     else if (count.Declined) setnotesCount((prev) => ({...prev,Declined:count.Declined}));
       if (!count.Pending) setnotesCount((prev) => ({...prev,Pending:0}));
      else setnotesCount((prev) => ({...prev,Pending:count.Pending}));
+   }
+
+   const getAccountStatus = ()=> {
+    axios.get(`${API_BACKEND_URL}/auth/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`,{withCredentials:true})
+    .then((response)=>{
+      setAccountStatus(response.data)
+    }).catch((error)=>{
+      console.log(error);
+    })
+   }
+
+   useEffect(()=>{
+     if(accountStatus.status === "Approved" || accountStatus.status === "Declined"){
+      axios.delete(`${API_BACKEND_URL}/auth/UpdateInfoInfo/${tempAuthenticatedUser.id}`,{withCredentials:true})
+      .then((response)=>{
+      }).catch((error)=>{
+        console.log(error);
+      });
+     }
+   },[tempAuthenticatedUser,accountStatus]);
+
+
+   const editNote = (id,idx)=>{
+    axios.get(`${API_BACKEND_URL}/notes/note/${id}`)
+    .then((response)=>{
+      console.log(response);
+      setNoteToUpdate(response.data);
+      setcurrentNoteIndex(idx);
+      setShowUploadModal(true);
+    }).catch((error)=>{
+      console.log(error);
+    });
    }
 
 
@@ -155,6 +196,12 @@ export default function Profile() {
           </div>
         </nav>
         <div className="body max-w-6xl mx-auto px-5 py-3">
+         {Object.entries(accountStatus).length > 0 && (
+             <div className="status mb-3 gap-2 flex px-3 rounded-md py-2.5" style={{background:`${accountStatus.status == "Declined" ? "#fef2f2":`${accountStatus.status == "Approved" ? "#f0fdf4":"#fefce8"}`}`}}>
+            {accountStatus.status == "Declined" ? <X className="w-4"/> : accountStatus.status == "Approved" ? <Check className="w-4"/> : <Info className="w-4"/>} 
+              <p>{accountStatus.remark}</p>
+             </div> 
+         )}
           <div className="info bg-white shadow-sm rounded-lg border border-gray-200 py-3.5 px-4">
             <div className="info_header flex-col sm:flex-row flex justify-between items-center">
               <div className="info_header_left flex items-center gap-3.5">
@@ -173,10 +220,14 @@ export default function Profile() {
                 </div>
               ) :
                 <div className="right_enabled flex gap-2.5 mt-5 flex-col sm:mt-0 sm:flex-row w-full sm:w-fit">
-                  <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" style={{ background: "#16a34a" }}>
+                  {!saveLoading ? (
+                  <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" onClick={() => { updateInfo() }} style={{ background: "#16a34a" }}>
+                    <>
                     <Save className="w-4" />
-                    <button className="ml-1" onClick={() => { updateInfo() }}>Save</button>
-                  </div>
+                    <button className="ml-1" >Save</button>
+                    </>
+                   </div>
+                    ):<div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer"><button className="ml-1" disabled><Loader/></button></div>}
                   <div className="flex items-center text-white p-2.5 rounded-md justify-center cursor-pointer" style={{ background: "#6b7280" }} onClick={() => setIsDisabled(true)}>
                     <X className="w-4" />
                     <button className="ml-2">Cancel</button>
@@ -279,7 +330,7 @@ export default function Profile() {
           <div className="myNotes mt-6 bg-white shadow-md  rounded-lg border border-gray-200 py-3.5 px-4">
             <div className="header">
               <h1 className="text-xl font-bold">My Notes</h1>
-              <p className="text-gray-500">6 notes uploaded</p>
+              <p className="text-gray-500">{notesCount.Approved + notesCount.Pending + notesCount.Declined} notes uploaded</p>
             </div>
             <div className="notes_Filter flex flex-col md:flex-row gap-2.5 mt-4 mb-5">
               <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("All")}}>All Notes ({notesCount.Approved + notesCount.Pending + notesCount.Declined})</button>
@@ -300,11 +351,12 @@ export default function Profile() {
                     <div className="header gap-3 sm:flex-row flex justify-between items-center">
                       <h1 className="font-bold text-xl line-clamp-2">{note.title}</h1>
                       <div className="flex items-center">
-                        <Edit className="text-gray-600 w-5 cursor-pointer mr-2" />
+                        <Edit className="text-gray-600 w-5 cursor-pointer mr-2" onClick={()=>editNote(note.id,i)}/>
                         <Delete className="text-gray-600 w-5 cursor-pointer" onClick={()=>{setShowDeleteModal(true);setcurrentNoteIndex(i)}}/>
                       </div>
                       {showDeleteModal && currentNoteIndex == i && <DeleteNoteModal setShowDeleteModal={setShowDeleteModal} setcurrentNoteIndex={setcurrentNoteIndex}noteID={note.id}/>}
-                    </div>
+                      {showUploadModal && noteToUpdate != null && currentNoteIndex == i && <UploadNote noteToUpdate={noteToUpdate} setShowDeleteModal={setShowUploadModal}/>}
+                     </div>
                     <p className="mt-2 text-blue-600">{note.subject.department}</p>
                     <p className="mt-4 text-gray-600 text-ellipsis overflow-hidden line-clamp-2">{note.description}</p>
                     <div className="border rounded-md flex items-center gap-5 p-2 mt-5"

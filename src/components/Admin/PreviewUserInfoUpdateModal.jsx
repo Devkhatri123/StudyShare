@@ -1,6 +1,60 @@
+import axios from "axios";
 import { X } from "lucide-react";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import API_BACKEND_URL from "../../utils/API";
+import Loader from "../Loader";
 
 export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,selectedUpdate}){
+    const [enableRemarkModal,setEnableRemarkModal] = useState(false);
+    const [loading,setLoading] = useState(false);
+    const [loading2,setLoading2] = useState(false);
+    const [remarkRequest,setRemarkRequest] = useState({
+        id:"",
+        message:""
+    });
+
+    const rejectUpdateRequestInfo = async(ID) => {
+      if(remarkRequest.message.length == 0){
+        toast.error("Message text area is empty");
+        return;
+      }
+      setRemarkRequest((prev) => ({...prev,id:ID}))
+      setLoading(true);
+      await axios.post(`${API_BACKEND_URL}/auth/admin/RejectInfoUpdateRequest/${ID}`,remarkRequest,{withCredentials:true})
+      .then((response)=>{
+        if(response.status === 200){
+            toast.success(response.data);
+            setEnableRemarkModal(false);
+            setPreviewUserInfoUpdate(false);
+        }
+      }).catch((error)=>{
+        console.log(error);
+      }).finally(()=>{
+         setLoading(false);
+      });
+
+    }
+
+
+    const approveChanges = async(userId) => {
+        setLoading2(true);
+       await axios.post(`${API_BACKEND_URL}/auth/admin/approveChanges/${userId}`,{},{withCredentials:true})
+      .then((response)=>{
+        if(response.status === 200){
+            toast.success(response.data);
+            setEnableRemarkModal(false);
+            setPreviewUserInfoUpdate(false);
+        }
+        console.log(response);
+      }).catch((error)=>{
+        console.log(error);
+      }).finally(()=>{
+         setLoading2(false);
+      })
+    }
+
+
     return (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
             <div className="previewInfoUpdateModal w-full max-w-96 fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5">
@@ -31,11 +85,27 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                     <p>{selectedUpdate.phone}</p>
                 </div>
                 </div>
+                {!enableRemarkModal ? (
                 <div className="flex justify-end gap-2 mt-2">
-                    <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm">Accept</button>
-                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm">Reject</button>
+                    {!loading2 ? (
+                    <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={()=>{approveChanges(selectedUpdate.id)}}>Accept</button>
+                    ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
+                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(true)}}>Reject</button>
                 </div>
-             </div>
+                 ):
+                 <>
+                 <div className="remarkModal mt-1.5">
+                    <textarea className="text-sm w-full rounded-md border border-gray-300 py-1 px-1.5 outline-0" name="" id="" placeholder="Write rejection reason..." onChange={(e)=>setRemarkRequest((prev) => ({...prev,message:e.target.value}))}></textarea>
+                    <div className="flex justify-end gap-1.5">
+                        {!loading ? (
+                        <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={() => rejectUpdateRequestInfo(selectedUpdate.id)}>Confirm</button>
+                        ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
+                        <button className="bg-gray-100 text-black py-1.5 px-2.5 rounded-md text-sm" onClick={()=>setEnableRemarkModal(false)}>Cancel</button>
+                    </div>
+                 </div>
+                 </>
+                 }
+              </div>
             </div>
         </div>
     )

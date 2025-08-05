@@ -16,15 +16,13 @@ export default function UserInfoUpdate(){
         const getApprovalPendingUserUpdates = () => {
             axios.get(`${API_BACKEND_URL}/auth/admin/ApprovalPendingUserInfo?pageNumber=${pageNumber}&limit=2`,{withCredentials:true})
             .then((response)=>{
-                if(response.data.length > 0){
                 SetUpdates((prev) => [...prev,...response.data]);
-            }
-
-            }).catch((error)=>{
+        }).catch((error)=>{
                 console.log(error);
             });
         }
         getApprovalPendingUserUpdates();
+        return () => SetUpdates([])
     },[pageNumber]);
 
       const handleScroll = () => {
@@ -72,8 +70,7 @@ export default function UserInfoUpdate(){
                     </div>
                     {PreviewUserInfoUpdate && currentUpdateIndex == i && <PreviewUserInfoUpdateModal setPreviewUserInfoUpdate={setPreviewUserInfoUpdate} selectedUpdate={selectedUpdate}/>}
                    </div>
-                   
-                    })   
+                     })   
                 ):<p>No Update Available</p>}
                    </div>
                   
