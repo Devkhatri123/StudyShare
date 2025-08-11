@@ -21,7 +21,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
       }
       setRemarkRequest((prev) => ({...prev,id:ID}))
       setLoading(true);
-      await axios.post(`${API_BACKEND_URL}/auth/admin/RejectInfoUpdateRequest/${ID}`,remarkRequest,{withCredentials:true})
+      await axios.post(`${API_BACKEND_URL}/profile/admin/RejectInfoUpdateRequest/${ID}`,remarkRequest,{withCredentials:true})
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);
@@ -39,7 +39,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
     const approveChanges = async(userId) => {
         setLoading2(true);
-       await axios.post(`${API_BACKEND_URL}/auth/admin/approveChanges/${userId}`,{},{withCredentials:true})
+       await axios.post(`${API_BACKEND_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true})
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);

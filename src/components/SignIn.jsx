@@ -69,7 +69,7 @@ export default function SignIn() {
           <p className="text-sm text-gray-600">
             Don't have an account?{" "}
             <a href="/register" className="text-blue-600 hover:underline">
-              Sign in
+              Sign Up
             </a>
           </p>
           {/* {error != "" &&  (

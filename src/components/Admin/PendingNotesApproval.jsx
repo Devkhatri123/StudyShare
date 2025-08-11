@@ -1,11 +1,10 @@
 import axios from "axios";
 import { Clock, Eye, FileText, UserCheck, X } from "lucide-react";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import RemarkModal from "./RemarkModal";
 import PreviewNote from "./PreviewNote";
-import { toast } from "react-toastify";
 
 export default function PendingNotesApproval() {
   const[ApprovalPendingNotes,setApprovalPendingNotes] = useState([]);
@@ -38,12 +37,10 @@ export default function PendingNotesApproval() {
 
    const approveNote = async(i) => {
      setApproveLoading(true);
-     const remaininArray = ApprovalPendingNotes.filter((item)=>{
-      return item.id != ApprovalPendingNotes[i].id;
-     });
+      console.log(ApprovalPendingNotes[i])
      await axios.post(`${API_BACKEND_URL}/notes/${ApprovalPendingNotes[i].id}/approve`)
      .then((response)=>{
-      toast.success(response.data.message);
+      toast.success("Note Approved!!!");
       window.location.reload() 
     }).catch((error)=>{
       console.log(error);

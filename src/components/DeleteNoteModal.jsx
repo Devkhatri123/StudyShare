@@ -9,9 +9,10 @@ export default function DeleteNoteModal({setShowDeleteModal,setcurrentNoteIndex,
     const [loading,setLoading] = useState(false);
 
     const deleteNote = () =>{
-        setLoading(true);
+      setLoading(true);
       axios.delete(`${API_BACKEND_URL}/notes/${noteID}`,{withCredentials:true})
       .then((response)=>{
+        console.log(response)
         if(response.status == 200){
             toast.success("Note deleted successfully!");
             setShowDeleteModal(false);

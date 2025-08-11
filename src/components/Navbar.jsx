@@ -47,42 +47,9 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
-            <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Browse
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Popular
-            </a>
-            <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors">
-              Recent
-            </a>
-          </nav>
-
           {/* Desktop Search & Auth */}
           <div className="hidden lg:flex items-center gap-4">
-            {/* <div className="relative">
-              <svg
-                className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search notes by subject..."
-                className="w-64 xl:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              />
-            </div> */}
-            {/*  */}
+          
            {authContext.AuthenticatedUser == null ? (
             <>
             <button className="text-gray-600 hover:text-gray-900 px-4 py-2 transition-colors">
@@ -104,6 +71,7 @@ export default function Navbar() {
            {showDropDown && (
            <div className="absolute right-3 top-16 py-2.5 px-6 dropdown shadow-lg bg-white  rounded-lg">
             <li className='list-none cursor-pointer'><Link to={"/profile"}>Profile</Link></li>
+            {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{email:authContext.AuthenticatedUser.universityEmail}}>Verify Email</Link></li>}
             {authContext.AuthenticatedUser.role === "ADMIN" && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
             <li className='list-none cursor-pointer' onClick={()=>{signOut()}}>SignOut</li>
            </div>

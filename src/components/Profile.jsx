@@ -40,14 +40,14 @@ export default function Profile() {
 
   useEffect(()=>{
     getAccountStatus();
-  },[tempAuthenticatedUser]);
+  },[tempAuthenticatedUser,noteStatus]);
 
   useEffect(()=>{
      getMyNotes();
   },[tempAuthenticatedUser,pageNumber])
 
    const getMyNotes = async() => {
-    await axios.get(`${API_BACKEND_URL}/notes/myNotes?userId=${tempAuthenticatedUser?.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+     await axios.get(`${API_BACKEND_URL}/notes/myNotes?userId=${tempAuthenticatedUser?.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
         .then((response) => {
           setCount(response.data.count)
           if(noteStatus.temp === noteStatus.status){
@@ -63,14 +63,16 @@ export default function Profile() {
           console.log(error);
         }).finally(()=>{
           setLoading(false);
-        })
+        });
+        
    }
 
   const updateInfo = async () => {
     setSaveLoading(true);
-    await axios.put(`${API_BACKEND_URL}/auth/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
+    await axios.put(`${API_BACKEND_URL}/profile/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
       .then((response) => {
         toast.success(response.data.message);
+        setAccountStatus({status:"Pending",remark:"Update Request Pending Review"})
         setIsDisabled(true);
       }).catch((error) => {
         console.log(error);
@@ -100,8 +102,8 @@ export default function Profile() {
 },[myNotes]);
 
 
-  const getApprovedNotes = (type) => {
-    if(type !== noteStatus.status){
+  const getCategoryNotes = (type) => {
+     if(type !== noteStatus.status){
        setPageNumber(0);
        setNoteStatus((prev) => ({...prev,
         temp:prev.status,
@@ -133,9 +135,13 @@ export default function Profile() {
    }
 
    const getAccountStatus = ()=> {
-    axios.get(`${API_BACKEND_URL}/auth/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`,{withCredentials:true})
+    axios.get(`${API_BACKEND_URL}/profile/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`,{withCredentials:true})
     .then((response)=>{
-      setAccountStatus(response.data)
+      console.log(response)
+      if(response.data.status == "Declined"){
+        setAccountStatus({status:"Declined",remark:response.data.remark});
+      }else if (response.data.status == "Approved")  setAccountStatus({status:"Approved",remark:"Your Update Request was Approved,changes has been applied"});
+      else setAccountStatus(response.data)
     }).catch((error)=>{
       console.log(error);
     })
@@ -143,7 +149,7 @@ export default function Profile() {
 
    useEffect(()=>{
      if(accountStatus.status === "Approved" || accountStatus.status === "Declined"){
-      axios.delete(`${API_BACKEND_URL}/auth/UpdateInfoInfo/${tempAuthenticatedUser.id}`,{withCredentials:true})
+      axios.delete(`${API_BACKEND_URL}/profile/UpdateInfoInfo/${tempAuthenticatedUser.id}`,{withCredentials:true})
       .then((response)=>{
       }).catch((error)=>{
         console.log(error);
@@ -155,7 +161,6 @@ export default function Profile() {
    const editNote = (id,idx)=>{
     axios.get(`${API_BACKEND_URL}/notes/note/${id}`)
     .then((response)=>{
-      console.log(response);
       setNoteToUpdate(response.data);
       setcurrentNoteIndex(idx);
       setShowUploadModal(true);
@@ -213,7 +218,8 @@ export default function Profile() {
                   <p className="">Dha Suffa University</p>
                 </div>
               </div>
-              {isDisbaled ? (
+              {accountStatus == null || accountStatus.status !== "Pending" && (
+              isDisbaled ? (
                 <div className="right_disabled bg-gray-900 justify-center w-full gap-1.5 mt-4 sm:w-fit sm:mt-0 px-4 py-2 rounded-md flex items-center cursor-pointer" onClick={() => setIsDisabled(false)}>
                   <Edit className="text-white w-4 h-4" />
                   <button className=" text-white">Edit Profile</button>
@@ -233,7 +239,8 @@ export default function Profile() {
                     <button className="ml-2">Cancel</button>
                   </div>
                 </div>
-              }
+              
+            )}
             </div>
             <div className="info_inputs flex flex-col mt-8 gap-2.5 sm:flex-row">
               <div className="leftInputs w-full sm:w-[50%]">
@@ -256,10 +263,8 @@ export default function Profile() {
                   <label htmlFor="Gender">Gender</label>
                   {isDisbaled ? (
                     <select name="gender" id="" className="border border-gray-200 px-3 py-2 rounded-lg" disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }}>
-                      <option value="Male">Male</option>
-                      <option value="Male">Female</option>
-                      <option value="Other">Other</option>
-                    </select>
+                      <option value={tempAuthenticatedUser.gender}>{tempAuthenticatedUser.gender}</option>
+                     </select>
                   ) :
                     <>
                       <select name="gender" id="" className="border border-gray-200 px-3 py-2 rounded-lg" onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, gender: e.target.value }) }}>
@@ -333,10 +338,10 @@ export default function Profile() {
               <p className="text-gray-500">{notesCount.Approved + notesCount.Pending + notesCount.Declined} notes uploaded</p>
             </div>
             <div className="notes_Filter flex flex-col md:flex-row gap-2.5 mt-4 mb-5">
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("All")}}>All Notes ({notesCount.Approved + notesCount.Pending + notesCount.Declined})</button>
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Approved")}}>Approved ({notesCount.Approved})</button>
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Pending")}}>Pending ({notesCount.Pending})</button>
-              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getApprovedNotes("Declined")}}>Declined ({notesCount.Declined})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getCategoryNotes("All")}}>All Notes ({notesCount.Approved + notesCount.Pending + notesCount.Declined})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getCategoryNotes("Approved")}}>Approved ({notesCount.Approved})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getCategoryNotes("Pending")}}>Pending ({notesCount.Pending})</button>
+              <button className="bg-gray-200 rounded-lg text-gray-700 py-2 px-3.5 cursor-pointer mr-2" onClick={()=>{getCategoryNotes("Declined")}}>Declined ({notesCount.Declined})</button>
               <input type="text" name="" id="" placeholder="Search notes" className="border border-gray-200 rounded-md w-[44%] px-2.5" />
             </div>
             <hr className="text-gray-400" />
@@ -350,10 +355,12 @@ export default function Profile() {
                   }}>
                     <div className="header gap-3 sm:flex-row flex justify-between items-center">
                       <h1 className="font-bold text-xl line-clamp-2">{note.title}</h1>
+                      {note.status  !== "Pending" && (
                       <div className="flex items-center">
                         <Edit className="text-gray-600 w-5 cursor-pointer mr-2" onClick={()=>editNote(note.id,i)}/>
                         <Delete className="text-gray-600 w-5 cursor-pointer" onClick={()=>{setShowDeleteModal(true);setcurrentNoteIndex(i)}}/>
                       </div>
+                      )}
                       {showDeleteModal && currentNoteIndex == i && <DeleteNoteModal setShowDeleteModal={setShowDeleteModal} setcurrentNoteIndex={setcurrentNoteIndex}noteID={note.id}/>}
                       {showUploadModal && noteToUpdate != null && currentNoteIndex == i && <UploadNote noteToUpdate={noteToUpdate} setShowDeleteModal={setShowUploadModal}/>}
                      </div>

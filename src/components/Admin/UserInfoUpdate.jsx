@@ -14,7 +14,7 @@ export default function UserInfoUpdate(){
 
     useEffect(()=>{
         const getApprovalPendingUserUpdates = () => {
-            axios.get(`${API_BACKEND_URL}/auth/admin/ApprovalPendingUserInfo?pageNumber=${pageNumber}&limit=2`,{withCredentials:true})
+            axios.get(`${API_BACKEND_URL}/profile/admin/ApprovalPendingUserInfo?pageNumber=${pageNumber}&limit=2`,{withCredentials:true})
             .then((response)=>{
                 SetUpdates((prev) => [...prev,...response.data]);
         }).catch((error)=>{

@@ -8,6 +8,9 @@ export default function EmailVerificationCode() {
     const inputsRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
+    useEffect(()=>{
+     console.log(location)
+    },[]);
     const handleNumberOnlyInput = (e) => {
         if (isNaN(e.key)) {
             e.preventDefault();

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Navbar from "./Navbar"
 import axios from "axios";
 import { Link } from "react-router-dom"
@@ -8,23 +8,34 @@ import Loader from "./Loader";
 import API_BACKEND_URL from "../utils/API";
 
 export default function StudyShareHomepage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const timer = useRef();
   const [subjects, setSubjects] = useState([]);
   const [loading,setLoading] = useState(true);
+  const [query,setQuery] = useState("");
   const [limit,setLimit] = useState(0);
   useEffect(() => {
+    timer.current = setTimeout(async() => {
     const getSubjects = async () => {
-     await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=2`)
+    await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=2&query=${query}`)
     .then((response)=>{
-       setSubjects((prev) =>[...prev,...response.data]);
+      if(limit == 0) setSubjects([...response.data]);
+      else setSubjects((prev) =>[...prev,...response.data]);
       }).catch((error)=>{
       console.log("Error in fetching subjects:", error);
     }).finally(()=>{
       setLoading(false);
     })
   }
-    getSubjects();
-   },[limit]);
+      getSubjects();
+},[500])
+  //  return () => clearTimeout(timer.current);
+   },[query,limit]);
+
+   const handleSearch = (e) => {
+    clearTimeout(timer.current);
+      setQuery(e.target.value);
+      setLimit(0)
+   }
 
 
    const handleScroll = () => {
@@ -121,8 +132,8 @@ export default function StudyShareHomepage() {
             <input
               type="text"
               placeholder="Search notes by subject or university..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={query}
+              onChange={(e) => handleSearch(e)}
               className="w-full h-12 sm:h-14 pl-12 pr-20 sm:pr-24 text-base sm:text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
             <button className="absolute right-2 top-2 bg-gray-900 hover:bg-gray-800 text-white px-4 sm:px-6 py-2 rounded-md transition-colors text-sm sm:text-base">
