@@ -1,33 +1,57 @@
 import axios from "axios";
 import { User, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 
-export default function UserDetailModal({ user, setShowModal }) {
-    const [reports,setReports] = useState([]);
-    const [loading,setLoading] = useState(false);
-    useEffect(()=>{
+export default function UserDetailModal({ user, setShowModal, ShowModal }) {
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [pageNumber, setPageNumber] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const reportBody_Ref = useRef();
+    useEffect(() => {
+        if (!hasMore) return;
         setLoading(true);
-     axios.get(`${API_BACKEND_URL}/report/admin/user/${user.id}/reports`,{withCredentials:true})
-     .then((response)=>{
-        setReports([...response.data]);
-        console.log(response);
-     }).catch((error)=>{
-        console.log(error);
-     }).finally(()=>{
-        setLoading(false);
-     })
-    },[]);
+        axios.get(`${API_BACKEND_URL}/report/admin/user/${user.id}/reports?pageNumber=${pageNumber}&limit=3`, { withCredentials: true })
+            .then((response) => {
+                if (response.data.length > 0) setReports((prev) => ([...prev, ...response.data]));
+                else setHasMore(false);
+            }).catch((error) => {
+                console.log(error);
+            }).finally(() => {
+                setLoading(false);
+            })
+    }, [pageNumber]);
 
-    return (
+
+    const handleModalScroll = (e) => {
+
+        if (hasMore && reportBody_Ref.current.scrollTop + e.target.clientHeight + 1 >= e.target.scrollHeight) {
+            setPageNumber((prev) => prev + 1);
+
+        }
+    }
+
+    useEffect(() => {
+        reportBody_Ref.current.addEventListener("scroll", handleModalScroll);
+        return () => {
+            if (reportBody_Ref.current != null) {
+                reportBody_Ref.current.removeEventListener("scroll", handleModalScroll);
+            }
+        }
+    }, []);
+
+
+
+    return ShowModal && (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }}>
-            <div className="UserDetailModal w-full max-w-96 fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5">
+            <div className="UserDetailModal h-full sm:h-fit w-full max-w-96 fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5">
                 <div className="header flex justify-between">
                     <div className="flex items-baseline">
                         <h2 className="font-medium  sm:text-lg">User Details:  </h2>
                         <h2>&nbsp; @{user.fullname}</h2>
                     </div>
-                    <X onClick={() => { setShowModal(false); }} />
+                    <X onClick={() => { setShowModal(false); document.body.style.overflow = "scroll" }} />
                 </div>
                 <div className="body mt-3">
                     <div className="flex items-baseline">
@@ -41,23 +65,23 @@ export default function UserDetailModal({ user, setShowModal }) {
                     <div className="mt-1 flex items-baseline">
                         <p className="text-sm font-bold">Reports:</p>
                     </div>
-                    <div className="reports_Body h-[200px] overflow-scroll my-2">
-                       {reports.map((report,i)=>{
-                       return <div key={i} className="report mb-2 bg-[#fef1f2] p-1.5 rounded-md">
-                            <div className="flex items-baseline mt-1.5">
-                                <p className="text-sm">Reason:&nbsp;{report.reason}</p>
-                                {/* <p className="text-[14px]">{report.reason}</p> */}
+                    <div className="reports_Body h-[200px] overflow-scroll my-2" ref={reportBody_Ref}>
+                        {reports.map((report, i) => {
+                            return <div key={i} className="report mb-2 bg-[#fef1f2] p-1.5 rounded-md">
+                                <div className="flex items-baseline mt-1.5">
+                                    <p className="text-sm">Reason:&nbsp;{report.reason}</p>
+                                    {/* <p className="text-[14px]">{report.reason}</p> */}
+                                </div>
+                                <div className="flex items-baseline mt-1.5">
+                                    <p className="text-sm">Additional Details:&nbsp;{report.additionalDetails}</p>
+                                    {/* <p className="text-[14px]">{report.additionalDetails}</p> */}
+                                </div>
+                                <div className="flex items-baseline mt-1.5">
+                                    <p className="text-sm">ReportedBy:&nbsp;{report.reportedByUserName}</p>
+                                    {/* <p className="text-[14px] ">&nbsp;{report.reportedByUserName}</p> */}
+                                </div>
                             </div>
-                               <div className="flex items-baseline mt-1.5">
-                                <p className="text-sm">Additional Details:&nbsp;{report.additionalDetails}</p>
-                                {/* <p className="text-[14px]">{report.additionalDetails}</p> */}
-                            </div>
-                             <div className="flex items-baseline mt-1.5">
-                                <p className="text-sm">ReportedBy:&nbsp;{report.reportedByUserName}</p>
-                                {/* <p className="text-[14px] ">&nbsp;{report.reportedByUserName}</p> */}
-                            </div>
-                        </div>
-                       })}
+                        })}
                     </div>
                 </div>
             </div>

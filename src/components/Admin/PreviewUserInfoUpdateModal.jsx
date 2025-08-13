@@ -78,11 +78,11 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 </div>
                 
                 <div className="new_info text-end text-md text-green-500">
-                    <p>{selectedUpdate.name}</p>
+                    <p>{selectedUpdate.fullname}</p>
                     <p>{selectedUpdate.semester}</p>
                     <p>{selectedUpdate.gender}</p>
                     <p>{selectedUpdate.department}</p>
-                    <p>{selectedUpdate.phone}</p>
+                    <p>{selectedUpdate.contact}</p>
                 </div>
                 </div>
                 {!enableRemarkModal ? (

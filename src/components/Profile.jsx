@@ -22,6 +22,7 @@ export default function Profile() {
   const [saveLoading,setSaveLoading] = useState(false);
   const [noteToUpdate,setNoteToUpdate] = useState(null);
   const [showUploadModal,setShowUploadModal] = useState(false);
+  const [showAccountRemarkMessage,setShowAccountRemarkMessage] = useState(false);
   const [notesCount,setnotesCount] = useState({
     Approved:0,
     Pending:0,
@@ -214,16 +215,18 @@ export default function Profile() {
                   <User className="text-blue-600 w-5 h-5 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold truncate">{authContext.AuthenticatedUser.name}</h1>
+                  <h1 className="text-xl font-bold truncate">{authContext.AuthenticatedUser.fullname}</h1>
                   <p className="">Dha Suffa University</p>
                 </div>
               </div>
               {accountStatus == null || accountStatus.status !== "Pending" && (
+              tempAuthenticatedUser.accountStatus == "Active" && tempAuthenticatedUser.emailVerified == true && tempAuthenticatedUser.enabled == true ? (
               isDisbaled ? (
                 <div className="right_disabled bg-gray-900 justify-center w-full gap-1.5 mt-4 sm:w-fit sm:mt-0 px-4 py-2 rounded-md flex items-center cursor-pointer" onClick={() => setIsDisabled(false)}>
                   <Edit className="text-white w-4 h-4" />
                   <button className=" text-white">Edit Profile</button>
                 </div>
+              
               ) :
                 <div className="right_enabled flex gap-2.5 mt-5 flex-col sm:mt-0 sm:flex-row w-full sm:w-fit">
                   {!saveLoading ? (
@@ -240,16 +243,25 @@ export default function Profile() {
                   </div>
                 </div>
               
-            )}
+            ): <div className="right_disabled group relative bg-gray-300 justify-center w-full gap-1.5 mt-4 sm:w-fit sm:mt-0 px-4 py-2 rounded-md flex items-center cursor-pointer" onMouseOver={()=> {setShowAccountRemarkMessage(true)}} onMouseLeave={()=>{setShowAccountRemarkMessage(false)}}>
+                  <Edit className="text-white w-4 h-4" />
+                  <button className=" text-white">Edit Profile</button>
+                  {showAccountRemarkMessage && (
+                     <div className="p-3 w-full block absolute group-hover:block mt-3 right-0 bg-white shadow-md rounded-lg">
+                  <p className="text-black">{tempAuthenticatedUser.accountRemarks}</p>
+                 </div>
+                  )}
+                </div>
+          )}
             </div>
             <div className="info_inputs flex flex-col mt-8 gap-2.5 sm:flex-row">
               <div className="leftInputs w-full sm:w-[50%]">
                 <div className="fullnameInput flex flex-col mb-4">
                   <label htmlFor="Fullname">Fullname</label>
                   {isDisbaled ? (
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.name} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
+                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.fullname} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
                   ) : <>
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.name} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, name: e.target.value }) }} />
+                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.fullname} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, fullname: e.target.value }) }} />
                   </>}
                 </div>
 
@@ -323,9 +335,9 @@ export default function Profile() {
                 <div className="Phone flex flex-col mb-4">
                   <label htmlFor="Phone">Phone</label>
                   {isDisbaled ? (
-                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.phone} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
+                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.contact} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
                   ) : <>
-                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.phone} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, phone: e.target.value }) }} />
+                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.contact} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, contact: e.target.value }) }} />
                   </>}
                 </div>
               </div>

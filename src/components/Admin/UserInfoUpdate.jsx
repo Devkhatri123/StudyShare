@@ -52,10 +52,10 @@ export default function UserInfoUpdate(){
                   return <div key={i} className="update mb-2.5 gap-3 sm:gap-0 flex items-center flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
                     <div className="left w-full sm:w-fit flex">
                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-                         <span className="text-xs sm:text-sm font-semibold text-white">{update.name.substring(0,1)}</span>
+                         <span className="text-xs sm:text-sm font-semibold text-white">{update.fullname.substring(0,1)}</span>
                         </div> 
                         <div className="ml-2">
-                            <h1 className="font-bold">{update.name}</h1>
+                            <h1 className="font-bold">{update.fullname}</h1>
                             <div>
                                 <p className="text-sm truncate">{update.universityEmail}</p>
                                 <p className="text-xs text-gray-600">Requested {update.requestAt}</p>

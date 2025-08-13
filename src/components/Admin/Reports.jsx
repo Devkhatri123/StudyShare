@@ -39,6 +39,7 @@ export default function Reports() {
    
       useEffect(()=>{
        window.addEventListener("scroll",handleScroll);
+    
        return () => window.removeEventListener("scroll",handleScroll);
       },[]);
 
@@ -68,7 +69,7 @@ export default function Reports() {
                         </div>
                     </div>
                     <div className="right w-full flex-col sm:w-fit sm:flex-row flex items-center gap-2">
-                        <div className="flex w-full justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-2 px-3" onClick={(e)=>{setClickedReportIndex(i);setShowModal(true)}}>
+                        <div className="flex w-full justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-2 px-3" onClick={(e)=>{setClickedReportIndex(i);setShowModal(true);document.body.style.overflow="hidden"}}>
                             
                             <StopCircle className="w-4 mr-2"/>
                             <button className="text-sm">View Reports</button>
@@ -78,7 +79,7 @@ export default function Reports() {
                             <button className="text-sm">Block</button>
                         </div>
                     </div>
-                    {showModal && clickedReportIndex != null && clickedReportIndex == i && <UserDetailModal user={report} setShowModal={setShowModal} />}
+                    {showModal && clickedReportIndex != null && clickedReportIndex == i && <UserDetailModal user={report} setShowModal={setShowModal} ShowModal={showModal} />}
                  </div>
                  })
                 ):<p>No Reports Found</p>}
