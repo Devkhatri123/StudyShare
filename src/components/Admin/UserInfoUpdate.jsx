@@ -10,23 +10,27 @@ export default function UserInfoUpdate(){
     const [updates,SetUpdates] = useState([]);
     const [pageNumber,setPageNumber] = useState(0);
     const [selectedUpdate,setSelectedUpdate] = useState(null);
+    const [hasMore,setHasMore] = useState(true);
 
 
     useEffect(()=>{
+      if(!hasMore) return;
         const getApprovalPendingUserUpdates = () => {
             axios.get(`${API_BACKEND_URL}/profile/admin/ApprovalPendingUserInfo?pageNumber=${pageNumber}&limit=2`,{withCredentials:true})
             .then((response)=>{
+              if(response.data.length > 0){
                 SetUpdates((prev) => [...prev,...response.data]);
+              }else setHasMore(false);
         }).catch((error)=>{
                 console.log(error);
             });
         }
         getApprovalPendingUserUpdates();
-        return () => SetUpdates([])
+       // return () => SetUpdates([])
     },[pageNumber]);
 
       const handleScroll = () => {
-         if(window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
+         if(hasMore && window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
           setPageNumber((Prev) => Prev + 1);
         }
        }

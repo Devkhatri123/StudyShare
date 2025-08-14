@@ -42,11 +42,11 @@ const Note = ({ note }) => {
                   className="w-full h-full rounded-full object-cover"
                 />
               ) : (
-                <span className="text-xs sm:text-sm font-semibold text-white">{note.createdBy.name.substring(0, 1)}</span>
+                <span className="text-xs sm:text-sm font-semibold text-white">{note.createdBy.fullname.substring(0, 1)}</span>
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{note.createdBy.name}</p>
+              <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{note.createdBy.fullname}</p>
               <div className="flex items-center text-xs sm:text-sm text-gray-500">
                 <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
                 <span>{note.createdAt}</span>

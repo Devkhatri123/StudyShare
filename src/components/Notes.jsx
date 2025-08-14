@@ -12,18 +12,29 @@ export default function Notes() {
   const bodyRef = useRef();
   const messageRef = useRef();
   const authContext = useContext(AuthContext);
-  const toggleContext = useContext(ToggleContext);
+  const timerRef = useRef();
   const [notes, setNotes] = useState([]);
+  const [subject,setSubject] = useState(null);
+  const [query,setQuery] = useState("");
+  const [hasMore,setHasMore] = useState(true);
   const [showUploadModal,setShowUploadModal] = useState(false);
   const [showMessage,setShowMessage] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [pageNumber,setPageNumber] = useState(0);
   const { subjectCode, subjectName } = useParams();
   useEffect(() => {
     document.title = `${subjectName} Notes - StudyShare`;
-    const fetchNotes = async () => {
-      await axios.get(`http://localhost:8080/v1/notes?subjectID=${subjectCode}`)
+    timerRef.current = setTimeout(async() => {
+     const fetchNotes = async () => {
+      if(!hasMore) return;
+      await axios.get(`http://localhost:8080/v1/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=2&query=${query}`)
         .then((response) => {
-          setNotes(response.data);
+          if(subject == null) setSubject(response.data[0].subject);
+          if(!response.data.length>0){
+            setHasMore(false);
+           }
+            if(pageNumber == 0) setNotes([...response.data]);
+            else setNotes((prev)=>([...prev,...response.data]));
           console.log(response.data)
         }).catch((error) => {
           console.log(error);
@@ -31,15 +42,29 @@ export default function Notes() {
           setLoading(false);
         })
     };
-    fetchNotes();
-  }, [subjectCode, subjectName]);
+        fetchNotes();
+     }, 500);
+  }, [subjectCode,subjectName,pageNumber,query]);
 
-   const handleHover = () => {
-    setShowMessage(true);
-   }
 
+    const handleScroll = () => {
+        if(hasMore && window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
+         setPageNumber((Prev) => Prev + 1);
+       }
+      }
    
+      useEffect(()=>{
+       window.addEventListener("scroll",handleScroll);
+       return () => window.removeEventListener("scroll",handleScroll);
+      },[]);
 
+
+      const handleSearch = (e) => {
+        clearTimeout(timerRef.current);
+        setPageNumber(0);
+        setQuery(e.target.value);
+        setHasMore(true);
+      }
 
   return (
     !loading ? (
@@ -105,8 +130,8 @@ export default function Notes() {
             </div>
           </div>
           {showUploadModal && <UploadNote setShowDeleteModal={setShowUploadModal}/>}
-          {notes.length > 0 ? (
-            <>
+          {subject !== null && 
+           <>
               <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
                 <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6">
                   <div className="flex flex-col sm:flex-row sm:items-start space-y-4 sm:space-y-0 sm:space-x-5 mb-4 sm:mb-6">
@@ -130,9 +155,9 @@ export default function Notes() {
 
                     <div className="flex-1 text-center sm:text-left">
                       <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 leading-tight">
-                        {notes[0]?.subject.subjectName}
+                        {subject?.subjectName}
                       </h1>
-                      <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{notes[0]?.subject.shortDescription}</p>
+                      <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{subject.shortDescription}</p>
                     </div>
                   </div>
 
@@ -196,90 +221,28 @@ export default function Notes() {
                       </div>
                       <input
                         type="text"
+                        onChange={(e)=>{handleSearch(e)}}
                         placeholder="Search notes..."
                         className="block w-full pl-10 sm:pl-12 pr-3 sm:pr-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-gray-50 focus:bg-white text-sm sm:text-base"
                       />
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center space-y-3 sm:space-y-0 sm:space-x-3">
-                      <div className="relative">
-                        <button className="flex items-center justify-between sm:justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white shadow-sm w-full sm:w-auto min-w-0">
-                          <div className="flex items-center space-x-2 min-w-0">
-                            <svg
-                              className="w-4 h-4 text-gray-500 flex-shrink-0"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 4h13M3 8h9m-9 4h9m5-4v12m0 0l-4-4m4 4l4-4"
-                              />
-                            </svg>
-                            <span className="text-gray-700 font-medium text-sm sm:text-base truncate">Most Recent</span>
-                          </div>
-                          <svg
-                            className="w-4 h-4 text-gray-400 flex-shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                      </div>
-
-                      <div className="relative">
-                        <button className="flex items-center justify-between sm:justify-center space-x-2 px-3 sm:px-4 py-2.5 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all duration-200 bg-white shadow-sm w-full sm:w-auto min-w-0">
-                          <div className="flex items-center space-x-2 min-w-0">
-                            <svg
-                              className="w-4 h-4 text-gray-500 flex-shrink-0"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"
-                              />
-                            </svg>
-                            <span className="text-gray-700 font-medium text-sm sm:text-base truncate">All Notes</span>
-                          </div>
-                          <svg
-                            className="w-4 h-4 text-gray-400 flex-shrink-0"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
                   </div>
                 </div>
               </div>
-
-              <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pb-8">
+               </>
+          }
+                <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pb-8">
+                {notes.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                  {notes.map((note) => (
-                    <Note key={note.id} note={note} />
+                  {notes.map((note,i) => (
+                    <Note key={i} note={note} />
                   ))}
                 </div>
-                <div className="text-center mt-8">
-                  <button className="px-6 py-3 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700 shadow-sm hover:shadow-md">
-                    Load More Notes
-                  </button>
-                </div>
+                ): <p className="text-center flex items-center justify-center text-xl font-bold" style={{ height: "50dvh" }}>No Notes found of {subjectName}</p>}
+               
               </div>
-            </>
-          ) : <p className="text-center flex items-center justify-center text-xl font-bold" style={{ height: "50dvh" }}>No Notes found of {subjectName}</p>
-          }
-        </div>
+ </div>
       </>
     ) : <Loader />
   )

@@ -12,7 +12,7 @@ export default function UserDetailModal({ user, setShowModal, ShowModal }) {
     useEffect(() => {
         if (!hasMore) return;
         setLoading(true);
-        axios.get(`${API_BACKEND_URL}/report/admin/user/${user.id}/reports?pageNumber=${pageNumber}&limit=3`, { withCredentials: true })
+        axios.get(`${API_BACKEND_URL}/admin/user/${user.id}/reports?pageNumber=${pageNumber}&limit=3`, { withCredentials: true })
             .then((response) => {
                 if (response.data.length > 0) setReports((prev) => ([...prev, ...response.data]));
                 else setHasMore(false);

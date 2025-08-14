@@ -11,15 +11,18 @@ export default function StudyShareHomepage() {
   const timer = useRef();
   const [subjects, setSubjects] = useState([]);
   const [loading,setLoading] = useState(true);
+  const [hasMore,setHasMore] = useState(true);
   const [query,setQuery] = useState("");
   const [limit,setLimit] = useState(0);
   useEffect(() => {
     timer.current = setTimeout(async() => {
     const getSubjects = async () => {
+    if(!hasMore) return;
     await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=2&query=${query}`)
     .then((response)=>{
       if(limit == 0) setSubjects([...response.data]);
       else setSubjects((prev) =>[...prev,...response.data]);
+      if(!response.data.length > 0) setHasMore(false);
       }).catch((error)=>{
       console.log("Error in fetching subjects:", error);
     }).finally(()=>{
@@ -32,14 +35,14 @@ export default function StudyShareHomepage() {
    },[query,limit]);
 
    const handleSearch = (e) => {
-    clearTimeout(timer.current);
+      clearTimeout(timer.current);
       setQuery(e.target.value);
       setLimit(0)
    }
 
 
    const handleScroll = () => {
-     if(window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
+     if(hasMore && window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
       setLimit((Prev) => Prev + 1);
     }
    }
@@ -156,7 +159,7 @@ export default function StudyShareHomepage() {
            {subjects.length > 0 ? subjects.map((subject,i) => (
                 <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
                   <Link to={`/${subject.subjectName}/${subject.code}/notes`} className="block">
-                  <div className="flex items-center gap-2 text-sm text-blue-600 mb-3">
+                  <div className="flex items-center gap-2 text-sm text-blue-600 mb-3 border border-gray-300 w-fit px-2 rounded-xl">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path
                     strokeLinecap="round"

@@ -37,6 +37,7 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
         axios.post(`${API_BACKEND_URL}/report/user`,Report,{withCredentials:true})
         .then((response)=>{
         toast.success(response.data);
+        setShowModal(false);
         }).catch((error)=>{
           console.log(error);
         }).finally(()=>{
@@ -44,9 +45,6 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
         })
     }
    }
-   useEffect(()=>{
-    console.log(Report)
-   },[Report]);
     return (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
             <div className="ReportModal w-full h-full md:h-fit fixed sm:top-[50%] sm:translate-y-[-50%] bg-white md:max-w-[512px] rounded-md p-2.5 lg:max-w-xl">
