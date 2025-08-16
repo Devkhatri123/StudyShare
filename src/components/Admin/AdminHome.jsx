@@ -1,12 +1,15 @@
-import { AlertTriangle, FileText, Menu, UserCheck } from "lucide-react";
-import { useState } from "react";
+import { AlertTriangle, FileText, Menu, User2, UserCheck } from "lucide-react";
+import { useContext, useState } from "react";
 import PendingNotesApproval from "./PendingNotesApproval";
 import UserInfoUpdate from "./UserInfoUpdate";
 import Reports from "./Reports";
+import UserManagement from "./UserManagement";
+import { AuthContext } from "../../ContextApi/AuthContext";
 
 export default function AdminHome(){
     const [currentComponent,setCurrentComponent] = useState(<PendingNotesApproval/>);
     const [currentTabName,setcurrentTabName] = useState("Notes");
+    
     function returnComponent(currenTab){
         if(currenTab === "Notes"){
          setCurrentComponent(<PendingNotesApproval/>)
@@ -16,10 +19,13 @@ export default function AdminHome(){
          setCurrentComponent(<UserInfoUpdate/>);
          setcurrentTabName("Updates");
       }
-        else{ 
+      else if(currenTab === "Reports"){ 
          setCurrentComponent(<Reports/>);
          setcurrentTabName("Reports");
-        }
+      }else if(currenTab === "Users"){
+         setCurrentComponent(<UserManagement/>)
+         setcurrentTabName("Users");
+      }
     }
      return (
         <div>
@@ -77,8 +83,13 @@ export default function AdminHome(){
               <AlertTriangle className="w-5"/>
               <p>Reports</p>
             </div>
+              <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Users")} style={{background:`${currentTabName === "Users" ? "black":""}`,color:`${currentTabName === "Users" ? "white":"black"}`}}>
+              <User2 className="w-5"/>
+              <p>Users</p>
+            </div>
+            
          </div>
-         <div className="main">
+         <div className="main shadow-xl">
             {currentComponent}
          </div>
         </div>

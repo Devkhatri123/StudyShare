@@ -15,7 +15,7 @@ export default function StudyShareHomepage() {
   const [query,setQuery] = useState("");
   const [limit,setLimit] = useState(0);
   useEffect(() => {
-    timer.current = setTimeout(async() => {
+    timer.current = setTimeout(() => {
     const getSubjects = async () => {
     if(!hasMore) return;
     await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=2&query=${query}`)
@@ -37,6 +37,7 @@ export default function StudyShareHomepage() {
    const handleSearch = (e) => {
       clearTimeout(timer.current);
       setQuery(e.target.value);
+      setHasMore(true)
       setLimit(0)
    }
 

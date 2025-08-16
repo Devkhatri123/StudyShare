@@ -27,7 +27,7 @@ export default function Notes() {
     timerRef.current = setTimeout(async() => {
      const fetchNotes = async () => {
       if(!hasMore) return;
-      await axios.get(`http://localhost:8080/v1/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=2&query=${query}`)
+      await axios.get(`http://localhost:8080/v1/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=3&query=${query}`)
         .then((response) => {
           if(subject == null) setSubject(response.data[0].subject);
           if(!response.data.length>0){
@@ -35,7 +35,6 @@ export default function Notes() {
            }
             if(pageNumber == 0) setNotes([...response.data]);
             else setNotes((prev)=>([...prev,...response.data]));
-          console.log(response.data)
         }).catch((error) => {
           console.log(error);
         }).finally(() => {
@@ -129,7 +128,7 @@ export default function Notes() {
               </div>
             </div>
           </div>
-          {showUploadModal && <UploadNote setShowDeleteModal={setShowUploadModal}/>}
+          {showUploadModal && <UploadNote setShowUploadModal={setShowUploadModal}/>}
           {subject !== null && 
            <>
               <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">

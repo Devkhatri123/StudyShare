@@ -72,7 +72,7 @@ export default function Navbar() {
            <div className="absolute right-3 top-16 py-2.5 px-6 dropdown shadow-lg bg-white  rounded-lg">
             <li className='list-none cursor-pointer'><Link to={"/profile"}>Profile</Link></li>
             {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{email:authContext.AuthenticatedUser.universityEmail}}>Verify Email</Link></li>}
-            {authContext.AuthenticatedUser.role === "ADMIN" && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
+            {authContext.AuthenticatedUser.roles.includes("ADMIN") && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
             <li className='list-none cursor-pointer' onClick={()=>{signOut()}}>SignOut</li>
            </div>
     )}

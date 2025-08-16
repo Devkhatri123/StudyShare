@@ -6,6 +6,7 @@ import Loader from "../Loader";
 import RemarkModal from "./RemarkModal";
 import PreviewNote from "./PreviewNote";
 import { toast } from "react-toastify";
+import { convertBase64ToBlob } from "../../utils/Validation";
 
 export default function PendingNotesApproval() {
   const [ApprovalPendingNotes, setApprovalPendingNotes] = useState([]);
@@ -21,6 +22,7 @@ export default function PendingNotesApproval() {
     if (!hasMore) return;
     axios.get(`${API_BACKEND_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
       .then((response) => {
+        console.log(response)
         if (response.data.length > 0) {
           setApprovalPendingNotes((prev) => ([...prev, ...response.data]));
         } else sethasMore(false);
@@ -72,7 +74,7 @@ export default function PendingNotesApproval() {
 
   return (
     <div>
-      <div className="PendingNotesApproval_Header bg-[#eef3ff] rounded-tl-2xl-2xl rounded-tr-2xl">
+      <div className="PendingNotesApproval_Header p-3 bg-[#eef3ff] rounded-tl-2xl-2xl rounded-tr-2xl">
         <div className="flex gap-1.5 items-center mb-1.5">
           <FileText className="text-[#1e3a8a]" />
           <h1 className="text-[#1e3a8a] text-2xl font-semibold">Pending Note Approvals</h1>
@@ -80,17 +82,19 @@ export default function PendingNotesApproval() {
         <p className="text-[#2e5cdb]">Review and approve user-submitted notes • {ApprovalPendingNotes?.length} pending submissions</p>
 
       </div>
-      <div className="PendingNotesApproval_body border-b-[1px] mt-4 p-5 bg-white flex flex-wrap">
+      <div className="PendingNotesApproval_body mb-7 mt-4 p-4 bg-white flex flex-wrap">
         {!loading ? (
           ApprovalPendingNotes && ApprovalPendingNotes.map((note, i) => {
-            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(50%_-_16px)] 2xl:flex-[0_0_calc(33.333%_-_16px)] shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
+           
+            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(50%_-_16px)]  shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
               style={{ maxWidth: "-webkit-fill-available" }}
             >
-              <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden"
+              <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
+              style={{backgroundImage:`url(${URL.createObjectURL(convertBase64ToBlob(note.thumbnail,"image/jpeg"))})`,}}
               >
-                <img src={`data:image/jpeg;base64,${note.thumbnail}`}
-                  className="w-full h-[50vh] w-48 " style={{ objectFit: "cover" }}
-                />
+                {/* <img src={url}
+                  className="h-[220px] w-full " style={{ objectFit: "cover" }}
+                /> */}
               </div>
 
               {/* Content Section */}

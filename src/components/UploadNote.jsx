@@ -7,7 +7,7 @@ import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
 import { AuthContext } from "../ContextApi/AuthContext";
-export default function UploadNote({ noteToUpdate, setShowDeleteModal }) {
+export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     const thumbnailInputRef = useRef();
     const notePdfRef = useRef();
     const { subjectName, subjectCode } = useParams();
@@ -167,6 +167,7 @@ export default function UploadNote({ noteToUpdate, setShowDeleteModal }) {
         })
             .then((response) => {
                 toast.success(response.data.message);
+                setShowUploadModal(false);
                // window.location.reload();
             }).catch((error) => {
                 console.log(error)
@@ -184,7 +185,7 @@ export default function UploadNote({ noteToUpdate, setShowDeleteModal }) {
                 <div className="modal_header shadow-sm w-full border-b-[1px] " style={{ borderBottom: "1px solid #f8f9fa" }}>
                     <div className="flex justify-between px-4 py-5">
                         <h1 className="text-md">Upload Study Notes</h1>
-                        <X onClick={() => { setShowDeleteModal(false); }} />
+                        <X onClick={() => { setShowUploadModal(false); }} />
                     </div>
                 </div>
                 <div className="modal_body">
