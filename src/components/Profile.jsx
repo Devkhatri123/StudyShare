@@ -23,6 +23,7 @@ export default function Profile() {
   const [noteToUpdate,setNoteToUpdate] = useState(null);
   const [showUploadModal,setShowUploadModal] = useState(false);
   const [showAccountRemarkMessage,setShowAccountRemarkMessage] = useState(false);
+  const [hasMore,setHasMore] = useState(true);
   const [notesCount,setnotesCount] = useState({
     Approved:0,
     Pending:0,
@@ -41,15 +42,17 @@ export default function Profile() {
 
   useEffect(()=>{
     getAccountStatus();
-  },[tempAuthenticatedUser,noteStatus]);
+  },[authContext.AuthenticatedUser,noteStatus]);
 
   useEffect(()=>{
-     getMyNotes();
-  },[tempAuthenticatedUser,pageNumber])
+  if(authContext.AuthenticatedUser) getMyNotes();
+  },[authContext.AuthenticatedUser,pageNumber,hasMore])
 
    const getMyNotes = async() => {
-     await axios.get(`${API_BACKEND_URL}/notes/myNotes?userId=${tempAuthenticatedUser?.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+    if(!hasMore) return;
+     await axios.get(`${API_BACKEND_URL}/notes/myNotes?userId=${authContext.AuthenticatedUser?.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
         .then((response) => {
+          if(!response.data.myNotes.length > 0) setHasMore(false);
           setCount(response.data.count)
           if(noteStatus.temp === noteStatus.status){
           setMyNotes((prev) => [...prev,...response.data.myNotes]);
@@ -110,13 +113,14 @@ export default function Profile() {
         temp:prev.status,
         status:type
       }));
+      setHasMore(true);
       // getMyNotes()
       }
      
   }
 
   const handleScroll = () => {
-  if(window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
+  if(hasMore && window.innerHeight + document.documentElement.scrollTop +1 >= document.documentElement.scrollHeight){
       setPageNumber((Prev) => Prev + 1);
      }
    }
@@ -247,7 +251,7 @@ export default function Profile() {
                   <Edit className="text-white w-4 h-4" />
                   <button className=" text-white">Edit Profile</button>
                   {showAccountRemarkMessage && (
-                     <div className="p-3 w-full block absolute group-hover:block mt-3 right-0 bg-white shadow-md rounded-lg">
+                     <div className="p-3 max-w-32 block absolute group-hover:block mt-5 top-7 right-0 bg-white shadow-md rounded-lg">
                   <p className="text-black">{tempAuthenticatedUser.accountRemarks}</p>
                  </div>
                   )}
@@ -367,17 +371,17 @@ export default function Profile() {
                   }}>
                     <div className="header gap-3 sm:flex-row flex justify-between items-center">
                       <h1 className="font-bold text-xl line-clamp-2">{note.title}</h1>
-                      {note.status  !== "Pending" && (
+                      {note.status  !== "Pending" && authContext.AuthenticatedUser.accountStatus !== "Blocked" && (
                       <div className="flex items-center">
                         <Edit className="text-gray-600 w-5 cursor-pointer mr-2" onClick={()=>editNote(note.id,i)}/>
                         <Delete className="text-gray-600 w-5 cursor-pointer" onClick={()=>{setShowDeleteModal(true);setcurrentNoteIndex(i)}}/>
                       </div>
                       )}
-                      {showDeleteModal && currentNoteIndex == i && <DeleteNoteModal setShowDeleteModal={setShowDeleteModal} setcurrentNoteIndex={setcurrentNoteIndex}noteID={note.id}/>}
-                      {showUploadModal && noteToUpdate != null && currentNoteIndex == i && <UploadNote noteToUpdate={noteToUpdate} setShowDeleteModal={setShowUploadModal}/>}
+                      {showDeleteModal && currentNoteIndex == i && <DeleteNoteModal setShowDeleteModal={setShowDeleteModal} setcurrentNoteIndex={setcurrentNoteIndex} noteID={note.id} Notes={myNotes} setNotes={setMyNotes}/>}
+                      {showUploadModal && noteToUpdate != null && currentNoteIndex == i && <UploadNote noteToUpdate={noteToUpdate} setShowUploadModal={setShowUploadModal}/>}
                      </div>
                     <p className="mt-2 text-blue-600">{note.subject.department}</p>
-                    <p className="mt-4 text-gray-600 text-ellipsis overflow-hidden line-clamp-2">{note.description}</p>
+                    <p className="mt-4 text-gray-600 text-ellipsis overflow-hidden line-clamp-2" style={{lineBreak:"anywhere"}}>{note.description}</p>
                     <div className="border rounded-md flex items-center gap-5 p-2 mt-5"
                       style={{ borderColor: `${note.status === "Approved" ? "#b9f8cf" : note.status == "Declined" ? "oklch(88.5% 0.062 18.334)" : note.status === "Pending" ? "#fff085" : ""}` }}
                     >

@@ -33,7 +33,7 @@ export default function PreviewNote({currentNote,setShowPreviewModal,setCurretNo
             </div>
         </div>
         <div className="description mt-3 mx-2.5">
-            <p className=" text-sm text-gray-500 ">{currentNote.description}</p>
+            <p className=" text-sm text-gray-500" style={{lineBreak:"anywhere"}}>{currentNote.description}</p>
         </div>
         <div className="pdfViewer mt-5">
             <PDFViewer pdfURL={pdfUrl} style={{height:"400px"}}/>

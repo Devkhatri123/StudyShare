@@ -1,14 +1,16 @@
 import axios from "axios";
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
+import { AdminContext } from "../../ContextApi/AdminContext";
 
 export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,selectedUpdate}){
     const [enableRemarkModal,setEnableRemarkModal] = useState(false);
     const [loading,setLoading] = useState(false);
     const [loading2,setLoading2] = useState(false);
+    const adminContext = useContext(AdminContext);
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
         message:""
@@ -27,6 +29,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
             toast.success(response.data);
             setEnableRemarkModal(false);
             setPreviewUserInfoUpdate(false);
+            adminContext.setCount({});
         }
       }).catch((error)=>{
         console.log(error);
@@ -45,6 +48,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
             toast.success(response.data);
             setEnableRemarkModal(false);
             setPreviewUserInfoUpdate(false);
+            adminContext.setCount({});
         }
         console.log(response);
       }).catch((error)=>{

@@ -1,12 +1,13 @@
 import axios from "axios";
 import { Blocks, StopCircle, StopCircleIcon, UserCheck } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import UserDetailModal from "./UserDetailModal";
 import { toast } from "react-toastify";
 import BlockModal from "./BlockModal";
 import { BlockUser, DiscardUserReports } from "../../Service/userService";
+import { AdminContext } from "../../ContextApi/AdminContext";
 
 export default function Reports() {
     const [reportedProfiles, setReportedProfiles] = useState([]);
@@ -17,6 +18,7 @@ export default function Reports() {
     const [showModal, setShowModal] = useState(false);
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [loading2, setLoading2] = useState(false);
+    const adminContext = useContext(AdminContext);
 
     useEffect(() => {
         if (!hasMore) return;
@@ -32,7 +34,8 @@ export default function Reports() {
                 console.log(error);
             }).finally(() => {
                 setloading(false);
-            })
+            });
+            return () => setReportedProfiles([]);
     }, [pageNumber]);
 
 
@@ -53,6 +56,7 @@ export default function Reports() {
             .then(async (response) => {
                 if (response.status == 200) {
                     await discardUserReports(userId);
+                    adminContext.setCount({});
                     toast.success(response.data.message);
                 }
             }).catch((error) => {
@@ -70,6 +74,7 @@ export default function Reports() {
                 return profile.id != userId;
             });
             setReportedProfiles([...filteredReports]);
+            adminContext.setCount({});
         }).catch((error) => {
             console.log(error);
         });

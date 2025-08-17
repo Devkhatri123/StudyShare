@@ -17,55 +17,61 @@ import Profile from './components/Profile';
 import { toast } from 'react-toastify';
 import Loader from './components/Loader';
 import AdminHome from './components/Admin/AdminHome';
+import Blocked from './components/Blocked';
+import { AdminProvider } from './ContextApi/AdminContext';
 function App() {
   const useAuth = useContext(AuthContext);
-  const [loading,setLoading] = useState(true);
-  const {handleError} = useError();
+  const [loading, setLoading] = useState(true);
+  const { handleError } = useError();
   useEffect(() => {
     const getUser = async () => {
-      axios.defaults.withCredentials=true;
+      axios.defaults.withCredentials = true;
       await axios.get("http://localhost:8080/v1/auth/loggedInUser",
-        {withCredentials:true}
+        { withCredentials: true }
       )
         .then((response) => {
           console.log(response)
           useAuth.setIsAuthenticated(response.data.isLoggedIn);
           useAuth.setAuthenticatedUser(response.data.user)
-          //user
         }).catch((error) => {
           console.log(error)
-         }).finally(() => {
+        }).finally(() => {
           setLoading(false);
         })
     }
     getUser();
   }, []);
 
-return (
+  return (
     <>
-    {!loading ? (
-      <Routes>
-         
-          <Route element={<ProtectedRoute />}>
-          
-           
-          </Route>
+      {!loading ? (
+        <Routes>
+
           <Route path="/" element={<Home />} />
-          <Route path='/signIn' element={<SignIn />} />
-          <Route path='/register' element={<Register />} />
           <Route path="/:subjectName/:subjectCode/notes" element={
             <ToggleContextProvider>
               <Notes />
-              </ToggleContextProvider>}
-               />
-          
-          <Route path='/admin/home' element={<AdminHome/>}/>
+            </ToggleContextProvider>}
+          />
+
+
+          <Route path='/admin/home' element={
+            <AdminProvider>
+              <AdminHome />
+            </AdminProvider>
+          } />
           <Route path="/note/:noteID" element={<ViewNote />} />
           <Route path="/verify" element={<EmailVerificationCode />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile" element={<Profile />}
+          />
+
+
+          <Route path='/signIn' element={<SignIn />} />
+          <Route path='/register' element={<Register />} />
+          {/* <Route path="/blocked" element={<Blocked />} /> */}
         </Routes>
-    ):<Loader/>}
-     </>
+      ) : <Loader />}
+    </>
   )
 }
 

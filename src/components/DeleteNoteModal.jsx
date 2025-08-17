@@ -5,15 +5,18 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import Loader from "../components/Loader"
 
-export default function DeleteNoteModal({setShowDeleteModal,setcurrentNoteIndex,noteID}){
+export default function DeleteNoteModal({setShowDeleteModal,setcurrentNoteIndex,noteID,Notes,setNotes}){
     const [loading,setLoading] = useState(false);
 
     const deleteNote = () =>{
       setLoading(true);
       axios.delete(`${API_BACKEND_URL}/notes/${noteID}`,{withCredentials:true})
       .then((response)=>{
-        console.log(response)
         if(response.status == 200){
+            const noneDeletedNotes = Notes.filter((note)=>{
+              return note.id != noteID;
+            });
+            setNotes(noneDeletedNotes);
             toast.success("Note deleted successfully!");
             setShowDeleteModal(false);
         }

@@ -1,12 +1,13 @@
 import axios from "axios";
 import { Clock, Eye, FileText, UserCheck, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import RemarkModal from "./RemarkModal";
 import PreviewNote from "./PreviewNote";
 import { toast } from "react-toastify";
 import { convertBase64ToBlob } from "../../utils/Validation";
+import { AdminContext } from "../../ContextApi/AdminContext";
 
 export default function PendingNotesApproval() {
   const [ApprovalPendingNotes, setApprovalPendingNotes] = useState([]);
@@ -17,13 +18,13 @@ export default function PendingNotesApproval() {
   const [remarkModal, setRemarkModal] = useState(false);
   const [pageNumber, setPageNumber] = useState(0);
   const [hasMore, sethasMore] = useState(true);
+  const adminContext = useContext(AdminContext);
 
   useEffect(() => {
     if (!hasMore) return;
     axios.get(`${API_BACKEND_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
       .then((response) => {
-        console.log(response)
-        if (response.data.length > 0) {
+       if (response.data.length > 0) {
           setApprovalPendingNotes((prev) => ([...prev, ...response.data]));
         } else sethasMore(false);
       }).catch((error) => {
@@ -62,6 +63,7 @@ export default function PendingNotesApproval() {
           return note.id != ApprovalPendingNotes[i].id;
         });
         setApprovalPendingNotes([...filteredNotes]);
+        adminContext.setCount({});
       }).catch((error) => {
         console.log(error);
         toast.error("Error in approving note");
@@ -86,7 +88,7 @@ export default function PendingNotesApproval() {
         {!loading ? (
           ApprovalPendingNotes && ApprovalPendingNotes.map((note, i) => {
            
-            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(50%_-_16px)]  shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
+            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)]  shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
               style={{ maxWidth: "-webkit-fill-available" }}
             >
               <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
@@ -104,7 +106,7 @@ export default function PendingNotesApproval() {
                   <h3 className="text-lg sm:text-md font-normal text-gray-900 mb-2 line-clamp-2 leading-tight">
                     {note.title}
                   </h3>
-                  <p className="text-gray-600 font-normal text-sm line-clamp-2 leading-relaxed">{note.description}</p>
+                  <p className="text-gray-600 font-normal text-sm line-clamp-2 leading-relaxed" style={{lineBreak:"anywhere"}}>{note.description}</p>
                 </div>
 
                 {/* Author Info */}

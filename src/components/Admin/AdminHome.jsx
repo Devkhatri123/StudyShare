@@ -1,14 +1,29 @@
 import { AlertTriangle, FileText, Menu, User2, UserCheck } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import PendingNotesApproval from "./PendingNotesApproval";
 import UserInfoUpdate from "./UserInfoUpdate";
 import Reports from "./Reports";
 import UserManagement from "./UserManagement";
 import { AuthContext } from "../../ContextApi/AuthContext";
+import axios from "axios";
+import API_BACKEND_URL from "../../utils/API";
+import { AdminContext } from "../../ContextApi/AdminContext";
 
 export default function AdminHome(){
     const [currentComponent,setCurrentComponent] = useState(<PendingNotesApproval/>);
     const [currentTabName,setcurrentTabName] = useState("Notes");
+    const adminContext = useContext(AdminContext);
+
+    useEffect(()=>{
+      if(!Object.entries(adminContext.count).length > 0){
+     axios.get(`${API_BACKEND_URL}/admin/count`,{withCredentials:true})
+     .then((response)=>{
+      adminContext.setCount(response.data)
+     }).catch((error)=>{
+      console.log(error);
+     });
+   }
+    },[adminContext.count]);
     
     function returnComponent(currenTab){
         if(currenTab === "Notes"){
@@ -48,7 +63,7 @@ export default function AdminHome(){
              </div>
              <div className="numbers ml-2 leading-4">
                 <h1 className="mb-0 font-normal text-[#5e566c]">PENDING NOTES</h1>
-                <p className="font-bold text-xl">3</p>
+                <p className="font-bold text-xl">{adminContext.count?.pendingNotes}</p>
              </div>
            </div>
             <div className="UserUpdateInfo flex shadow-sm rounded-md p-3.5">
@@ -57,7 +72,7 @@ export default function AdminHome(){
              </div>
              <div className="numbers ml-2 leading-4">
                 <h1 className="mb-0 font-normal text-[#5e566c]">USER UPDATES</h1>
-                <p className="font-bold text-xl">3</p>
+                <p className="font-bold text-xl">{adminContext.count?.pendingUpdates}</p>
              </div>
            </div>
            <div className="ReportedUser flex shadow-sm rounded-md p-3.5">
@@ -66,7 +81,7 @@ export default function AdminHome(){
              </div>
              <div className="numbers ml-2 leading-4">
                 <h1 className="mb-0 font-normal text-[#5e566c]">REPORTED USER</h1>
-                <p className="font-bold text-xl">2</p>
+                <p className="font-bold text-xl">{adminContext.count?.reportedUser}</p>
              </div>
            </div>
          </div>

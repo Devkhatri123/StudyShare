@@ -4,9 +4,11 @@ import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
+import { AdminContext } from "../../ContextApi/AdminContext";
 
 export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemarkModal, setApprovalPendingNotes, ApprovalPendingNotes }) {
     const [loading, setLoading] = useState(false);
+    const adminContext = useContext(AdminContext);
     const [remarkRequest, setremarkRequest] = useState({
         id: currentNote.id,
         message: ''
@@ -40,6 +42,7 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
                     setApprovalPendingNotes([...filteredNotes]);
                     setCurretNoteIndex(null)
                     setRemarkModal(false);
+                    adminContext.setCount({});
                 }
             }).catch((error) => {
                 console.log(error);
@@ -65,7 +68,7 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
                     </div>
                     <div className="Subject mt-1 px-5 py-2">
                         <p className="mb-1">Description *</p>
-                        <textarea onChange={(e) => { setremarkRequest({ ...remarkRequest, message: e.target.value }) }} value={remarkRequest.message} className="w-full px-3 py-2 text-base rounded-md  border-gray-300" style={{ border: "0.2px solid gray", outline: "none" }} placeholder="Write Remark..."></textarea>
+                        <textarea onChange={(e) => { setremarkRequest({ ...remarkRequest, message: e.target.value }) }} value={remarkRequest.message} className="w-full px-3 py-2 text-base rounded-md  border-gray-300" style={{ border: "0.2px solid gray", outline: "none" }} placeholder="Write Remark..." maxLength={512}></textarea>
                     </div>
 
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>

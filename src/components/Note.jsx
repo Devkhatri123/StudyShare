@@ -15,12 +15,13 @@ const Note = ({ note }) => {
     >
       <Link to={`/note/${note.id}`}>
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
-        style={{backgroundImage:`url(${URL.createObjectURL(convertBase64ToBlob(note.thumbnail,"image/jpeg"))})`,}}
+        <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden 
+        bg-center bg-cover bg-no-repeat h-52 w-full"
+        // style={{backgroundImage:`url(${URL.createObjectURL(convertBase64ToBlob(note.thumbnail,"image/jpeg"))})`,}}
         >
-          {/* <img src={`data:image/jpeg;base64,${note.thumbnail}`}
+          <img src={`data:image/jpeg;base64,${note.thumbnail}`}
             className="w-full h-52 " style={{ objectFit: "cover" }}
-          /> */}
+          />
 
         </div>
 
@@ -31,7 +32,7 @@ const Note = ({ note }) => {
             <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2 leading-tight">
               {note.title}
             </h3>
-            <p className="text-gray-600 text-sm sm:text-base line-clamp-2 leading-relaxed">{note.description}</p>
+            <p className="text-gray-600 text-sm sm:text-base line-clamp-2 leading-relaxed" style={{lineBreak:"anywhere"}}>{note.description}</p>
           </div>
 
           {/* Author Info */}

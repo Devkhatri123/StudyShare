@@ -5,6 +5,8 @@ import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { AuthContext } from "../../ContextApi/AuthContext";
 import { toast } from "react-toastify";
+import BlockModal from "./BlockModal";
+import { BlockUser, DiscardUserReports } from "../../Service/userService";
 
 export default function UserManagement() {
     const authContext = useContext(AuthContext);
@@ -16,6 +18,8 @@ export default function UserManagement() {
     const [loading2, setLoading2] = useState(false);
     const [loading3, setLoading3] = useState(false);
     const [currentProfile, setCurrentProfile] = useState(null);
+    const [showBlockModal,setShowBlockModal] = useState(false);
+    const [loading4,setLoading4] = useState(false); 
     const timerRef = useRef();
     const profileBodyRef = useRef();
     useEffect(() => {
@@ -48,12 +52,12 @@ export default function UserManagement() {
         setQuery(e.target.value);
     }
 
-    const unBlockUser = async (userId) => {
+    const unBlockUser = async (userId,index) => {
         setLoading2(true);
         await axios.post(`${API_BACKEND_URL}/profile/admin/unblock/user/${userId}`, {}, { withCredentials: true })
             .then((response) => {
-                console.log(response);
-                window.location.reload();
+                Profiles[index].accountStatus = "Active";
+               // window.location.reload();
             }).catch((error) => {
                 console.log(error);
             }).finally(() => {
@@ -75,6 +79,23 @@ export default function UserManagement() {
             })
     }
 
+    const blockUser = async(id)=>{
+        setLoading4(true);
+        await BlockUser(id)
+        .then(async(response)=>{
+            if(response.status == 200){
+            await DiscardUserReports(id);
+            Profiles[currentProfile].accountStatus = "Blocked";
+            toast.success("User blocked successfully");
+            }
+        }).catch((error)=>{
+            console.log(error);
+        }).finally(()=>{
+            setLoading4(false);
+            setCurrentProfile(null);
+        })
+    }
+
     return (
         <div>
             <div className="UserInfoUpdate_Header bg-[#fef1f2] rounded-t-md p-3">
@@ -93,7 +114,6 @@ export default function UserManagement() {
                 {Profiles.length > 0 && (
                     <div className="h-[150px] overflow-y-scroll" ref={profileBodyRef}>
                         {Profiles.map((profile, i) => {
-                             console.log(profile);
                             return <div key={i} className="update mb-2.5 bg-[#fef1f2] gap-3 sm:gap-0 flex items-center flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
                                 <div className="left w-full sm:w-fit flex">
                                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
@@ -111,24 +131,25 @@ export default function UserManagement() {
                                     <div className="flex w-full justify-center sm:w-fit items-center border border-gray-200 rounded-2xl px-2 bg-black text-white" >
                                         <p className="text-[13px]">{profile.accountStatus}</p>
                                     </div>
-
+                                     
                                     {profile.accountStatus == "Active" ? (
-                                        <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-1 px-4">
+                                       <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-1 px-4" onClick={()=>{setShowBlockModal(true);setCurrentProfile(i)}}>
                                             <StopCircle className="w-4 mr-2" />
                                             <button className="text-sm">Block</button>
                                         </div>
+                                       
                                     ) :
                                         !loading2 ? (
-                                            <div className="flex w-full text-black bg-transparent justify-center sm:w-fit items-center border border-gray-400 rounded-lg py-2 px-4" onClick={(() => unBlockUser(profile.id))}>
-                                                <UserCheck className="w-4 mr-2" />
+                                            <div className="flex w-full text-black bg-transparent justify-center sm:w-fit items-center border border-gray-400 rounded-lg py-2 px-2" onClick={(() => unBlockUser(profile.id,i))}>
+                                                <UserCheck className="w-4 mr-0.5" />
                                                 <button className="text-sm">Unblock</button>
                                             </div>
                                         ) :
                                             <div className="flex w-full text-black bg-gray-300 justify-center sm:w-fit items-center border border-gray-400 rounded-lg py-2 px-4" >
-                                                <UserCheck className="w-4 mr-2" />
-                                                <button className="text-sm">Unblock</button>
+                                                <Loader/>
                                             </div>
                                     }
+                                    {showBlockModal && currentProfile != null && currentProfile == i && <BlockModal user={profile} blockUser={blockUser} setShowBlockModal={setShowBlockModal} loading={loading4}/>}
                                     {authContext.AuthenticatedUser.roles.includes("MANAGER") && (
                                        
                                         !profile.roles.includes("ADMIN") ? (

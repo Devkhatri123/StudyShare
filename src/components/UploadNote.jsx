@@ -65,13 +65,15 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }, [noteToUpdate]);
 
     useEffect(() => {
-         if (noteToUpdate == null) {
+          if (noteToUpdate == null) {
           setnoteData((prev) => ({...prev,subjectcode:subjectCode}));
          }
+
         document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = "scroll";
         }
+     
     }, []);
 
 
@@ -178,10 +180,27 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             })
     }
 
+   const handleDescription = (e) => {
+    // if(e.nativeEvent.inputType === "deleteContentBackward"){
+    //     setnoteData({ ...noteData, description: e.target.value });
+    // }
+    console.log(e.target.value.length)
+    if(e.target.value.length <= 300){
+       setnoteData({ ...noteData, description: e.target.value });
+    }
+   }
+
+   const handleTitle = (e) => {
+    
+    if(e.target.value.length <= 60){
+       setnoteData({ ...noteData, title: e.target.value });
+    }
+   }
+
 
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }}>
-            <div className="h-full overflow-scroll absolute w-[100%] top-0 z-[9999] modal bg-white rounded-lg   mx-auto shadow-2xl md:max-w-[46rem] md:h-[65%] left-0 right-0 md:translate-y-[25%] lg:max-w-4xl lg:max-h-[700px] xl:max-w-5xl">
+            <div className="h-full no-scrollbar overflow-y-scroll absolute w-[100%] top-0 z-[9999] modal bg-white rounded-lg   mx-auto shadow-2xl md:max-w-[46rem] md:h-[65%] left-0 right-0 md:translate-y-[25%] lg:max-w-4xl lg:max-h-[800px] xl:max-w-5xl">
                 <div className="modal_header shadow-sm w-full border-b-[1px] " style={{ borderBottom: "1px solid #f8f9fa" }}>
                     <div className="flex justify-between px-4 py-5">
                         <h1 className="text-md">Upload Study Notes</h1>
@@ -194,12 +213,14 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                         <p className="mb-1">Title *</p>
                         <input type="text" className="w-full px-3 py-2 text-base rounded-md  border-gray-300" style={{ border: "0.2px solid gray", outline: "none" }} name="title" placeholder="Enter note title"
                             value={noteData.title}
-                            onChange={(e) => { setnoteData({ ...noteData, title: e.target.value }) }}
+                            onChange={(e) => { handleTitle(e); }}
                         />
+                        <p className="text-gray-500 text-sm">Title Length : {noteData.title.length} / 60</p>
                     </div>
                     <div className="Subject mt-1 px-5 py-2">
                         <p className="mb-1">Description *</p>
-                        <textarea value={noteData.description} onChange={(e) => { setnoteData({ ...noteData, description: e.target.value }) }} className="w-full px-3 py-2 text-base rounded-md border-gray-300" name="description" id="" style={{ border: "0.2px solid gray", outline: "none" }} placeholder="Describe your notes..."></textarea>
+                        <textarea value={noteData.description} onChange={(e)=>{handleDescription(e)}} className="w-full px-3 py-2 text-base rounded-md border-gray-300" name="description" id="" style={{ border: "0.2px solid gray", outline: "none", }} placeholder="Describe your notes..." ></textarea>
+                        <p className="text-gray-500 text-sm"> Description Length : {noteData.description.length} / 300</p>
                     </div>
 
                     {/*Thumbnail Upload */}
