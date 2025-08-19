@@ -9,9 +9,7 @@ import ProtectedRoute from "./utils/ProtectedRoute";
 import SignIn from './components/SignIn';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './ContextApi/AuthContext';
-import { useError } from './ContextApi/ErrorContext';
 import axios from 'axios';
-import { ToggleContextProvider } from './utils/Toggle';
 import EmailVerificationCode from './components/EmailVerificationCode';
 import Profile from './components/Profile';
 import { toast } from 'react-toastify';
@@ -22,7 +20,6 @@ import { AdminProvider } from './ContextApi/AdminContext';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const { handleError } = useError();
   useEffect(() => {
     const getUser = async () => {
       axios.defaults.withCredentials = true;
@@ -48,12 +45,9 @@ function App() {
         <Routes>
 
           <Route path="/" element={<Home />} />
-          <Route path="/:subjectName/:subjectCode/notes" element={
-            <ToggleContextProvider>
-              <Notes />
-            </ToggleContextProvider>}
-          />
-
+          <Route path="/:subjectName/:subjectCode/notes" element={<Notes />}/>
+          <Route path="/profile" element={<Profile />}/>
+        
 
           <Route path='/admin/home' element={
             <AdminProvider>
@@ -62,13 +56,12 @@ function App() {
           } />
           <Route path="/note/:noteID" element={<ViewNote />} />
           <Route path="/verify" element={<EmailVerificationCode />} />
-          <Route path="/profile" element={<Profile />}
-          />
+          
 
 
           <Route path='/signIn' element={<SignIn />} />
           <Route path='/register' element={<Register />} />
-          {/* <Route path="/blocked" element={<Blocked />} /> */}
+          <Route path="/blocked" element={<Blocked />} />
         </Routes>
       ) : <Loader />}
     </>

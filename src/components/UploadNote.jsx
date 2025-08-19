@@ -1,6 +1,6 @@
 import { Upload, X } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
-import { ToggleContext } from "../utils/Toggle";
+
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -66,7 +66,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
 
     useEffect(() => {
           if (noteToUpdate == null) {
-          setnoteData((prev) => ({...prev,subjectcode:subjectCode}));
+           setnoteData((prev) => ({...prev,subjectcode:subjectCode}));
          }
 
         document.body.style.overflow = "hidden";
@@ -181,10 +181,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }
 
    const handleDescription = (e) => {
-    // if(e.nativeEvent.inputType === "deleteContentBackward"){
-    //     setnoteData({ ...noteData, description: e.target.value });
-    // }
-    console.log(e.target.value.length)
     if(e.target.value.length <= 300){
        setnoteData({ ...noteData, description: e.target.value });
     }

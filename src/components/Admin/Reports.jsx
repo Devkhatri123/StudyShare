@@ -3,11 +3,11 @@ import { Blocks, StopCircle, StopCircleIcon, UserCheck } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
-import UserDetailModal from "./UserDetailModal";
 import { toast } from "react-toastify";
 import BlockModal from "./BlockModal";
 import { BlockUser, DiscardUserReports } from "../../Service/userService";
 import { AdminContext } from "../../ContextApi/AdminContext";
+import ReportsDetailsModal from "./ReportsDetailsModal";
 
 export default function Reports() {
     const [reportedProfiles, setReportedProfiles] = useState([]);
@@ -119,7 +119,7 @@ export default function Reports() {
                                     <button className="text-sm">Discard Reports</button>
                                 </div>
                             </div>
-                            {showModal && clickedReportIndex != null && clickedReportIndex == i && <UserDetailModal user={report} setShowModal={setShowModal} ShowModal={showModal} />}
+                            {showModal && clickedReportIndex != null && clickedReportIndex == i && <ReportsDetailsModal user={report} setShowModal={setShowModal} ShowModal={showModal} />}
                             {showBlockModal && clickedReportIndex != null && clickedReportIndex == i && <BlockModal blockUser={blockUser} user={report} setShowBlockModal={setShowBlockModal} loading={loading2} />}
                         </div>
                     })

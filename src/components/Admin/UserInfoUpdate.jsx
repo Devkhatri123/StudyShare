@@ -72,7 +72,7 @@ export default function UserInfoUpdate(){
                             <button className="text-sm">Preview</button>
                         </div>
                     </div>
-                    {PreviewUserInfoUpdate && currentUpdateIndex == i && <PreviewUserInfoUpdateModal setPreviewUserInfoUpdate={setPreviewUserInfoUpdate} selectedUpdate={selectedUpdate}/>}
+                    {PreviewUserInfoUpdate && currentUpdateIndex == i && <PreviewUserInfoUpdateModal setPreviewUserInfoUpdate={setPreviewUserInfoUpdate} selectedUpdate={selectedUpdate} Profiles={updates} setProfiles={SetUpdates}/>}
                    </div>
                      })   
                 ):<p>No Update Available</p>}

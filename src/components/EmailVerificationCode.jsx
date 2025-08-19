@@ -1,13 +1,15 @@
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import API_BACKEND_URL from "../utils/API.JSX";
 import { toast } from "react-toastify";
+import { AuthContext } from "../ContextApi/AuthContext";
 
 export default function EmailVerificationCode() {
     const inputsRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
+    const authContext = useContext(AuthContext);
     useEffect(()=>{
      console.log(location)
     },[]);
@@ -59,8 +61,15 @@ export default function EmailVerificationCode() {
         axios.post(`${API_BACKEND_URL}/auth/verify`,verification)
         .then((response)=>{
             toast.success(response.data.message);
-            if(location?.state?.PrevURL != null){
+            if(location?.state?.PrevURL !== "/"){
                 navigate("/signIn");
+            }else {
+                authContext.setAuthenticatedUser((prev)=>({...prev,
+                emailVerified:true,
+                accountRemarks:"",
+                accountStatus:"Active"
+                }));
+                navigate("/")
             }
           }).catch((error)=>{
             if(error.response.data.status == 200){

@@ -7,4 +7,4 @@ export const BlockUser = async (userId) => {
 }
 export const DiscardUserReports = async(userId) => {
       return await axios.delete(`${API_BACKEND_URL}/admin/user/${userId}/reports`,{withCredentials:true})
-     } 
+} 

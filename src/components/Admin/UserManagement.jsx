@@ -18,8 +18,9 @@ export default function UserManagement() {
     const [loading2, setLoading2] = useState(false);
     const [loading3, setLoading3] = useState(false);
     const [currentProfile, setCurrentProfile] = useState(null);
-    const [showBlockModal,setShowBlockModal] = useState(false);
-    const [loading4,setLoading4] = useState(false); 
+    const [showBlockModal, setShowBlockModal] = useState(false);
+    const [loading4, setLoading4] = useState(false);
+    const [loading5, setLoading5] = useState(false);
     const timerRef = useRef();
     const profileBodyRef = useRef();
     useEffect(() => {
@@ -52,12 +53,12 @@ export default function UserManagement() {
         setQuery(e.target.value);
     }
 
-    const unBlockUser = async (userId,index) => {
+    const unBlockUser = async (userId, index) => {
         setLoading2(true);
         await axios.post(`${API_BACKEND_URL}/profile/admin/unblock/user/${userId}`, {}, { withCredentials: true })
             .then((response) => {
                 Profiles[index].accountStatus = "Active";
-               // window.location.reload();
+                // window.location.reload();
             }).catch((error) => {
                 console.log(error);
             }).finally(() => {
@@ -69,8 +70,8 @@ export default function UserManagement() {
         setLoading3(true);
         await axios.post(`${API_BACKEND_URL}/manager/promoteUserToAdmin/${userId}`, {}, { withCredentials: true })
             .then((response) => {
-              Profiles[index].roles.push("ADMIN");
-              toast.success("success!!!");
+                Profiles[index].roles.push("ADMIN");
+                toast.success("success!!!");
             }).catch((error) => {
                 console.log(error);
             }).finally(() => {
@@ -79,21 +80,33 @@ export default function UserManagement() {
             })
     }
 
-    const blockUser = async(id)=>{
+    const blockUser = async (id) => {
         setLoading4(true);
         await BlockUser(id)
-        .then(async(response)=>{
-            if(response.status == 200){
-            await DiscardUserReports(id);
-            Profiles[currentProfile].accountStatus = "Blocked";
-            toast.success("User blocked successfully");
-            }
-        }).catch((error)=>{
-            console.log(error);
-        }).finally(()=>{
-            setLoading4(false);
-            setCurrentProfile(null);
-        })
+            .then(async (response) => {
+                if (response.status == 200) {
+                    await DiscardUserReports(id);
+                    Profiles[currentProfile].accountStatus = "Blocked";
+                    toast.success("User blocked successfully");
+                }
+            }).catch((error) => {
+                console.log(error);
+            }).finally(() => {
+                setLoading4(false);
+                setCurrentProfile(null);
+            })
+    }
+
+    const removeAdminRole = async (userId, i) => {
+        await axios.post(`${API_BACKEND_URL}/manager/removeAdminRole/${userId}`, {}, { withCredentials: true })
+            .then((response) => {
+                const idx = Profiles[i].roles.indexOf("ADMIN");
+                Profiles[i].roles.splice(idx, 1);
+            }).catch((error) => {
+                console.log(error);
+            }).finally(()=>{
+                setLoading5(false);
+            })
     }
 
     return (
@@ -131,29 +144,29 @@ export default function UserManagement() {
                                     <div className="flex w-full justify-center sm:w-fit items-center border border-gray-200 rounded-2xl px-2 bg-black text-white" >
                                         <p className="text-[13px]">{profile.accountStatus}</p>
                                     </div>
-                                     
+
                                     {profile.accountStatus == "Active" ? (
-                                       <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-1 px-4" onClick={()=>{setShowBlockModal(true);setCurrentProfile(i)}}>
+                                        <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-1 px-4" onClick={() => { setShowBlockModal(true); setCurrentProfile(i) }}>
                                             <StopCircle className="w-4 mr-2" />
                                             <button className="text-sm">Block</button>
                                         </div>
-                                       
+
                                     ) :
                                         !loading2 ? (
-                                            <div className="flex w-full text-black bg-transparent justify-center sm:w-fit items-center border border-gray-400 rounded-lg py-2 px-2" onClick={(() => unBlockUser(profile.id,i))}>
+                                            <div className="flex w-full text-black bg-transparent justify-center sm:w-fit items-center border border-gray-400 rounded-lg py-2 px-2" onClick={(() => unBlockUser(profile.id, i))}>
                                                 <UserCheck className="w-4 mr-0.5" />
                                                 <button className="text-sm">Unblock</button>
                                             </div>
                                         ) :
                                             <div className="flex w-full text-black bg-gray-300 justify-center sm:w-fit items-center border border-gray-400 rounded-lg py-2 px-4" >
-                                                <Loader/>
+                                                <Loader />
                                             </div>
                                     }
-                                    {showBlockModal && currentProfile != null && currentProfile == i && <BlockModal user={profile} blockUser={blockUser} setShowBlockModal={setShowBlockModal} loading={loading4}/>}
+                                    {showBlockModal && currentProfile != null && currentProfile == i && <BlockModal user={profile} blockUser={blockUser} setShowBlockModal={setShowBlockModal} loading={loading4} />}
                                     {authContext.AuthenticatedUser.roles.includes("MANAGER") && (
-                                       
+
                                         !profile.roles.includes("ADMIN") ? (
-                                            currentProfile == null && !loading3 ?
+                                           currentProfile == null || currentProfile !== i || !loading3 ?
                                                 <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer border border-gray-400" onClick={() => { promoteUserToAdmin(i, profile.id) }}>
                                                     <p>Promote to admin</p>
                                                 </div>
@@ -161,9 +174,14 @@ export default function UserManagement() {
                                                     <Loader />
                                                 </div>
                                         ) :
-                                            <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer border border-gray-400" >
-                                                <p>Demote to User</p>
-                                            </div>
+                                            currentProfile == null || currentProfile !== i || !loading5 ? (
+                                                <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer border border-gray-400" onClick={() => { removeAdminRole(profile.id, i); setCurrentProfile(i); setLoading5(true) }}>
+                                                    <p>Demote to User</p>
+                                                </div>
+                                            ) :
+                                                <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer border bg-gray-200 border-gray-400" >
+                                                    <Loader />
+                                                </div>
                                     )}
 
                                 </div>

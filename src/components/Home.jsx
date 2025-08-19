@@ -65,7 +65,7 @@ export default function StudyShareHomepage() {
             Share Knowledge, Excel Together
           </h1>
           <p className="mb-8 sm:mb-12 text-base sm:text-lg text-blue-100 max-w-2xl mx-auto">
-            Access thousands of lecture notes from top universities. Upload your notes and help fellow students succeed.
+            Access thousands of lecture notes. Upload your notes and help fellow students succeed.
           </p>
 
           {/* Feature Cards */}

@@ -8,11 +8,9 @@ export default function Navbar() {
     const [showDropDown,setShowDropDown] = useState(false);
     const authContext = useContext(AuthContext);
  
-
     const signOut = () => {
       axios.post(`${API_BACKEND_URL}/auth/logout`,{},{withCredentials:true})
       .then((response)=>{
-        console.log(response);
         window.location.reload();
       }).catch((error)=>{
         console.log(error);
@@ -70,9 +68,9 @@ export default function Navbar() {
            </div>
            {showDropDown && (
            <div className="absolute right-3 top-16 py-2.5 px-6 dropdown shadow-lg bg-white  rounded-lg">
-            <li className='list-none cursor-pointer'><Link to={"/profile"}>Profile</Link></li>
+            <li className='list-none cursor-pointer'><Link to={"/profile"} state={{userEmail:authContext.AuthenticatedUser.id}}>Profile</Link></li>
             {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{email:authContext.AuthenticatedUser.universityEmail}}>Verify Email</Link></li>}
-            {authContext.AuthenticatedUser.roles.includes("ADMIN") && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
+            {(authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
             <li className='list-none cursor-pointer' onClick={()=>{signOut()}}>SignOut</li>
            </div>
     )}
@@ -99,43 +97,19 @@ export default function Navbar() {
         {isMobileMenuOpen && (
           <div className="lg:hidden border-t bg-white mt-3 pt-4 pb-4">
             <div className="flex flex-col space-y-4">
-              {/* Mobile Search */}
-              <div className="relative">
-                <svg
-                  className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search notes..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
+              
 
               {/* Mobile Navigation */}
-              <nav className="flex flex-col space-y-3">
-                <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors py-2">
-                  Browse
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors py-2">
-                  Popular
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900 transition-colors py-2">
-                  Recent
-                </a>
+              {authContext.AuthenticatedUser != null && (
+             <nav className="flex flex-col space-y-3">
+            <li className='list-none cursor-pointer'><Link to={"/profile"} state={{userEmail:authContext.AuthenticatedUser.id}}>Profile</Link></li>
+            {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{email:authContext.AuthenticatedUser.universityEmail}}>Verify Email</Link></li>}
+            {(authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
+            <li className='list-none cursor-pointer' onClick={()=>{signOut()}}>SignOut</li>
               </nav>
-
-              {/* Mobile Auth Buttons */}
-              <div className="flex flex-col space-y-2 pt-2">
+              )}
+              {authContext.AuthenticatedUser == null && (
+             <div className="flex flex-col space-y-2 pt-2">
                 <button className="text-gray-600 hover:text-gray-900 py-2 text-left transition-colors">
                   <Link to={"/signIn"}>
                    Sign In
@@ -147,6 +121,7 @@ export default function Navbar() {
                   </Link>
                 </button>
               </div>
+              )}
             </div>
           </div>
         )}

@@ -5,12 +5,14 @@ import { toast } from "react-toastify";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import { AdminContext } from "../../ContextApi/AdminContext";
+import { AuthContext } from "../../ContextApi/AuthContext";
 
-export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,selectedUpdate}){
+export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,selectedUpdate,Profiles,setProfiles}){
     const [enableRemarkModal,setEnableRemarkModal] = useState(false);
     const [loading,setLoading] = useState(false);
     const [loading2,setLoading2] = useState(false);
     const adminContext = useContext(AdminContext);
+    const authContext = useContext(AuthContext);
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
         message:""
@@ -46,12 +48,21 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);
+ 
+            const NonApprovedProfiles = Profiles.filter((profile)=>{
+              return profile.id !== selectedUpdate.id;
+            });
+            setProfiles([...NonApprovedProfiles]);
+
+
             setEnableRemarkModal(false);
             setPreviewUserInfoUpdate(false);
+            
             adminContext.setCount({});
-        }
+          }
         console.log(response);
       }).catch((error)=>{
+        toast.error(error.response.data);
         console.log(error);
       }).finally(()=>{
          setLoading2(false);
@@ -75,6 +86,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 <div className="flex justify-between">
                     <div className="old_info text-md">
                     <p>Name</p>
+                    <p>Email</p>
                     <p>Semester</p>
                     <p>Gender</p>
                     <p>Dept</p>
@@ -83,6 +95,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 
                 <div className="new_info text-end text-md text-green-500">
                     <p>{selectedUpdate.fullname}</p>
+                    <p>{selectedUpdate.universityEmail}</p>
                     <p>{selectedUpdate.semester}</p>
                     <p>{selectedUpdate.gender}</p>
                     <p>{selectedUpdate.department}</p>

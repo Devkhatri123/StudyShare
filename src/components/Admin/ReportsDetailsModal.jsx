@@ -3,7 +3,7 @@ import { User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 
-export default function UserDetailModal({ user, setShowModal, ShowModal }) {
+export default function ReportsDetailsModal({ user, setShowModal, ShowModal }) {
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(false);
     const [pageNumber, setPageNumber] = useState(0);

@@ -79,8 +79,7 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
                             ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md"><Loader /></button>}
                         </div>
                     </div>
-
-                </div>
+           </div>
             </div>
         </div>
     )

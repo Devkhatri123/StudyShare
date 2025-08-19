@@ -5,7 +5,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
 import Loader from "./Loader";
 import UploadNote from "./UploadNote";
-import { ToggleContext } from "../utils/Toggle";
 import { AuthContext } from "../ContextApi/AuthContext";
 
 export default function Notes() {
