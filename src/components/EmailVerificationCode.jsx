@@ -60,23 +60,15 @@ export default function EmailVerificationCode() {
         }
         axios.post(`${API_BACKEND_URL}/auth/verify`,verification)
         .then((response)=>{
-            toast.success(response.data.message);
+            toast.success(response.data);
             if(location?.state?.PrevURL !== "/"){
                 navigate("/signIn");
             }else {
-                authContext.setAuthenticatedUser((prev)=>({...prev,
-                emailVerified:true,
-                accountRemarks:"",
-                accountStatus:"Active"
-                }));
+                authContext.setAuthenticatedUser(null);
                 navigate("/")
             }
           }).catch((error)=>{
-            if(error.response.data.status == 200){
-                toast.success("Account is already verified");
-                return;
-            }
-            toast.error(error.response.data.message)
+            toast.error(error.response.data)
         })
     }
     const getOtp = () => {

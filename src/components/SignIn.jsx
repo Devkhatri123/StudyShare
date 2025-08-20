@@ -1,12 +1,11 @@
 import { useContext, useEffect,useState } from "react"
 import { AuthContext } from "../ContextApi/AuthContext"
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff, BookOpen, ChevronDown } from "lucide-react"
+import { Eye, EyeOff, BookOpen } from "lucide-react"
 import axios from "axios";
 import Loader from "./Loader";
 import API_BACKEND_URL from "../utils/API";
 import { isValidEmail } from "../utils/Validation";
-import ErrorMessage from "./ErrorMessage";
 import { toast } from "react-toastify";
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
@@ -27,7 +26,7 @@ export default function SignIn() {
     // Login 
     const login = async() =>{
        if(!isValidEmail(user.email)){
-         setError("Email is not valid");
+         toast.error("Invalid Mail")
          return;
        } else if(user.password.length == 0){
         setError("Password is empty");

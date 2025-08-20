@@ -1,4 +1,4 @@
-import { AlertTriangle, FileText, Menu, User2, UserCheck } from "lucide-react";
+import { AlertTriangle, Book, FileText, Menu, User2, UserCheck } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
 import PendingNotesApproval from "./PendingNotesApproval";
 import UserInfoUpdate from "./UserInfoUpdate";
@@ -8,11 +8,13 @@ import { AuthContext } from "../../ContextApi/AuthContext";
 import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { AdminContext } from "../../ContextApi/AdminContext";
+import AddSubject from "./AddSubject";
 
 export default function AdminHome(){
     const [currentComponent,setCurrentComponent] = useState(<PendingNotesApproval/>);
     const [currentTabName,setcurrentTabName] = useState("Notes");
     const adminContext = useContext(AdminContext);
+    const authContext = useContext(AuthContext);
 
     useEffect(()=>{
       if(!Object.entries(adminContext.count).length > 0){
@@ -40,6 +42,9 @@ export default function AdminHome(){
       }else if(currenTab === "Users"){
          setCurrentComponent(<UserManagement/>)
          setcurrentTabName("Users");
+      }else if (currenTab === "Subjects"){
+         setCurrentComponent(<AddSubject/>)
+         setcurrentTabName("Subjects")
       }
     }
      return (
@@ -54,7 +59,7 @@ export default function AdminHome(){
                 </div>
             </div>
         </header>
-        <div className="bg-[#f1f4f6]">
+        <div className="bg-[#f1f4f6] px-4">
         <div className="body max-w-dvh mx-5 sm:max-w-2xl md:max-w-3xl  lg:max-w-5xl sm:mx-auto pt-10">
          <div className="stats grid-cols-1 grid sm:grid-cols-2 gap-4">
            <div className="pendingNotes flex bg-[#f4f7fe] shadow-sm rounded-md p-3.5">
@@ -98,11 +103,27 @@ export default function AdminHome(){
               <AlertTriangle className="w-5"/>
               <p>Reports</p>
             </div>
-              <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Users")} style={{background:`${currentTabName === "Users" ? "black":""}`,color:`${currentTabName === "Users" ? "white":"black"}`}}>
+              <div className="users flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Users")} style={{background:`${currentTabName === "Users" ? "black":""}`,color:`${currentTabName === "Users" ? "white":"black"}`}}>
               <User2 className="w-5"/>
               <p>Users</p>
             </div>
-            
+              <div className="Subject flex gap-2 items-center py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Subjects")} style={{background:`${currentTabName === "Subjects" ? "black":""}`,color:`${currentTabName === "Subjects" ? "white":"black"}`}}>
+              <svg
+                    className="w-6 h-6 sm:w-5 sm:h-5 "
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    style={{color:`${currentTabName === "Subjects" ? "white":"black"}`}}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    />
+                  </svg>
+              <p>Subject</p>
+            </div>
          </div>
          <div className="main shadow-xl">
             {currentComponent}

@@ -21,8 +21,8 @@ function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
+    if(useAuth.AuthenticatedUser == null){
     const getUser = async () => {
-      axios.defaults.withCredentials = true;
       await axios.get("http://localhost:8080/v1/auth/loggedInUser",
         { withCredentials: true }
       )
@@ -37,7 +37,8 @@ function App() {
         })
     }
     getUser();
-  }, []);
+  }
+  }, [useAuth.AuthenticatedUser]);
 
   return (
     <>

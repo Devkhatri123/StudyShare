@@ -1,6 +1,6 @@
 import axios from "axios";
 import { X } from "lucide-react";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
@@ -13,6 +13,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
     const [loading2,setLoading2] = useState(false);
     const adminContext = useContext(AdminContext);
     const authContext = useContext(AuthContext);
+
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
         message:""
@@ -53,16 +54,16 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
               return profile.id !== selectedUpdate.id;
             });
             setProfiles([...NonApprovedProfiles]);
-
+             adminContext.setCount({});
 
             setEnableRemarkModal(false);
             setPreviewUserInfoUpdate(false);
             
-            adminContext.setCount({});
+           
           }
         console.log(response);
       }).catch((error)=>{
-        toast.error(error.response.data);
+        if(error.response.data != undefined) toast.error(error.response.data);
         console.log(error);
       }).finally(()=>{
          setLoading2(false);
@@ -78,7 +79,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 <X onClick={()=>{setPreviewUserInfoUpdate(false)}}/>
               </div>
               <p className="text-sm text-gray-400">How the profile will look after changes</p>
-             <div className="Modal_body overflow-x-scroll">
+             <div className="Modal_body overflow-y-scroll">
                 <div className="flex justify-between border-gray-200 border-b mt-1.5">
                     <p className="text-sm">Attributes</p>
                      <p className="text-sm">New</p>

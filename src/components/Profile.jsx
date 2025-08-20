@@ -40,8 +40,9 @@ export default function Profile() {
   const location = useLocation();
 
   useEffect(()=>{
+    if(authContext.AuthenticatedUser != null){
     const getProfile = async() => {
-      await axios.get(`${API_BACKEND_URL}/profile/${authContext.AuthenticatedUser.id}`)
+      await axios.get(`${API_BACKEND_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
       .then((response)=>{
        console.log(response)
         setAuthenticatedUser(response.data.profile);
@@ -52,6 +53,7 @@ export default function Profile() {
       })
     }
     getProfile();
+  }
   },[])
 
 
@@ -251,10 +253,11 @@ export default function Profile() {
                   <User className="text-blue-600 w-5 h-5 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold truncate">{authContext.AuthenticatedUser.fullname}</h1>
+                  <h1 className="text-xl font-bold truncate">{tempAuthenticatedUser.fullname}</h1>
                   <p className="">Dha Suffa University</p>
                 </div>
               </div>
+              {tempAuthenticatedUser.id === authContext.AuthenticatedUser.id && (
               <div className="flex-col mt-5 w-full sm:w-fit sm:flex-row sm:mt-0 flex items-center">
               {!Object.entries(accountStatus).length > 0 && !tempAuthenticatedUser.emailVerified && (
               <>
@@ -262,6 +265,7 @@ export default function Profile() {
               <button className="mr-2 w-full sm:w-fit bg-gray-50 border border-gray-200 py-2 px-2 rounded-md" onClick={(e)=>{setShowChangeEmailModal(true);}}>Change Email</button>
               </>
               )}
+              
               {accountStatus == null || accountStatus.status !== "Pending" && (
                 tempAuthenticatedUser?.accountStatus == "Active" && tempAuthenticatedUser.emailVerified == true && tempAuthenticatedUser.enabled == true ? (
                   isDisbaled ? (
@@ -299,13 +303,14 @@ export default function Profile() {
               <div>
               </div>
               </div>
+              )}
             </div>
             <div className="info_inputs flex flex-col mt-8 gap-2.5 sm:flex-row">
               <div className="leftInputs w-full sm:w-[50%]">
                 <div className="fullnameInput flex flex-col mb-4">
                   <label htmlFor="Fullname">Fullname</label>
                   {isDisbaled ? (
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={authContext.AuthenticatedUser.fullname} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
+                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.fullname} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
                   ) : <>
                     <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.fullname} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, fullname: e.target.value }) }} />
                   </>}
@@ -322,7 +327,7 @@ export default function Profile() {
                   <label htmlFor="Gender">Gender</label>
                   {isDisbaled ? (
                     <select name="gender" id="" className="border border-gray-200 px-3 py-2 rounded-lg" disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }}>
-                      <option value={authContext.AuthenticatedUser.gender}>{authContext.AuthenticatedUser.gender}</option>
+                      <option value={tempAuthenticatedUser.gender}>{tempAuthenticatedUser.gender}</option>
                     </select>
                   ) :
                     <>
@@ -340,7 +345,7 @@ export default function Profile() {
                   <label htmlFor="Department">Department</label>
                   {isDisbaled ? (
                     <select name="Department" id="" disabled className="border border-gray-200 px-3 py-2 rounded-lg" style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }}>
-                      <option value={authContext.AuthenticatedUser.department}>{authContext.AuthenticatedUser.department}</option>
+                      <option value={tempAuthenticatedUser.department}>{tempAuthenticatedUser.department}</option>
                     </select>
                   ) :
                     <>
@@ -353,7 +358,7 @@ export default function Profile() {
                 <div className="Semester flex flex-col mb-4">
                   <label htmlFor="Semester">Semester</label>
                   {isDisbaled ? (
-                    <select name="Semester" id="" value={authContext.AuthenticatedUser.semester} className="border border-gray-200 px-3 py-2 rounded-lg" disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }}>
+                    <select name="Semester" id="" value={tempAuthenticatedUser.semester} className="border border-gray-200 px-3 py-2 rounded-lg" disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }}>
                       <option value="1">1</option>
                       <option value="2">2</option>
                       <option value="3">3</option>
@@ -381,7 +386,7 @@ export default function Profile() {
                 <div className="Phone flex flex-col mb-4">
                   <label htmlFor="Phone">Phone</label>
                   {isDisbaled ? (
-                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={authContext.AuthenticatedUser.contact} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
+                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.contact} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
                   ) : <>
                     <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.contact} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, contact: e.target.value }) }} />
                   </>}
@@ -413,15 +418,18 @@ export default function Profile() {
                     }}>
                       <div className="header gap-3 sm:flex-row flex justify-between items-center">
                         <h1 className="font-bold text-xl line-clamp-2">{note.title}</h1>
-                        {note.status !== "Pending" && authContext.AuthenticatedUser.accountStatus !== "Blocked" && (
+                        {authContext.AuthenticatedUser.id === tempAuthenticatedUser.id && (
+                        note.status !== "Pending" && authContext.AuthenticatedUser.accountStatus !== "Blocked" && (
                           <div className="flex items-center">
                             <Edit className="text-gray-600 w-5 cursor-pointer mr-2" onClick={() => editNote(note.id, i)} />
                             <Delete className="text-gray-600 w-5 cursor-pointer" onClick={() => { setShowDeleteModal(true); setcurrentNoteIndex(i) }} />
                           </div>
-                        )}
+                        )
+                       )}
                         {showDeleteModal && currentNoteIndex == i && <DeleteNoteModal setShowDeleteModal={setShowDeleteModal} setcurrentNoteIndex={setcurrentNoteIndex} noteID={note.id} Notes={myNotes} setNotes={setMyNotes} />}
                         {showUploadModal && noteToUpdate != null && currentNoteIndex == i && <UploadNote noteToUpdate={noteToUpdate} setShowUploadModal={setShowUploadModal} />}
-                      </div>
+                     
+                        </div>
                       <p className="mt-2 text-blue-600">{note.subject.department}</p>
                       <p className="mt-4 text-gray-600 text-ellipsis overflow-hidden line-clamp-2" style={{ lineBreak: "anywhere" }}>{note.description}</p>
                       <div className="border rounded-md flex items-center gap-5 p-2 mt-5"

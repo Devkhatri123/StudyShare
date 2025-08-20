@@ -102,21 +102,21 @@ export default function Navbar() {
               {/* Mobile Navigation */}
               {authContext.AuthenticatedUser != null && (
              <nav className="flex flex-col space-y-3">
-            <li className='list-none cursor-pointer'><Link to={"/profile"} state={{userEmail:authContext.AuthenticatedUser.id}}>Profile</Link></li>
-            {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{email:authContext.AuthenticatedUser.universityEmail}}>Verify Email</Link></li>}
-            {(authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) && <li className='list-none cursor-pointer'><Link to={"/admin/home"}>Admin</Link></li>}
+            <li className='list-none cursor-pointer'><Link to={"/profile"} state={{userEmail:authContext.AuthenticatedUser.id}} className="block w-full">Profile</Link></li>
+            {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{email:authContext.AuthenticatedUser.universityEmail}} className="block w-full">Verify Email</Link></li>}
+            {(authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) && <li className='list-none cursor-pointer'><Link to={"/admin/home"} className="block w-full">Admin</Link></li>}
             <li className='list-none cursor-pointer' onClick={()=>{signOut()}}>SignOut</li>
               </nav>
               )}
               {authContext.AuthenticatedUser == null && (
              <div className="flex flex-col space-y-2 pt-2">
                 <button className="text-gray-600 hover:text-gray-900 py-2 text-left transition-colors">
-                  <Link to={"/signIn"}>
+                  <Link to={"/signIn"}  className="block w-full">
                    Sign In
                 </Link>
                   </button>
                 <button className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-md transition-colors">
-                  <Link to={"/register"}>
+                  <Link to={"/register"}  className="block w-full">
                   Register
                   </Link>
                 </button>

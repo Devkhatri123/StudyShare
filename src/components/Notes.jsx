@@ -118,7 +118,7 @@ export default function Notes() {
                   </button>
                   {showMessage &&(
                   <div ref={messageRef} className="p-3 w-full block absolute group-hover:block mt-3 right-0 bg-white shadow-md rounded-lg">
-                  <p className="text-black">{authContext.AuthenticatedUser.accountRemarks}</p>
+                  <p className="text-black">{authContext.AuthenticatedUser.accountRemarks == "" && authContext.AuthenticatedUser.accountStatus == "Blocked" ? "Your account is blocked" :  authContext.AuthenticatedUser.accountRemarks}</p>
                  </div>
                   )}
                   </div>

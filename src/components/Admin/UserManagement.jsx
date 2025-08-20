@@ -7,6 +7,7 @@ import { AuthContext } from "../../ContextApi/AuthContext";
 import { toast } from "react-toastify";
 import BlockModal from "./BlockModal";
 import { BlockUser, DiscardUserReports } from "../../Service/userService";
+import { Link } from "react-router-dom";
 
 export default function UserManagement() {
     const authContext = useContext(AuthContext);
@@ -129,9 +130,11 @@ export default function UserManagement() {
                         {Profiles.map((profile, i) => {
                             return <div key={i} className="update mb-2.5 bg-[#fef1f2] gap-3 sm:gap-0 flex items-center flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
                                 <div className="left w-full sm:w-fit flex">
+                                    <Link to={"/profile"} state={{userEmail:profile.id}}>
                                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
                                         <span className="text-xs sm:text-sm font-semibold text-white">{profile.fullname.substring(0, 1)}</span>
                                     </div>
+                                    </Link>
                                     <div className="ml-2">
                                         <h1 className="font-bold text-[#7f1d1d]">{profile.fullname}</h1>
                                         <div className="truncate">
@@ -145,7 +148,7 @@ export default function UserManagement() {
                                         <p className="text-[13px]">{profile.accountStatus}</p>
                                     </div>
 
-                                    {profile.accountStatus == "Active" ? (
+                                    {profile.accountStatus !== "Blocked" ? (
                                         <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-1 px-4" onClick={() => { setShowBlockModal(true); setCurrentProfile(i) }}>
                                             <StopCircle className="w-4 mr-2" />
                                             <button className="text-sm">Block</button>
