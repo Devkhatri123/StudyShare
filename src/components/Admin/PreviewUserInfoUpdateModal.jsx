@@ -12,7 +12,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
     const [loading,setLoading] = useState(false);
     const [loading2,setLoading2] = useState(false);
     const adminContext = useContext(AdminContext);
-    const authContext = useContext(AuthContext);
 
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
@@ -30,9 +29,10 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);
+            updatePendingProfilesArray(ID);
+            adminContext.setCount({});
             setEnableRemarkModal(false);
             setPreviewUserInfoUpdate(false);
-            adminContext.setCount({});
         }
       }).catch((error)=>{
         console.log(error);
@@ -49,27 +49,27 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);
- 
-            const NonApprovedProfiles = Profiles.filter((profile)=>{
-              return profile.id !== selectedUpdate.id;
-            });
-            setProfiles([...NonApprovedProfiles]);
-             adminContext.setCount({});
+            updatePendingProfilesArray(userId);
+            adminContext.setCount({});
 
             setEnableRemarkModal(false);
             setPreviewUserInfoUpdate(false);
             
            
           }
-        console.log(response);
       }).catch((error)=>{
         if(error.response.data != undefined) toast.error(error.response.data);
-        console.log(error);
       }).finally(()=>{
          setLoading2(false);
       })
     }
 
+    const updatePendingProfilesArray = (userId) => {
+      const NonApprovedProfiles = Profiles.filter((profile)=>{
+              return profile.id !== userId;
+      });
+            setProfiles([...NonApprovedProfiles]);
+    }
 
     return (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>

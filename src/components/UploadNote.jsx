@@ -14,6 +14,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     const [isDragging, setIsDragging] = useState(false);
     const [isNoteDragging, setIsNoteDragging] = useState(false);
     const [loading, setLoading] = useState(false);
+    const abortControllerRef = useRef();
     const authContext = useContext(AuthContext);
     const [noteData, setnoteData] = useState(
         {
@@ -148,10 +149,18 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         if (noteData.title.length == 0) {
             toast.error("Title is empty");
             return;
-        } if (noteData.description.length == 0) {
+        }
+         
+         if (noteData.description.length == 0) {
             toast.error("Description is empty");
             return;
         }
+        if(abortControllerRef.current){
+            abortControllerRef.current.abort();
+        }
+        abortControllerRef.current = new AbortController();
+        const signal = abortControllerRef.current.signal;
+
         const formData = new FormData();
         formData.append("thumbnail", noteData.imgThumbNail);
         formData.append("notes", noteData.notePdfData);
@@ -165,7 +174,8 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         })], { type: "application/json" }));
         setLoading(true);
         await axios.post(`${API_BACKEND_URL}/notes/uploadNote`, formData, {
-            withCredentials: true
+            withCredentials: true,
+            signal:signal
         })
             .then((response) => {
                 toast.success(response.data.message);
@@ -193,6 +203,11 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }
    }
 
+   const cancelUpload = () => {
+     if(abortControllerRef.current){
+        abortControllerRef.current.abort();
+     }
+   }
 
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }}>
@@ -276,11 +291,11 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
 
 
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>
-                        <div className="flex justify-end mr-2.5">
-                            <button className="mr-3 bg-gray-100 text-black px-2.5 rounded-md">cancel</button>
+                        <div className="flex justify-end mx-2.5 sm:mx-0 sm:mr-2.5 flex-col gap-2 sm:flex-row">
+                            <button className="sm:mr-3 bg-gray-100 text-black py-2 px-2.5 rounded-md text-sm" onClick={()=>{cancelUpload()}}>cancel</button>
                             {!loading ? (
-                                <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md" onClick={() => uploadNote()}><Upload className="text-sm mr-1 w-[15px]" />Upload Note</button>
-                            ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md" disabled><Loader /></button>}
+                                <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm justify-center" onClick={() => uploadNote()}><Upload className="text-sm mr-1 w-[13px]" />Upload Note</button>
+                            ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md sm:w-[100px]" disabled style={{opacity:"0.7"}}><Loader /></button>}
                         </div>
                     </div>
 

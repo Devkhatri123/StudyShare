@@ -21,3 +21,8 @@ export const convertBase64ToBlob = (base64, mime) => {
   }
   return new Blob([uint8array], { type: mime })
 }
+
+export const returnFullFormOfDepartment = (department) => {
+  if(department == "CS") return "Computer Science";
+  else if (department == "CE") return "Civil Engineering";
+}

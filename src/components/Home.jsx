@@ -18,8 +18,9 @@ export default function StudyShareHomepage() {
     timer.current = setTimeout(() => {
     const getSubjects = async () => {
     if(!hasMore) return;
-    await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=2&query=${query}`)
+    await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=3&query=${query}`)
     .then((response)=>{
+      console.log([...response.data])
       if(limit == 0) setSubjects([...response.data]);
       else setSubjects((prev) =>[...prev,...response.data]);
       if(!response.data.length > 0) setHasMore(false);
@@ -158,7 +159,7 @@ export default function StudyShareHomepage() {
            {!loading ? (
            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
            {subjects.length > 0 ? subjects.map((subject,i) => (
-                <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
+               <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
                   <Link to={`/${subject.subjectName}/${subject.code}/notes`} className="block">
                   <div className="flex items-center gap-2 text-sm text-blue-600 mb-3 border border-gray-300 w-fit px-2 rounded-xl">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -172,9 +173,9 @@ export default function StudyShareHomepage() {
                 {subject.semester} Semester
               </div>
               <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">{subject.subjectName}</h3>
-              <p className="text-gray-600 text-sm mb-4">{subject.shortDescription}</p>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2">{subject.shortDescription}</p>
               <div className="flex items-center justify-between">
-                <span className="text-blue-600 text-sm font-medium">{subject.semester} Semester</span>
+                <span className="text-blue-600 text-sm font-medium">{subject.code}</span>
                
               </div>
               </Link>

@@ -59,7 +59,7 @@ export default function Profile() {
 
   useEffect(() => {
     getAccountStatus();
-  }, [tempAuthenticatedUser,noteStatus]);
+  }, [noteStatus]);
 
   useEffect(() => {
     if (tempAuthenticatedUser != null) getMyNotes();
@@ -168,7 +168,7 @@ export default function Profile() {
     axios.get(`${API_BACKEND_URL}/profile/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`, { withCredentials: true })
       .then((response) => {
         if (response.data.status == "Declined") {
-          setAccountStatus({ status: "Declined", remark: response.data.remark });
+          setAccountStatus({ status: "Declined", remark:"Reason: "+response.data.remark });
         } else if (response.data.status == "Approved") setAccountStatus({ status: "Approved", remark: "Your Update Request was Approved,changes has been applied" });
         else setAccountStatus(response.data)
       }).catch((error) => {
@@ -237,7 +237,7 @@ export default function Profile() {
 
           </div>
         </nav>
-        <div className="body max-w-6xl mx-auto px-5 py-3">
+        <div className="body max-w-6xl mx-auto px-2 sm:px-5 py-3">
 
           {/* Showing the status of update info request */}
           {Object.entries(accountStatus).length > 0 && (
@@ -248,7 +248,7 @@ export default function Profile() {
           )}
           <div className="info bg-white shadow-sm rounded-lg border border-gray-200 py-3.5 px-4">
             <div className="info_header flex-col sm:flex-row flex justify-between items-center">
-              <div className="info_header_left flex items-center gap-3.5">
+              <div className="info_header_left flex-col text-center sm:flex-row sm:text-left flex items-center gap-3.5">
                 <div className="rounded-full bg-blue-100 p-3.5">
                   <User className="text-blue-600 w-5 h-5 sm:w-8 sm:h-8" />
                 </div>

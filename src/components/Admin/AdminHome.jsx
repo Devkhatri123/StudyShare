@@ -8,7 +8,7 @@ import { AuthContext } from "../../ContextApi/AuthContext";
 import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { AdminContext } from "../../ContextApi/AdminContext";
-import AddSubject from "./AddSubject";
+import Subject from "./Subject";
 
 export default function AdminHome(){
     const [currentComponent,setCurrentComponent] = useState(<PendingNotesApproval/>);
@@ -43,7 +43,7 @@ export default function AdminHome(){
          setCurrentComponent(<UserManagement/>)
          setcurrentTabName("Users");
       }else if (currenTab === "Subjects"){
-         setCurrentComponent(<AddSubject/>)
+         setCurrentComponent(<Subject/>)
          setcurrentTabName("Subjects")
       }
     }
@@ -60,7 +60,7 @@ export default function AdminHome(){
             </div>
         </header>
         <div className="bg-[#f1f4f6] px-4">
-        <div className="body max-w-dvh mx-5 sm:max-w-2xl md:max-w-3xl  lg:max-w-5xl sm:mx-auto pt-10">
+        <div className="body max-w-dvh mx-0 sm:max-w-2xl md:max-w-3xl  lg:max-w-5xl sm:mx-auto pt-10">
          <div className="stats grid-cols-1 grid sm:grid-cols-2 gap-4">
            <div className="pendingNotes flex bg-[#f4f7fe] shadow-sm rounded-md p-3.5">
             <div className="bg-[#3174f0] rounded-lg px-2 py-2 h-10 shadow-md">
@@ -90,7 +90,7 @@ export default function AdminHome(){
              </div>
            </div>
          </div>
-         <div className="tabs_header mt-5 flex gap-4 bg-white shadow-md p-1 rounded-lg mb-5 overflow-scroll sm:overflow-hidden items-center">
+         <div className="tabs_header mt-5 flex gap-4 bg-white shadow-md p-1 rounded-lg mb-5 overflow-x-scroll no-scrollbar sm:overflow-hidden items-center">
             <div className="Notes hover:cursor-pointer flex gap-2 bg-black text-white rounded-md py-2 px-3" style={{background:`${currentTabName === "Notes" ? "black":"none"}`,color:`${currentTabName === "Notes" ? "white":"black"}`}} onClick={()=>returnComponent("Notes")}>
               <FileText className="w-5"/>
               <p>Notes</p>

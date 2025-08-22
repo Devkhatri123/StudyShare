@@ -88,7 +88,7 @@ export default function PendingNotesApproval() {
         {!loading ? (
           ApprovalPendingNotes && ApprovalPendingNotes.map((note, i) => {
            
-            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)]  shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
+            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)]  shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm"
               style={{ maxWidth: "-webkit-fill-available" }}
             >
               <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
