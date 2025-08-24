@@ -22,6 +22,7 @@ export default function UserManagement() {
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [loading4, setLoading4] = useState(false);
     const [loading5, setLoading5] = useState(false);
+    const [activateUserLoading,setActivateUserLoading] = useState(false);
     const timerRef = useRef();
     const profileBodyRef = useRef();
     useEffect(() => {
@@ -58,7 +59,11 @@ export default function UserManagement() {
         setLoading2(true);
         await axios.post(`${API_BACKEND_URL}/profile/admin/unblock/user/${userId}`, {}, { withCredentials: true })
             .then((response) => {
-                Profiles[index].accountStatus = "Active";
+                if(Profiles[index].emailVerified == false){
+                 Profiles[index].accountStatus = "Disabled";
+                }else Profiles[index].accountStatus = "Active";
+                
+                toast.success(response.data)
                 // window.location.reload();
             }).catch((error) => {
                 console.log(error);
@@ -86,6 +91,7 @@ export default function UserManagement() {
         await BlockUser(id)
             .then(async (response) => {
                 if (response.status == 200) {
+                    
                     await DiscardUserReports(id);
                     Profiles[currentProfile].accountStatus = "Blocked";
                     toast.success("User blocked successfully");
@@ -110,6 +116,17 @@ export default function UserManagement() {
             })
     }
 
+    // Activating user's disabled account
+    const activateUser = async(profileId,i) => {
+    await axios.post(`${API_BACKEND_URL}/profile/admin/activate/user/${profileId}`,{},{withCredentials:true})
+     .then((response)=>{
+        toast.success(response.data)
+     }).catch((error)=>{
+        console.log(error);
+     }).finally(()=>{
+        setActivateUserLoading(false);
+     })
+    }
     return (
         <div>
             <div className="UserInfoUpdate_Header bg-[#fef1f2] rounded-t-md p-3">
@@ -148,6 +165,17 @@ export default function UserManagement() {
                                         <p className="text-[13px]">{profile.accountStatus}</p>
                                     </div>
 
+                                    {profile.accountStatus == "Disabled" && (
+                                        !activateUserLoading && currentProfile != i ? (
+                                          <div className="flex w-full text-white bg-black justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-2 px-4" onClick={() => { activateUser(profile.id,i); setCurrentProfile(i); setActivateUserLoading(true) }}>
+                                            <button className="text-sm">Activate user</button>
+                                        </div>
+                                        ):
+                                        <div className="flex text-white bg-black justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-2 px-4 w-24" style={{opacity:"0.5"}}>
+                                            <button className="text-sm"><Loader/></button>
+                                        </div>
+                                    )}
+
                                     {profile.accountStatus !== "Blocked" ? (
                                         <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-1 px-4" onClick={() => { setShowBlockModal(true); setCurrentProfile(i) }}>
                                             <StopCircle className="w-4 mr-2" />
@@ -166,6 +194,7 @@ export default function UserManagement() {
                                             </div>
                                     }
                                     {showBlockModal && currentProfile != null && currentProfile == i && <BlockModal user={profile} blockUser={blockUser} setShowBlockModal={setShowBlockModal} loading={loading4} />}
+                                    
                                     {authContext.AuthenticatedUser.roles.includes("MANAGER") && (
 
                                         !profile.roles.includes("ADMIN") ? (

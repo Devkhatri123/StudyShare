@@ -12,6 +12,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
     const [loading,setLoading] = useState(false);
     const [loading2,setLoading2] = useState(false);
     const adminContext = useContext(AdminContext);
+    const abortController_Ref = useRef(); 
 
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
@@ -79,7 +80,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 <X onClick={()=>{setPreviewUserInfoUpdate(false)}}/>
               </div>
               <p className="text-sm text-gray-400">How the profile will look after changes</p>
-             <div className="Modal_body overflow-y-scroll">
+             <div className="Modal_body no-scrollbar overflow-y-scroll">
                 <div className="flex justify-between border-gray-200 border-b mt-1.5">
                     <p className="text-sm">Attributes</p>
                      <p className="text-sm">New</p>
@@ -91,7 +92,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                     <p>Semester</p>
                     <p>Gender</p>
                     <p>Dept</p>
-                    <p>Phone</p>
                 </div>
                 
                 <div className="new_info text-end text-md text-green-500">
@@ -100,7 +100,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                     <p>{selectedUpdate.semester}</p>
                     <p>{selectedUpdate.gender}</p>
                     <p>{selectedUpdate.department}</p>
-                    <p>{selectedUpdate.contact}</p>
                 </div>
                 </div>
                 {!enableRemarkModal ? (

@@ -28,7 +28,6 @@ export default function Register() {
   const [user, setUser] = useState({
     fullname: "",
     universityEmail: "",
-    contact:"",
     semester: "",
     gender: "",
     department: "",
@@ -163,21 +162,6 @@ export default function Register() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   value={user.email}
                   onChange={((e) => { setUser({ ...user, universityEmail: e.target.value }) })}
-                />
-              </div>
-
-        {/* Contact */}
-              <div className="space-y-2">
-                <label htmlFor="Contact" className="text-sm font-medium text-gray-700">
-                 Contact
-                </label>
-                <input
-                  id="Contact"
-                  type="text"
-                  placeholder="0312345678"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  value={user.contact}
-                  onChange={((e) => { setUser({ ...user, contact: e.target.value }) })}
                 />
               </div>
 

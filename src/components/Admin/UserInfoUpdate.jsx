@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import PreviewUserInfoUpdateModal from "./PreviewUserInfoUpdateModal";
 import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
+import { Link } from "react-router-dom";
 
 export default function UserInfoUpdate(){
     const [PreviewUserInfoUpdate,setPreviewUserInfoUpdate]= useState(false);
@@ -55,9 +56,11 @@ export default function UserInfoUpdate(){
                     updates.map((update,i)=>{
                   return <div key={i} className="update mb-2.5 gap-3 sm:gap-0 flex items-center flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
                     <div className="left w-full sm:w-fit flex">
+                        <Link to={"/profile"} className="h-fit" state={{userEmail:update.id}}>
                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-                         <span className="text-xs sm:text-sm font-semibold text-white">{update.fullname.substring(0,1)}</span>
+                       <span className="text-xs sm:text-sm font-semibold text-white">{update.fullname.substring(0,1)}</span>
                         </div> 
+                         </Link>
                         <div className="ml-2">
                             <h1 className="font-bold">{update.fullname}</h1>
                             <div>

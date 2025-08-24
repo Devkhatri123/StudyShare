@@ -295,7 +295,7 @@ export default function Profile() {
                   <button className=" text-white">Edit Profile</button>
                   {showAccountRemarkMessage && (
                     <div className="p-3 max-w-32 block absolute group-hover:block mt-5 top-7 right-0 bg-white shadow-md rounded-lg">
-                      <p className="text-black">{tempAuthenticatedUser.accountRemarks}</p>
+                      <p className="text-black text-[15px]">{tempAuthenticatedUser.accountRemarks}</p>
                     </div>
                   )}
                 </div>
@@ -383,14 +383,7 @@ export default function Profile() {
                     </>
                   }
                 </div>
-                <div className="Phone flex flex-col mb-4">
-                  <label htmlFor="Phone">Phone</label>
-                  {isDisbaled ? (
-                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.contact} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
-                  ) : <>
-                    <input type="text" className="border border-gray-200 px-3 py-2 rounded-lg" name="Phone" id="" value={tempAuthenticatedUser.contact} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, contact: e.target.value }) }} />
-                  </>}
-                </div>
+               
               </div>
             </div>
 

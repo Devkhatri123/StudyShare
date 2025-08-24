@@ -16,10 +16,12 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
      }else setShowEditSubjectModal(false);
     },[]);
     const Edit = async() => {
+        if(validateInput()){
      setLoading(true);
      await axios.put(`${API_BACKEND_URL}/admin/updateSubject`,subjectToEdit,{withCredentials:true})
      .then((response)=>{
         toast.success(response.data);
+        console.log(subjectToEdit);
         setShowEditSubjectModal(false);
         subjects[index] = subjectToEdit;
      }).catch((error)=>{
@@ -32,6 +34,7 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
         setLoading(false);
      })
     }
+    }
 
     const handleSubjectName = (e) => {
      if(e.target.value.length <= 30) setSubjectToEdit({...subjectToEdit,subjectName:e.target.value});
@@ -41,6 +44,36 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
      if(e.target.value.length <= 120) setSubjectToEdit({...subjectToEdit,shortDescription:e.target.value});
     }
 
+    const validateInput = () => {
+        if (subjectToEdit.subjectName == " " || subjectToEdit.subjectName.trim().length == 0) {
+            toast.error("Subject name is empty");
+            return false;
+        }else if (subjectToEdit.subjectName.trim().length > 30) {
+            toast.error("Subject name should be of 30 character only");
+            return false;
+        }else if (subjectToEdit.shortDescription == " " || subjectToEdit.shortDescription.trim().length == 0) {
+            toast.error("Subject description is empty");
+            return false;
+        }else if (subjectToEdit.shortDescription.trim().length > 120) {
+            toast.error("Subject description should be of 120 character only");
+            return false;
+        }
+        else if (subjectToEdit.code == " " || subjectToEdit.code.trim().length == 0) {
+            toast.error("Subject code is empty");
+            return false;
+        }else if (subjectToEdit.code.trim().length > 7) {
+            toast.error("Subject code should be of 7 character only");
+            return false;
+        }else if (isNaN(Number(subjectToEdit.semester))) {
+            toast.error("Semester can be only a number");
+            return false;
+        }else if (subjectToEdit.semester <= 0 || subjectToEdit.semester > 8) {
+            toast.error("Semester can be between 1 and 8");
+            return false;
+        }
+        return true;
+    }
+    
     return subjectToEdit != null && (
          <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}} >
                     <div className={`w-full h-full sm:h-fit max-w-[650px] sm:max-w-[450px] fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5`}>

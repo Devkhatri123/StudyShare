@@ -12,13 +12,11 @@ const ViewNote = () => {
   const [note,setNote] = useState(null);
   const [loading,setLoading] = useState(true);
   const [pdfURL,setpdfURL] = useState(null);
-  const [error,setError] = useState(false);
-  const [errorMsg,seterrorMsg] = useState(null);
+  const [error,setError] = useState(null);
   useEffect(()=>{
     const getNote = async () => {
     await axios.get(`${API_BACKEND_URL}/notes/note/${noteID}`)
    .then((response)=>{
-    console.log(response);
     setNote(response.data);
     const convertBase64ToBlob = (base64)=>{
      const bytes = atob(base64);
@@ -31,12 +29,14 @@ const ViewNote = () => {
     }
     const blob = convertBase64ToBlob(response.data.notePdfData);
     const url = URL.createObjectURL(blob);
-    setpdfURL(url);
+   setpdfURL(url);
    }).catch((error)=>{
-     console.log(error);
-     if(error.response.data.message) seterrorMsg(error.response.data.message);
-     setError(true);
-   }).finally(()=>{
+      if(error.status == 404) {
+      setError("Note not found. May be this note wouldn't have been approved or this note doesn't exist");
+     }else {
+      setError("Internal Server error");
+     }
+    }).finally(()=>{
     setLoading(false);
    })
       }
@@ -44,7 +44,8 @@ const ViewNote = () => {
   },[noteID])
     return (
       !loading ?
-      !error ? (
+      error == null ? (
+        note != null &&
         <div className="viewNote" style={{fontFamily:"Arial, Helvetica, sans-serif"}}>
             <Navbar />
             <div className="body max-w-7xl mx-auto p-5" style={{background:"#f9fafb"}}>
@@ -67,7 +68,7 @@ const ViewNote = () => {
                 </div>
             </div>
         </div>
-      ):<div className="h-[100vh] flex items-center justify-center text-2xl font-semibold">{errorMsg}</div>
+      ):<div className="h-[100vh] flex items-center justify-center text-md "><p className="text-center line-clamp-2 mx-2">{error}</p></div>
     : <div className="h-[100vh] flex items-center justify-center"><Loader/></div>
     )
 }

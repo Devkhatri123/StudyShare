@@ -1,11 +1,13 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import Navbar from "./Navbar"
 import axios from "axios";
 import { Link } from "react-router-dom"
 import Loader from "./Loader";
 import API_BACKEND_URL from "../utils/API";
+import { AuthContext } from "../ContextApi/AuthContext";
+import { returnFullFormOfDepartment } from "../utils/Validation";
 
 export default function StudyShareHomepage() {
   const timer = useRef();
@@ -14,11 +16,12 @@ export default function StudyShareHomepage() {
   const [hasMore,setHasMore] = useState(true);
   const [query,setQuery] = useState("");
   const [limit,setLimit] = useState(0);
+  const authContext = useContext(AuthContext);
   useEffect(() => {
     timer.current = setTimeout(() => {
     const getSubjects = async () => {
     if(!hasMore) return;
-    await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=3&query=${query}`)
+    await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=3&query=${query}`,{withCredentials:true})
     .then((response)=>{
       console.log([...response.data])
       if(limit == 0) setSubjects([...response.data]);
@@ -141,9 +144,7 @@ export default function StudyShareHomepage() {
               onChange={(e) => handleSearch(e)}
               className="w-full h-12 sm:h-14 pl-12 pr-20 sm:pr-24 text-base sm:text-lg border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
-            <button className="absolute right-2 top-2 bg-gray-900 hover:bg-gray-800 text-white px-4 sm:px-6 py-2 rounded-md transition-colors text-sm sm:text-base">
-              Search
-            </button>
+            
           </div>
         </div>
       </section>
@@ -153,7 +154,7 @@ export default function StudyShareHomepage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
             <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900">DHA Suffa University</h2>
-            <p className="text-gray-600 text-sm sm:text-base">Browse subjects and access lecture notes</p>
+            <p className="text-gray-600 text-sm sm:text-base">Browse subjects and access lecture notes {authContext.AuthenticatedUser != null && `of ${returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} department`}</p>
             <p className="mt-2 text-sm text-gray-500">{subjects.length} subjects available</p>
           </div>
            {!loading ? (
@@ -175,7 +176,7 @@ export default function StudyShareHomepage() {
               <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">{subject.subjectName}</h3>
               <p className="text-gray-600 text-sm mb-4 line-clamp-2">{subject.shortDescription}</p>
               <div className="flex items-center justify-between">
-                <span className="text-blue-600 text-sm font-medium">{subject.code}</span>
+                <span className="text-blue-600 text-sm font-medium">{returnFullFormOfDepartment(subject.department)}</span>
                
               </div>
               </Link>

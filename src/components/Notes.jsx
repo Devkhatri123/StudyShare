@@ -6,6 +6,7 @@ import axios from "axios";
 import Loader from "./Loader";
 import UploadNote from "./UploadNote";
 import { AuthContext } from "../ContextApi/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function Notes() {
   const bodyRef = useRef();
@@ -74,9 +75,11 @@ export default function Notes() {
             <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-4 sm:py-6 space-y-3 sm:space-y-0">
                 <nav className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm text-gray-500 overflow-x-auto">
+                  <Link to={"/"}>
                   <span className="hover:text-gray-700 cursor-pointer transition-colors duration-200 whitespace-nowrap">
                     Home
                   </span>
+                  </Link>
                   <span className="text-gray-300">/</span>
                   <span className="hover:text-gray-700 cursor-pointer transition-colors duration-200 whitespace-nowrap">
                     DHA Suffa University

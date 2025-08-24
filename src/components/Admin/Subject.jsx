@@ -121,7 +121,7 @@ export default function Subject() {
                                     <p className="subjectCode text-[#c34510] bg-[#f4f4f5] border border-[#fedfba] w-fit rounded-xl px-2 text-sm">{subject.status}</p>
                                 </div>
                                 <div className="subjectBody px-2 pb-9 sm:px-5">
-                                    <h1 className="my-2.5 font-bold text-lg leading-[1.3] line-clamp-1">{subject.subjectName}</h1>
+                                    <h1 className="my-2.5 font-bold text-lg leading-[1.3] line-clamp-1 lg:line-clamp-none">{subject.subjectName}</h1>
                                     <div className="flex justify-between overflow-x-scroll no-scrollbar gap-5">
                                         <div className="left">
                                             <p className="text-sm text-gray-600 mb-2">Department</p>
@@ -133,6 +133,9 @@ export default function Subject() {
                                             {subject.editedByName != null && (
                                             <p className="text-sm text-gray-600 mb-2">Edited by</p>
                                             )}
+                                             {subject.updatedAt != null && (
+                                                <p className="text-sm text-gray-600 mb-2">Edited On</p>
+                                            )}
                                         </div>
                                         <div className="right ">
                                             <p className="text-sm mb-2 font-medium line-clamp-1">{returnFullFormOfDepartment(subject.department)}</p>
@@ -143,6 +146,9 @@ export default function Subject() {
                                             )}
                                             {subject.editedByName != null && (
                                             <p className="text-sm mb-2 font-medium">{subject.editedByName}</p>
+                                            )}
+                                            {subject.updatedAt != null && (
+                                                <p className="text-sm mb-2 font-medium">{subject.updatedAt}</p>
                                             )}
                                         </div>
                                     </div>

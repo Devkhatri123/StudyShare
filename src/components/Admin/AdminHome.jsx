@@ -54,9 +54,9 @@ export default function AdminHome(){
                 <div className="left">
                     <h1 className="font-bold sm:text-xl">Admin Panel</h1>
                 </div>
-                <div className="right sm:rounded-md sm:border py-2 px-3 border-gray-200 hover:cursor-pointer">
+                {/* <div className="right sm:rounded-md sm:border py-2 px-3 border-gray-200 hover:cursor-pointer">
                     <Menu className="w-4"/>
-                </div>
+                </div> */}
             </div>
         </header>
         <div className="bg-[#f1f4f6] px-4">
@@ -90,21 +90,21 @@ export default function AdminHome(){
              </div>
            </div>
          </div>
-         <div className="tabs_header mt-5 flex gap-4 bg-white shadow-md p-1 rounded-lg mb-5 overflow-x-scroll no-scrollbar sm:overflow-hidden items-center">
-            <div className="Notes hover:cursor-pointer flex gap-2 bg-black text-white rounded-md py-2 px-3" style={{background:`${currentTabName === "Notes" ? "black":"none"}`,color:`${currentTabName === "Notes" ? "white":"black"}`}} onClick={()=>returnComponent("Notes")}>
+         <div className="tabs_header mt-5 flex gap-4 bg-white shadow-md p-1 rounded-lg mb-5 overflow-x-scroll no-scrollbar sm:overflow-hidden items-center text-sm md:gap-0">
+            <div className="Notes hover:cursor-pointer flex gap-2 bg-black text-white rounded-md py-2 px-3 items-center" style={{background:`${currentTabName === "Notes" ? "black":"none"}`,color:`${currentTabName === "Notes" ? "white":"black"}`}} onClick={()=>returnComponent("Notes")}>
               <FileText className="w-5"/>
               <p>Notes</p>
             </div>
-            <div className="UserUpdate flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Updates")} style={{background:`${currentTabName === "Updates" ? "black":""}`,color:`${currentTabName === "Updates" ? "white":"black"}`}}>
-              <UserCheck className="w-5"/>
+            <div className="UserUpdate flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer items-center" onClick={()=>returnComponent("Updates")} style={{background:`${currentTabName === "Updates" ? "black":""}`,color:`${currentTabName === "Updates" ? "white":"black"}`}}>
+              <UserCheck className="w-6 h-6 sm:w-5 sm:h-5"/>
               <p>Updates</p>
             </div>
-            <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Reports")} style={{background:`${currentTabName === "Reports" ? "black":""}`,color:`${currentTabName === "Reports" ? "white":"black"}`}}>
-              <AlertTriangle className="w-5"/>
+            <div className="reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer items-center" onClick={()=>returnComponent("Reports")} style={{background:`${currentTabName === "Reports" ? "black":""}`,color:`${currentTabName === "Reports" ? "white":"black"}`}}>
+              <AlertTriangle className="w-6 h-6 sm:w-5 sm:h-5"/>
               <p>Reports</p>
             </div>
-              <div className="users flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Users")} style={{background:`${currentTabName === "Users" ? "black":""}`,color:`${currentTabName === "Users" ? "white":"black"}`}}>
-              <User2 className="w-5"/>
+              <div className="users flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer items-center" onClick={()=>returnComponent("Users")} style={{background:`${currentTabName === "Users" ? "black":""}`,color:`${currentTabName === "Users" ? "white":"black"}`}}>
+              <User2 className="w-6 h-6 sm:w-5 sm:h-5"/>
               <p>Users</p>
             </div>
               <div className="Subject flex gap-2 items-center py-2 px-3 rounded-md hover:cursor-pointer" onClick={()=>returnComponent("Subjects")} style={{background:`${currentTabName === "Subjects" ? "black":""}`,color:`${currentTabName === "Subjects" ? "white":"black"}`}}>
