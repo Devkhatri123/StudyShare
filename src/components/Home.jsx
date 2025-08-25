@@ -154,12 +154,13 @@ export default function StudyShareHomepage() {
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
             <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900">DHA Suffa University</h2>
-            <p className="text-gray-600 text-sm sm:text-base">Browse subjects and access lecture notes {authContext.AuthenticatedUser != null && `of ${returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} department`}</p>
+            <p className="text-gray-600 text-sm sm:text-base">Browse subjects and access lecture notes</p>
             <p className="mt-2 text-sm text-gray-500">{subjects.length} subjects available</p>
           </div>
            {!loading ? (
+            subjects.length > 0 ? (
            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-           {subjects.length > 0 ? subjects.map((subject,i) => (
+           {subjects.map((subject,i) => (
                <div key={i} className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 hover:shadow-lg cursor-pointer active:scale-95 transform transition-transform">
                   <Link to={`/${subject.subjectName}/${subject.code}/notes`} className="block">
                   <div className="flex items-center gap-2 text-sm text-blue-600 mb-3 border border-gray-300 w-fit px-2 rounded-xl">
@@ -181,8 +182,9 @@ export default function StudyShareHomepage() {
               </div>
               </Link>
             </div>
-             )):<><p>No subjects found</p></>}
+             ))}
         </div>
+        ):<><p className="text-center w-full">No subjects found {authContext.AuthenticatedUser != null && `of ${returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} department`}</p></>
          ):(
           <Loader/>
          )}

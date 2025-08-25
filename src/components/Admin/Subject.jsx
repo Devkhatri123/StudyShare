@@ -97,7 +97,7 @@ export default function Subject() {
                         </svg>
                         <div className="ml-2">
                             <h1 className="text-[#7d2e13] text-2xl font-semibold line-clamp-1">Subject Management</h1>
-                            <p className="text-[#c95626] line-clamp-1 text-sm">Manage subjects for {returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} • 2 subjects</p>
+                            <p className="text-[#c95626] line-clamp-1 text-sm">Manage subjects for {returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} • {subjects.length} {subjects.length <= 1 ? "subject":"subjects"}</p>
                         </div>
                     </div>
 

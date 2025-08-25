@@ -26,7 +26,7 @@ export default function Register() {
   const [isRegistrationCompleted, setIsRegistrationCompleted] = useState(false);
 
   const [user, setUser] = useState({
-    fullname: "",
+    username: "",
     universityEmail: "",
     semester: "",
     gender: "",
@@ -40,58 +40,57 @@ export default function Register() {
   const departments = ["CS", "CE"];
 
   const submitForm = async () => {
-    if (!Validation()) {
-      return;
-    }
-    if (!isValidEmail(user.universityEmail)) {
-      setError("Email is not valid");
-      return;
-    }
-    setError(null);
-    user.semester = Number(user.semester);
+    if (Validation()) {
     setLoading(true);
     await axios.post(`${API_BACKEND_URL}/auth/signUp`, user).then((response) => {
-      console.log(response);
+       toast.success(response.data);
       navigate("/verify",{state:{email:user.universityEmail,PrevURL:location.pathname}});
     }).catch((error) => {
-      toast.error(error.response.data.message);
-      console.log(error);
+      toast.error(error.response.data);
     }).finally(() => {
       setLoading(false);
     })
   }
+  }
 
   const Validation = () => {
-    if (user.fullname.length == 0) {
-      setError("Full name input is empty");
+    if (user.username.trim().length == 0) {
+      toast.error("username input is empty");
+      return false;
+    }else if (user.username.trim().length > 35){
+        toast.error("username should not be greater than 35 characters");
+        return false;
+    }else if (user.universityEmail.trim().length == 0) {
+      toast.error("Email input is empty");
+      return false;
+    }else if (!isValidEmail(user.universityEmail)){
+      toast.error("Email is not valid");
+      return;
+    }else if (user.universityEmail.trim().length > 20) {
+      toast.error("Email should not be greater than 12 characters");
+      return false;
+    }else if (isNaN(user.semester)) {
+      toast.error("Semester can be only a number");
+      return false;
+    }else if (!semesters.includes(user.semester)) {
+      toast.error("Semester can be between 1 and 8");
+      return false;
+    }else if (!genders.includes(user.gender)) {
+      toast.error("Invalid gender selected");
+      return false;
+    }else if (!departments.includes(user.department)) {
+     toast.error("Invalid Department selected");
+      return false;
+    }else if (user.password.trim().length == 0) {
+     toast.error("Password input is empty");
       return false;
     }
-    else if (user.universityEmail.length == 0) {
-      setError("Email input is empty");
-      return false;
-    }
-    else if (user.semester.length == 0) {
-      setError("Semester not selected");
-      return false;
-    }
-    else if (user.gender.length == 0) {
-      setError("Gender not selected");
-      return false;
-    }
-    else if (user.department.length == 0) {
-      setError("Department not selected");
-      return false;
-    }
-    else if (user.password.length == 0) {
-      setError("Password input is empty");
-      return false;
-    }
-    else if (user.confirmPassword.length == 0) {
-      setError("Confirm password input is empty");
+    else if (user.confirmPassword.trim().length == 0) {
+     toast.error("Confirm password input is empty");
       return false;
     }
     else if (user.confirmPassword !== user.password) {
-      setError("Password doesn't match");
+      toast.error("Password doesn't match");
       return false;
     }
     return true;
@@ -136,15 +135,15 @@ export default function Register() {
               <div>
                 <div className="space-y-2">
                   <label htmlFor="firstName" className="text-sm font-medium text-gray-700">
-                    Full name
+                    User name
                   </label>
                   <input
-                    id="firstName"
+                    id="username"
                     type="text"
                     placeholder="John"
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    value={user.fullname}
-                    onChange={((e) => { setUser({ ...user, fullname: e.target.value }) })}
+                    value={user.username}
+                    onChange={((e) => { setUser({ ...user, username: e.target.value }) })}
                   />
                 </div>
 
@@ -190,7 +189,7 @@ export default function Register() {
                           type="button"
                           onClick={(e) => {
                             setselectedSemester(e.target.innerText)
-                            setUser({ ...user, semester: e.target.innerText })
+                            setUser({ ...user, semester: Number(e.target.innerText) })
                             setIsDropdownOpen2(false)
                           }}
                           className="w-full px-3 py-2 text-left hover:bg-gray-50 focus:outline-none focus:bg-gray-50 first:rounded-t-md last:rounded-b-md"

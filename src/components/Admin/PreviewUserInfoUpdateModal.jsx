@@ -45,8 +45,13 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
 
     const approveChanges = async(userId) => {
+      if(abortController_Ref.current){
+        abortController_Ref.current.abort();
+      }
+      abortController_Ref.current = new AbortController();
+      const signal = abortController_Ref.current.signal;
         setLoading2(true);
-       await axios.post(`${API_BACKEND_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true})
+       await axios.post(`${API_BACKEND_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true,signal:signal})
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);
@@ -59,6 +64,10 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
            
           }
       }).catch((error)=>{
+        if(axios.isCancel(error)){
+          toast.error("Operation cacelled");
+          return;
+        }
         if(error.response.data != undefined) toast.error(error.response.data);
       }).finally(()=>{
          setLoading2(false);
@@ -72,6 +81,11 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
             setProfiles([...NonApprovedProfiles]);
     }
 
+    const cancelRequest = () => {
+      if(abortController_Ref.current){
+        abortController_Ref.current.abort();
+      }
+    }
     return (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
             <div className="previewInfoUpdateModal w-full max-w-96 fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5">
@@ -95,7 +109,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 </div>
                 
                 <div className="new_info text-end text-md text-green-500">
-                    <p>{selectedUpdate.fullname}</p>
+                    <p>{selectedUpdate.username}</p>
                     <p>{selectedUpdate.universityEmail}</p>
                     <p>{selectedUpdate.semester}</p>
                     <p>{selectedUpdate.gender}</p>
@@ -107,7 +121,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                     {!loading2 ? (
                     <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={()=>{approveChanges(selectedUpdate.id)}}>Accept</button>
                     ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
-                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(true)}}>Reject</button>
+                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(true);cancelRequest()}}>Reject</button>
                 </div>
                  ):
                  <>
@@ -117,7 +131,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                         {!loading ? (
                         <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={() => rejectUpdateRequestInfo(selectedUpdate.id)}>Confirm</button>
                         ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
-                        <button className="bg-gray-100 text-black py-1.5 px-2.5 rounded-md text-sm" onClick={()=>setEnableRemarkModal(false)}>Cancel</button>
+                        <button className="bg-gray-100 text-black py-1.5 px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(false)}}>Cancel</button>
                     </div>
                  </div>
                  </>

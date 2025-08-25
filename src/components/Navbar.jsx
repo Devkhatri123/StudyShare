@@ -63,7 +63,7 @@ export default function Navbar() {
             </>
            ):<>
            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm cursor-pointer" onClick={()=>setShowDropDown(!showDropDown)}>
-            <span className="text-xs sm:text-sm font-semibold text-white" >{authContext.AuthenticatedUser.fullname.substring(0,1)}</span>
+            <span className="text-xs sm:text-sm font-semibold text-white" >{authContext.AuthenticatedUser.username.substring(0,1)}</span>
             
            </div>
            {showDropDown && (

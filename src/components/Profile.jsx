@@ -44,7 +44,6 @@ export default function Profile() {
     const getProfile = async() => {
       await axios.get(`${API_BACKEND_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
       .then((response)=>{
-       console.log(response)
         setAuthenticatedUser(response.data.profile);
       }).catch((error)=>{
         console.log(error);
@@ -253,7 +252,7 @@ export default function Profile() {
                   <User className="text-blue-600 w-5 h-5 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold truncate">{tempAuthenticatedUser.fullname}</h1>
+                  <h1 className="text-xl font-bold truncate">{tempAuthenticatedUser.username}</h1>
                   <p className="">Dha Suffa University</p>
                 </div>
               </div>
@@ -308,11 +307,11 @@ export default function Profile() {
             <div className="info_inputs flex flex-col mt-8 gap-2.5 sm:flex-row">
               <div className="leftInputs w-full sm:w-[50%]">
                 <div className="fullnameInput flex flex-col mb-4">
-                  <label htmlFor="Fullname">Fullname</label>
+                  <label htmlFor="Fullname">Username</label>
                   {isDisbaled ? (
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.fullname} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
+                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.username} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
                   ) : <>
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.fullname} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, fullname: e.target.value }) }} />
+                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.username} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, username: e.target.value }) }} />
                   </>}
                 </div>
 
