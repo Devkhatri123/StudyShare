@@ -10,8 +10,8 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
     const [loading, setLoading] = useState(false);
     const adminContext = useContext(AdminContext);
     const [remarkRequest, setremarkRequest] = useState({
-        id: currentNote.id,
-        message: ''
+        id: "",
+        message: ""
     });
     useEffect(() => {
         if (currentNote) {
@@ -26,14 +26,10 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
     }, [currentNote]);
 
     const sendRemark = async () => {
-        if (remarkRequest.message.length == 0) {
-            toast.error("Add some message");
-            return;
-        }
+        if(validateInputs()){
         setLoading(true);
         await axios.post(`${API_BACKEND_URL}/notes/admin/sendRemarkForNote`, remarkRequest, { withCredentials: true })
             .then((response) => {
-                console.log(response);
                 if (response.status == 200) {
                     toast.success(response.data.message);
                     const filteredNotes = ApprovalPendingNotes.filter((note) => {
@@ -49,11 +45,22 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
             }).finally(() => {
                 setLoading(false);
             })
+        }
     }
 
+    const validateInputs = () => {
+        if(remarkRequest.message.trim().length == 0){
+            toast.error("Description is empty");
+            return false;
+        }else if (remarkRequest.id.trim().length == 0){
+            toast.error("something is wrong. Try again by closing and opening the modal again.");
+            return false;
+        }
+        return true;
+    }
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }}>
-            <div className="h-full no-scrollbar sm:h-fit absolute w-[100%] top-0 z-[9999] modal bg-white rounded-lg sm:top-[50%] sm:translate-y-[-50%]  mx-auto shadow-2xl md:max-w-[46rem] left-0 right-0  lg:max-w-4xl xl:max-w-5xl ">
+            <div className="h-full no-scrollbar sm:h-fit absolute w-[100%] top-0 z-[9999] modal bg-white rounded-lg sm:top-[50%] sm:translate-y-[-50%]  mx-auto shadow-2xl md:max-w-[46rem] left-0 right-0  lg:max-w-3xl xl:max-w-4xl ">
                 <div className="modal_header shadow-sm w-full border-b-[1px] " style={{ borderBottom: "1px solid #f8f9fa" }}>
                     <div className="flex justify-between px-4 py-5">
                         <h1 className="text-xl font-bold">Send Remark - {currentNote.title}</h1>
@@ -72,11 +79,11 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
                     </div>
 
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>
-                        <div className="flex justify-end mr-2.5">
-                            <button className="mr-3 bg-gray-100 text-black px-2.5 rounded-md">cancel</button>
+                        <div className="flex justify-end mx-3 sm:mr-2.5 flex-col gap-2.5 sm:flex-row sm:gap-0">
+                            <button className="border-black sm:mr-3 bg-gray-100  text-black py-1 px-2.5 rounded-md">cancel</button>
                             {!loading ? (
                                 <button onClick={(e) => { sendRemark() }} className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md"><Upload className="text-sm mr-1 w-[15px]" />Send</button>
-                            ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md"><Loader /></button>}
+                            ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md w-full sm:w-[70px]" style={{opacity:"0.5"}}><Loader /></button>}
                         </div>
                     </div>
            </div>

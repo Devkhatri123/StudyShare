@@ -4,15 +4,14 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import API_BACKEND_URL from "../utils/API.JSX";
 import { toast } from "react-toastify";
 import { AuthContext } from "../ContextApi/AuthContext";
+import Loader from "./Loader";
 
 export default function EmailVerificationCode() {
     const inputsRef = useRef();
     const navigate = useNavigate();
     const location = useLocation();
     const authContext = useContext(AuthContext);
-    useEffect(()=>{
-     console.log(location)
-    },[]);
+    const [loading,setLoading] = useState(false);
     const handleNumberOnlyInput = (e) => {
         if (isNaN(e.key)) {
             e.preventDefault();
@@ -58,6 +57,7 @@ export default function EmailVerificationCode() {
             email:location.state.email,
             verificationCode:Number(o)
         }
+        setLoading(true);
         axios.post(`${API_BACKEND_URL}/auth/verify`,verification)
         .then((response)=>{
             toast.success(response.data);
@@ -69,6 +69,8 @@ export default function EmailVerificationCode() {
             }
           }).catch((error)=>{
             toast.error(error.response.data)
+        }).finally(()=>{
+            setLoading(false);
         })
     }
     const getOtp = () => {
@@ -106,8 +108,10 @@ export default function EmailVerificationCode() {
                         <input type="text" id="2" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
                         <input type="text" id="3" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
                     </div>
+                    {!loading ? (
                     <button onClick={()=>sendOtp()} className="rounded-lg bg-indigo-500 text-white font-medium px-[2em] sm:px-28 py-1.5 mb-3 hover:bg-indigo-600 transition-colors duration-150 cursor-pointer">Verify</button>
-                    <p className="mb-12">Didn't receive code? <span onClick={()=>{resendVerificationCode()}} className="font-medium text-indigo-600 hover:cursor-pointer">Resend</span></p>
+                    ):<button className="rounded-lg bg-indigo-500 text-white font-medium px-[2em] sm:px-28 py-1.5 mb-3 hover:bg-indigo-600 transition-colors duration-150 cursor-pointer" style={{opacity:"0.5"}}><Loader/></button>}
+                    <p className="mb-12">Didn't receive code?{!loading ? <span onClick={()=>{resendVerificationCode()}} className="font-medium text-indigo-600 hover:cursor-pointer">Resend</span>: <span className="font-medium text-indigo-600 hover:cursor-pointer">Resend</span>}</p>
                 </div>
             </div>
         </div>

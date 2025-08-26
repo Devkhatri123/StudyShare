@@ -27,7 +27,7 @@ function App() {
         { withCredentials: true }
       )
         .then((response) => {
-          console.log(response)
+          console.log(response.data)
           useAuth.setIsAuthenticated(response.data.isLoggedIn);
           useAuth.setAuthenticatedUser(response.data.user)
         }).catch((error) => {

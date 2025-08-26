@@ -15,26 +15,26 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
     const [Report,SetReport] = useState({
         reportedBy:authContext.AuthenticatedUser?.id,
         reportedUser:createdBy.id,
-        reason:"",
+        reason:"Spam or scam",
         additionalDetails:""
     });
 
-   const report = () => {
+    useEffect(()=>{
+    document.body.style.overflowY = "hidden";
+    return () => document.body.style.overflowY = "unset";
+    },[])
+   const report = async() => {
     if(authContext.AuthenticatedUser == null){
         toast.error("You are not signed In.");
         return;
     }
     // if(authContext.AuthenticatedUser.id === createdBy.id){
-    //     toast.error("You cant report to yourself");
+    //     toast.error("You can't report to yourself");
     //     return;
     // }
     if(reportType === "user"){
-        // SetReport((prev)=>({...prev,reportedBy:authContext.AuthenticatedUser.id}));
-        // SetReport((prev)=>({...prev,reportedUser:createdBy.id}));
-
-        if(Report.reason === "") SetReport((prev)=>({...prev,reason:selectRef.current.value}));
-        setLoading(true);
-        axios.post(`${API_BACKEND_URL}/report/user`,Report,{withCredentials:true})
+       setLoading(true);
+        await axios.post(`${API_BACKEND_URL}/report/user`,Report,{withCredentials:true})
         .then((response)=>{
         toast.success(response.data);
         setShowModal(false);
@@ -44,6 +44,15 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
             setLoading(false);
         })
     }
+   }
+
+   const handleReportDescription = (e) => {
+    console.log(e.target.value.length)
+    if(e.target.value.length <= 120){
+        SetReport((prev)=>({...prev,additionalDetails:e.target.value}));
+        //return
+    }
+
    }
     return (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
@@ -62,15 +71,11 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
                     </select>
                 </div>
                 <div className="addtionalDetails mt-2.5">
-                    <h2 className="text-sm mb-1">Additional Details(Optional)</h2>
-                    <textarea className="text-sm w-full rounded-md border border-gray-300 py-1 px-1.5 outline-0 min-h-[70px]" onChange={(e)=>{SetReport((prev)=>({...prev,additionalDetails:e.target.value}))}}  name="" id="" placeholder="Write additional details"></textarea>
-                    <p className="text-sm text-gray-400 -mt-1 mb-4">Max Character limit is 512</p>
-                    <p className="text-sm text-gray-400 -mt-1 mb-4">Avoid including personal Information</p>
+                    <h2 className="text-sm mb-1">Additional Details</h2>
+                    <textarea value={Report.additionalDetails} className="text-sm w-full rounded-md border border-gray-300 py-1 px-1.5 outline-0 min-h-[70px]" onChange={(e)=>{handleReportDescription(e)}}  name="report description" placeholder="Write additional details"></textarea>
+                    <p className="text-sm text-gray-400 -mt-1 mb-4">Description length : {Report.additionalDetails.length} / 120</p>
                 </div>
                 <div className="footer flex gap-3 justify-end">
-                    <div className="border border-b-gray-100 rounded-sm px-2">
-                        <button className="text-sm">Cancel</button>
-                    </div>
                     {!loading ? (
                      <div className="bg-black text-white rounded-sm px-2 py-1 text-sm" onClick={()=>{report()}}>
                         <button className="text-sm">Submit Report</button>

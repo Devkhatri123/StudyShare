@@ -12,6 +12,23 @@ export const isValidEmail = (email) => {
   return isValidEmail;
 }
 
+
+// Subject code validation
+// Subjects department code regex
+  const regexObj = {
+    "CS":"^CS\\d{3,5}$",
+    "CE":"^CE\\d{3,5}$"
+  }
+export const isValidSubjectCode = (code,department) => {
+  console.log(regexObj[department])
+  if(regexObj.hasOwnProperty(department)){
+    const Subject_Department_Code_REGEX = new RegExp(regexObj[department]);
+    return Subject_Department_Code_REGEX.test(code);
+  }else return false;
+}
+
+
+
 export const convertBase64ToBlob = (base64, mime) => {
   const bytes = atob(base64);
   const length = bytes.length;

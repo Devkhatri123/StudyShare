@@ -3,7 +3,6 @@ import Loader from "./Loader"
 
 export default function ChangeEmail({setAuthenticatedUser,tempAuthenticatedUser,updateEmail,setShowModal,loading}){
 
-   
 
     return (
          <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>

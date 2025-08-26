@@ -38,10 +38,10 @@ const Note = ({ note }) => {
           {/* Author Info */}
           <div className="flex items-center space-x-3 mb-4 pb-4 border-b border-gray-100">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-              <span className="text-xs sm:text-sm font-semibold text-white">{note.createdBy.fullname.substring(0, 1)}</span>
+              <span className="text-xs sm:text-sm font-semibold text-white">{note.createdBy.username.substring(0, 1)}</span>
             </div>
             <div className="flex-1 min-w-0">
-              <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{note.createdBy.fullname}</p>
+              <p className="font-semibold text-gray-900 text-sm sm:text-base truncate">{note.createdBy.username}</p>
               <div className="flex items-center text-xs sm:text-sm text-gray-500">
                 <Calendar className="w-3 h-3 sm:w-4 sm:h-4 mr-1 flex-shrink-0" />
                 <span>{note.createdAt}</span>

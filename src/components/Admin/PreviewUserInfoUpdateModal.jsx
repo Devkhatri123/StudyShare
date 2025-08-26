@@ -119,9 +119,13 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 {!enableRemarkModal ? (
                 <div className="flex justify-end gap-2 mt-2">
                     {!loading2 ? (
+                    <>
                     <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={()=>{approveChanges(selectedUpdate.id)}}>Accept</button>
-                    ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
-                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(true);cancelRequest()}}>Reject</button>
+                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(true);cancelRequest()}}>Reject</button>  
+                    </>
+                  ):
+                    <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
+                    
                 </div>
                  ):
                  <>

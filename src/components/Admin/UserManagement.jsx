@@ -125,6 +125,7 @@ export default function UserManagement() {
         console.log(error);
      }).finally(()=>{
         setActivateUserLoading(false);
+        setCurrentProfile(false);
      })
     }
     return (
@@ -149,11 +150,11 @@ export default function UserManagement() {
                                 <div className="left w-full sm:w-fit flex">
                                     <Link to={"/profile"} state={{userEmail:profile.id}}>
                                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-                                        <span className="text-xs sm:text-sm font-semibold text-white">{profile.fullname.substring(0, 1)}</span>
+                                        <span className="text-xs sm:text-sm font-semibold text-white">{profile?.username?.substring(0, 1)}</span>
                                     </div>
                                     </Link>
                                     <div className="ml-2">
-                                        <h1 className="font-bold text-[#7f1d1d]">{profile.fullname}</h1>
+                                        <h1 className="font-bold text-[#7f1d1d]">{profile.username}</h1>
                                         <div className="truncate">
                                             <p className="text-sm truncate text-[#7f1d1d]">{profile.universityEmail}</p>
                                             {/* <p className="text-xs text-white bg-[#ef4444] w-fit px-2 rounded-lg text-center">{report.reportCount} Reports</p> */}
@@ -161,8 +162,9 @@ export default function UserManagement() {
                                     </div>
                                 </div>
                                 <div className="right w-full flex-col sm:w-fit sm:flex-row flex items-center gap-2">
-                                    <div className="flex w-full justify-center sm:w-fit items-center border border-gray-200 rounded-2xl px-2 bg-black text-white" >
+                                    <div className="flex group relative w-full justify-center sm:w-fit items-center border border-gray-200 rounded-2xl px-2 bg-black text-white"  >
                                         <p className="text-[13px]">{profile.accountStatus}</p>
+                                       
                                     </div>
 
                                     {profile.accountStatus == "Disabled" && (

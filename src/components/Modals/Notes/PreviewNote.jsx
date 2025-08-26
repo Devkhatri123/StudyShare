@@ -1,10 +1,16 @@
 import { FileText, X } from "lucide-react";
-import PDFViewer from "../PDFViewer";
+import PDFViewer from "../../PDFViewer";
 import { useEffect, useState } from "react";
-import Note from "../Note";
+import Note from "../../Note";
 
 export default function PreviewNote({currentNote,setShowPreviewModal,setCurretNoteIndex}){
    const [pdfUrl,setPdfUrl] = useState('');
+
+   useEffect(()=>{
+    document.body.style.overflowY = "hidden";
+    return () =>  document.body.style.overflowY = "scroll";
+   },[])
+
    useEffect(()=>{
     const convertBase64ToBlob = (base64)=>{
      const bytes = atob(base64);

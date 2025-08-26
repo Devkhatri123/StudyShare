@@ -4,8 +4,9 @@ import { useEffect, useState } from "react"
 import API_BACKEND_URL from "../../../utils/API";
 import Loader from "../../Loader";
 import { toast } from "react-toastify";
+import { isValidSubjectCode } from "../../../utils/Validation";
 
-export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubjectModal, setSubjects }) {
+export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubjectModal, setSubjects, department }) {
     const [subject, setSubject] = useState({
         subjectName: "",
         shortDescription: "",
@@ -58,14 +59,10 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
         }else if (subject.shortDescription.trim().length > 120) {
             toast.error("Subject description should be of 120 character only");
             return false;
-        }
-        else if (subject.code == " " || subject.code.trim().length == 0) {
-            toast.error("Subject code is empty");
-            return false;
-        }else if (subject.code.trim().length > 7) {
-            toast.error("Subject code should be of 7 character only");
-            return false;
-        }else if (isNaN(Number(subject.semester))) {
+        }else if (!isValidSubjectCode(subject.code.toUpperCase(),department.toUpperCase())){
+          toast.error("Subject Code is not valid");
+          return false;  
+        } else if (isNaN(Number(subject.semester))) {
             toast.error("Semester can be only a number");
             return false;
         }else if (subject.semester <= 0 || subject.semester > 8) {
@@ -97,7 +94,7 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
                     <div className="flex gap-3">
                         <div className="flex flex-col my-2">
                             <label htmlFor="SubjectCode" className="text-sm text-[#4d5564]">Subject Code *</label>
-                            <input type="text" value={subject.code} name="" id="" placeholder="eg.,CS101" className="border border-[#ebebeb] py-1.5 pl-1.5 rounded-md" onChange={(e) => { setSubject({ ...subject, code: e.target.value.replaceAll(" ","") }) }} maxLength={7} />
+                            <input type="text" value={subject.code} name="" id="" placeholder="eg.,CS101" className="border border-[#ebebeb] py-1.5 pl-1.5 rounded-md" onChange={(e) => { setSubject({ ...subject, code: e.target.value.replaceAll(" ","").toUpperCase() }) }} maxLength={7}/>
                         </div>
                         <div className="flex flex-col my-2 w-full">
                             <label htmlFor="Semester" className="text-sm text-[#4d5564]">Semester *</label>

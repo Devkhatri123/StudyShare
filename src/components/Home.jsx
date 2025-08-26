@@ -184,7 +184,7 @@ export default function StudyShareHomepage() {
             </div>
              ))}
         </div>
-        ):<><p className="text-center w-full">No subjects found {authContext.AuthenticatedUser != null && `of ${returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} department`}</p></>
+        ):<><p className="text-center w-full">No subjects found <strong>{authContext.AuthenticatedUser != null && `of ${authContext.AuthenticatedUser.semester} semester, ${returnFullFormOfDepartment(authContext.AuthenticatedUser.department)} department`}</strong></p></>
          ):(
           <Loader/>
          )}

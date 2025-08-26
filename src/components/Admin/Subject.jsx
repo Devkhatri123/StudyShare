@@ -107,13 +107,13 @@ export default function Subject() {
                 </div>
 
             </div>
-            {showAddSubjectModal && <AddSubjectModal setShowAddSubjectModal={setShowAddSubjectModal} showAddSubjectModal={showAddSubjectModal} setSubjects={setSubjects} />}
-            <div className="subjects_body bg-white py-7 mb-5 ">
-                <div className="searchSubjects ml-4 mr-9.5 mb-3">
+            {showAddSubjectModal && <AddSubjectModal setShowAddSubjectModal={setShowAddSubjectModal} showAddSubjectModal={showAddSubjectModal} setSubjects={setSubjects} department={authContext.AuthenticatedUser.department} />}
+            <div className="subjects_body px-5 bg-white py-7 mb-5 ">
+                <div className="searchSubjects mb-3">
                     <input type="text" className=" p-1.5 w-full rounded-md border border-gray-300" name="query" id="" placeholder="Search subjects here..." onChange={(e) => { handleSearch(e) }} />
                 </div>
                 {subjects.length > 0 && (
-                    <div className="flex px-3  flex-wrap justify-around mx-auto md:justify-start md:px-2.5 md:gap-x-2.5">
+                    <div className="flex flex-wrap justify-around mx-auto md:justify-start md:gap-x-2.5">
                         {subjects.map((subject, i) => {
                          return <div key={i} className="subject border border-gray-200 mb-4 flex flex-col w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)] lg:flex-[0_0_calc(33.333%_-_16px)] shadow-sm hover:shadow-2xl transition-all duration-300">
                                 <div className="subject_header flex items-center justify-between rounded-t-xl py-3 px-2 bg-[#fedfba] ">

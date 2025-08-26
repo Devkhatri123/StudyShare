@@ -4,6 +4,7 @@ import Loader from "../../Loader";
 import axios from "axios";
 import API_BACKEND_URL from "../../../utils/API";
 import { toast } from "react-toastify";
+import { isValidSubjectCode } from "../../../utils/Validation";
 
 export default function EditSubject({subject,setShowEditSubjectModal,index,subjects}){
     const [subjectToEdit,setSubjectToEdit] = useState(null);
@@ -21,7 +22,6 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
      await axios.put(`${API_BACKEND_URL}/admin/updateSubject`,subjectToEdit,{withCredentials:true})
      .then((response)=>{
         toast.success(response.data);
-        console.log(subjectToEdit);
         setShowEditSubjectModal(false);
         subjects[index] = subjectToEdit;
      }).catch((error)=>{
@@ -57,13 +57,9 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
         }else if (subjectToEdit.shortDescription.trim().length > 120) {
             toast.error("Subject description should be of 120 character only");
             return false;
-        }
-        else if (subjectToEdit.code == " " || subjectToEdit.code.trim().length == 0) {
-            toast.error("Subject code is empty");
-            return false;
-        }else if (subjectToEdit.code.trim().length > 7) {
-            toast.error("Subject code should be of 7 character only");
-            return false;
+        }else if(!isValidSubjectCode(subjectToEdit.code,subjectToEdit.department)){
+            toast.error("Subject Code is not valid");
+            return false;  
         }else if (isNaN(Number(subjectToEdit.semester))) {
             toast.error("Semester can be only a number");
             return false;
@@ -96,7 +92,7 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
                         <div className="flex gap-0 flex-col sm:flex-row sm:gap-3">
                          <div className="flex flex-col my-2">
                             <label htmlFor="SubjectCode" className="text-sm text-[#4d5564]">Subject Code *</label>
-                            <input type="text" value={subjectToEdit.code} name="" id="" placeholder="eg.,CS101" className="border border-[#ebebeb] py-1.5 pl-1.5 rounded-md" onChange={(e)=>{setSubjectToEdit({...subjectToEdit,code:e.target.value})}} maxLength={7}/>
+                            <input type="text" value={subjectToEdit.code} name="" id="" placeholder="eg.,CS101" className="border border-[#ebebeb] py-1.5 pl-1.5 rounded-md" onChange={(e)=>{setSubjectToEdit({...subjectToEdit,code:e.target.value.replaceAll(" ","").toUpperCase()})}} maxLength={7}/>
                         </div>
                         <div className="flex flex-col my-2 w-full">
                             <label htmlFor="Semester" className="text-sm text-[#4d5564]">Semester *</label>

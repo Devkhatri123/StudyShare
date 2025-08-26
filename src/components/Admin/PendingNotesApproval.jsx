@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import RemarkModal from "./RemarkModal";
-import PreviewNote from "./PreviewNote";
+import PreviewNote from "../Modals/Notes/PreviewNote";
 import { toast } from "react-toastify";
 import { convertBase64ToBlob } from "../../utils/Validation";
 import { AdminContext } from "../../ContextApi/AdminContext";
@@ -21,6 +21,7 @@ export default function PendingNotesApproval() {
   const adminContext = useContext(AdminContext);
 
   useEffect(() => {
+    if(Object.entries(adminContext.count).length > 0){
     if (!hasMore) return;
     axios.get(`${API_BACKEND_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
       .then((response) => {
@@ -28,10 +29,14 @@ export default function PendingNotesApproval() {
           setApprovalPendingNotes((prev) => ([...prev, ...response.data]));
         } else sethasMore(false);
       }).catch((error) => {
+        // if(error.status == 403){
+        //   toast.error(error.response.data);
+        // }
         console.log(error);
       }).finally(() => {
         setLoading(false);
-      })
+      });
+    }else setLoading(false)
   }, [pageNumber]);
 
   const handleScroll = () => {
@@ -56,16 +61,18 @@ export default function PendingNotesApproval() {
 
   const approveNote = async (i) => {
     setApproveLoading(true);
-    await axios.post(`${API_BACKEND_URL}/notes/${ApprovalPendingNotes[i].id}/approve`)
+    await axios.post(`${API_BACKEND_URL}/notes/${ApprovalPendingNotes[i].id}/approve`,{},{withCredentials:true})
       .then((response) => {
+        if(response.status == 200){
         toast.success("Note Approved!!!");
         const filteredNotes = ApprovalPendingNotes.filter((note) => {
           return note.id != ApprovalPendingNotes[i].id;
         });
         setApprovalPendingNotes([...filteredNotes]);
         adminContext.setCount({});
+      }
       }).catch((error) => {
-        console.log(error);
+        console.log(error.response);
         toast.error("Error in approving note");
       }).finally(() => {
         setApproveLoading(false);
@@ -84,11 +91,11 @@ export default function PendingNotesApproval() {
         <p className="text-[#2e5cdb]">Review and approve user-submitted notes • {ApprovalPendingNotes?.length} pending submissions</p>
 
       </div>
-      <div className="PendingNotesApproval_body mb-7 mt-4 p-4 bg-white flex flex-wrap">
+      <div className="PendingNotesApproval_body mb-7 gap-5 mt-4 p-4 bg-white flex flex-wrap">
         {!loading ? (
           ApprovalPendingNotes && ApprovalPendingNotes.map((note, i) => {
            
-            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)]  shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm"
+            return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)] lg:flex-[0_0_calc(33.5%_-_16px)] shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm"
               style={{ maxWidth: "-webkit-fill-available" }}
             >
               <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
@@ -112,10 +119,10 @@ export default function PendingNotesApproval() {
                 {/* Author Info */}
                 <div className="flex items-center space-x-3 mb-4 pb-4 border-b border-gray-100">
                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-                    <span className="text-xs sm:text-sm font-semibold text-white">{note.createdBy.fullname.substring(0, 1)}</span>
+                    <span className="text-xs sm:text-sm font-semibold text-white">{note.createdBy.username.substring(0, 1)}</span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 text-sm truncate">{note.createdBy.fullname}</p>
+                    <p className="font-semibold text-gray-900 text-sm truncate">{note.createdBy.username}</p>
                     <div className="flex items-center text-xs sm:text-sm text-gray-600">
                       <Clock className="w-3 h-3 mr-1 flex-shrink-0 " />
                       <span className="text-xs">{note.createdAt}</span>

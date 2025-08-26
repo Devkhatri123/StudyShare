@@ -58,7 +58,7 @@ export default function Profile() {
 
   useEffect(() => {
     getAccountStatus();
-  }, [noteStatus]);
+  }, [location.state.userEmail]);
 
   useEffect(() => {
     if (tempAuthenticatedUser != null) getMyNotes();

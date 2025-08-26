@@ -20,7 +20,8 @@ export default function ReportsDetailsModal({ user, setShowModal, ShowModal }) {
                 console.log(error);
             }).finally(() => {
                 setLoading(false);
-            })
+            });
+
     }, [pageNumber]);
 
 
@@ -49,7 +50,7 @@ export default function ReportsDetailsModal({ user, setShowModal, ShowModal }) {
                 <div className="header flex justify-between">
                     <div className="flex items-baseline">
                         <h2 className="font-medium  sm:text-lg">User Details:  </h2>
-                        <h2>&nbsp; @{user.fullname}</h2>
+                        <h2>&nbsp; @{user.username}</h2>
                     </div>
                     <X onClick={() => { setShowModal(false); document.body.style.overflow = "scroll" }} />
                 </div>
@@ -73,7 +74,8 @@ export default function ReportsDetailsModal({ user, setShowModal, ShowModal }) {
                                     {/* <p className="text-[14px]">{report.reason}</p> */}
                                 </div>
                                 <div className="flex items-baseline mt-1.5">
-                                    <p className="text-sm">Additional Details:&nbsp;{report.additionalDetails}</p>
+                                    <p className="text-sm">Additional Details:&nbsp;</p>
+                                    <p className="text-sm break-words">{report.additionalDetails}</p>
                                     {/* <p className="text-[14px]">{report.additionalDetails}</p> */}
                                 </div>
                                 <div className="flex items-baseline mt-1.5">

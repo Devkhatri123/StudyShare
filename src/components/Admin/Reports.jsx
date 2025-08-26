@@ -95,10 +95,10 @@ export default function Reports() {
                         return <div key={i} className="update mb-2.5 bg-[#fef1f2] gap-3 sm:gap-0 flex items-center flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
                             <div className="left w-full sm:w-fit flex">
                                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">
-                                    <span className="text-xs sm:text-sm font-semibold text-white">{report.fullname.substring(0, 1)}</span>
+                                    <span className="text-xs sm:text-sm font-semibold text-white">{report.username.substring(0, 1)}</span>
                                 </div>
                                 <div className="ml-2">
-                                    <h1 className="font-bold text-[#7f1d1d]">{report.fullname}</h1>
+                                    <h1 className="font-bold text-[#7f1d1d]">{report.username}</h1>
                                     <div className="truncate">
                                         <p className="text-sm truncate text-[#7f1d1d]">{report.universityEmail}</p>
                                         <p className="text-xs text-white bg-[#ef4444] w-fit px-2 rounded-lg text-center">{report.reportCount} Reports</p>
