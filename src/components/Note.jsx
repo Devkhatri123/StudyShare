@@ -55,11 +55,12 @@ const Note = ({ note }) => {
           <User className="w-4 mr-2" />
           <button className="text-sm">Report User</button>
         </div>
+        {showReportModal && reportType == "user" && <ReportModal setShowModal={setShowReportModal} reportType={reportType} createdBy={note.createdBy} reportedNote={null} />}
         <div className="flex w-full  justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-2 px-3 text-black" onClick={() => { setReportType("note"); setShowReportModal(true) }}>
           <Flag className="w-4 mr-2" />
           <button className="text-sm">Report Note</button>
         </div>
-        {showReportModal && <ReportModal setShowModal={setShowReportModal} reportType={reportType} createdBy={note.createdBy} />}
+        {showReportModal && reportType == "note" && <ReportModal setShowModal={setShowReportModal} reportType={reportType} createdBy={null} reportedNote={note} />}
       </div>
     </div>
   )

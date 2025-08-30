@@ -19,7 +19,7 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
     const Edit = async() => {
         if(validateInput()){
      setLoading(true);
-     await axios.put(`${API_BACKEND_URL}/admin/updateSubject`,subjectToEdit,{withCredentials:true})
+     await axios.put(`${API_BACKEND_URL}/subject/admin/updateSubject`,subjectToEdit,{withCredentials:true})
      .then((response)=>{
         toast.success(response.data);
         setShowEditSubjectModal(false);

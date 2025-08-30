@@ -31,7 +31,7 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
         await axios.post(`${API_BACKEND_URL}/notes/admin/sendRemarkForNote`, remarkRequest, { withCredentials: true })
             .then((response) => {
                 if (response.status == 200) {
-                    toast.success(response.data.message);
+                    toast.success(response.data);
                     const filteredNotes = ApprovalPendingNotes.filter((note) => {
                         return note.id != currentNote.id;
                     });
@@ -42,6 +42,11 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
                 }
             }).catch((error) => {
                 console.log(error);
+                if(error.response.status == 404){
+                toast.error("Note may already have been approved or declined");
+                return;
+                }
+                toast.error("Error in declining note");
             }).finally(() => {
                 setLoading(false);
             })

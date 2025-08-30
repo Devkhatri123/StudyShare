@@ -1,10 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Eye, EyeOff, BookOpen, ChevronDown } from "lucide-react"
-import { useError } from "../ContextApi/ErrorContext"
 import { isValidEmail } from "../utils/Validation";
-import ErrorMessage from "./ErrorMessage";
 import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";

@@ -4,10 +4,10 @@ import { useContext, useEffect, useState } from "react";
 import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import { toast } from "react-toastify";
-import BlockModal from "./BlockModal";
+import BlockModal from "../Modals/User/BlockModal";
 import { BlockUser, DiscardUserReports } from "../../Service/userService";
 import { AdminContext } from "../../ContextApi/AdminContext";
-import ReportsDetailsModal from "./ReportsDetailsModal";
+import ReportsDetailsModal from "../Modals/User/ReportsDetailsModal";
 
 export default function Reports() {
     const [reportedProfiles, setReportedProfiles] = useState([]);

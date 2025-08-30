@@ -1,6 +1,6 @@
 import { useContext, useEffect,useState } from "react"
 import { AuthContext } from "../ContextApi/AuthContext"
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, BookOpen } from "lucide-react"
 import axios from "axios";
 import Loader from "./Loader";
@@ -28,28 +28,29 @@ export default function SignIn() {
        if(!isValidEmail(user.email)){
          toast.error("Invalid Mail")
          return;
-       } else if(user.password.length == 0){
-        setError("Password is empty");
+       } else if(user.password.trim().length == 0){
+        toast.error("Password is empty");
         return;
        }
-      if(error != "") setError("");
         setLoading(true);
-        axios.defaults.withCredentials = true;
+       axios.defaults.withCredentials = true;
        await axios.post(`${API_BACKEND_URL}/auth/login`,user)
       .then((response)=>{
-        if(Object.keys(response.data.user).length > 0){
-        AuthenticationContext.setAuthenticatedUser(response.data.user);
+        console.log(response)
+        if(Object.keys(response.data).length > 0){
+        AuthenticationContext.setAuthenticatedUser(response.data);
         AuthenticationContext.setIsAuthenticated(true);
         toast.success("SignIn successful");
         }
       }).catch((error)=>{
-        toast.error(error.response.data.message);
+        toast.error(error.response.data);
         console.log(error);
       }).finally(()=>{
         setLoading(false);
       });
     }
-
+     
+   
 
     return (
         <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
@@ -71,9 +72,6 @@ export default function SignIn() {
               Sign Up
             </a>
           </p>
-          {/* {error != "" &&  (
-           <ErrorMessage Msg={error}/>
-          )} */}
         </div>
 
         {/* Form Card */}
@@ -126,6 +124,7 @@ export default function SignIn() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+                <Link to={"/resetPasswordForm"} className="font-semibold text-indigo-600 hover:text-indigo-300">Forget password</Link>
               </div>
 
                {/* Submit button */}

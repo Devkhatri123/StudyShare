@@ -2,10 +2,10 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import API_BACKEND_URL from "../../utils/API";
-import Loader from "../Loader";
-import { AdminContext } from "../../ContextApi/AdminContext";
-import { AuthContext } from "../../ContextApi/AuthContext";
+import API_BACKEND_URL from "../../../utils/API";
+import Loader from "../../Loader";
+import { AdminContext } from "../../../ContextApi/AdminContext";
+import { AuthContext } from "../../../ContextApi/AuthContext";
 
 export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,selectedUpdate,Profiles,setProfiles}){
     const [enableRemarkModal,setEnableRemarkModal] = useState(false);
@@ -36,6 +36,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
             setPreviewUserInfoUpdate(false);
         }
       }).catch((error)=>{
+        toast.error(error.response.data);
         console.log(error);
       }).finally(()=>{
          setLoading(false);

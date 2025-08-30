@@ -23,7 +23,6 @@ export default function StudyShareHomepage() {
     if(!hasMore) return;
     await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=3&query=${query}`,{withCredentials:true})
     .then((response)=>{
-      console.log([...response.data])
       if(limit == 0) setSubjects([...response.data]);
       else setSubjects((prev) =>[...prev,...response.data]);
       if(!response.data.length > 0) setHasMore(false);

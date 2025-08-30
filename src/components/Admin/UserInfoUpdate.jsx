@@ -1,6 +1,6 @@
 import { Eye, UserCheck } from "lucide-react";
 import { useEffect, useState } from "react";
-import PreviewUserInfoUpdateModal from "./PreviewUserInfoUpdateModal";
+import PreviewUserInfoUpdateModal from "../Modals/User/PreviewUserInfoUpdateModal";
 import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { Link } from "react-router-dom";
@@ -54,7 +54,7 @@ export default function UserInfoUpdate(){
                   <div className="body bg-white p-5">
                     {updates.length > 0 ? (
                     updates.map((update,i)=>{
-                  return <div key={i} className="update mb-2.5 gap-3 sm:gap-0 flex items-center flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
+                  return <div key={i} className="update mb-2.5 gap-3 sm:gap-0 flex items-center mb-6 flex-col sm:flex-row justify-between border border-gray-200 rounded-lg px-2 py-3 hover:shadow-xl">
                     <div className="left w-full sm:w-fit flex">
                         <Link to={"/profile"} className="h-fit" state={{userEmail:update.id}}>
                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-sm">

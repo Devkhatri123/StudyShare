@@ -5,7 +5,7 @@ import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { AuthContext } from "../../ContextApi/AuthContext";
 import { toast } from "react-toastify";
-import BlockModal from "./BlockModal";
+import BlockModal from "../Modals/User/BlockModal";
 import { BlockUser, DiscardUserReports } from "../../Service/userService";
 import { Link } from "react-router-dom";
 
@@ -97,6 +97,7 @@ export default function UserManagement() {
                     toast.success("User blocked successfully");
                 }
             }).catch((error) => {
+                toast.error(error.response.data)
                 console.log(error);
             }).finally(() => {
                 setLoading4(false);

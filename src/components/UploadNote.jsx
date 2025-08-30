@@ -292,7 +292,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
 
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>
                         <div className="flex justify-end mx-2.5 sm:mx-0 sm:mr-2.5 flex-col gap-2 sm:flex-row">
-                            <button className="sm:mr-3 bg-gray-100 text-black py-2 px-2.5 rounded-md text-sm" onClick={()=>{cancelUpload()}}>cancel</button>
                             {!loading ? (
                                 <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm justify-center" onClick={() => uploadNote()}><Upload className="text-sm mr-1 w-[13px]" />Upload Note</button>
                             ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md sm:w-[100px]" disabled style={{opacity:"0.7"}}><Loader /></button>}

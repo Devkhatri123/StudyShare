@@ -10,7 +10,7 @@ import { Link, useLocation } from "react-router-dom";
 import UploadNote from "./UploadNote";
 import Loader from "./Loader";
 import { isValidEmail } from "../utils/Validation";
-import ChangeEmail from "./ChangeEmail";
+import ChangeEmail from "./Modals/User/ChangeEmail";
 
 export default function Profile() {
   const [isDisbaled, setIsDisabled] = useState(true);
@@ -44,8 +44,13 @@ export default function Profile() {
     const getProfile = async() => {
       await axios.get(`${API_BACKEND_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
       .then((response)=>{
-        setAuthenticatedUser(response.data.profile);
+        setAuthenticatedUser(response.data);
       }).catch((error)=>{
+        if(error.response == 404 ){
+          toast.error("Profile not found");
+          return;
+        }
+        toast.error(error.response.data)
         console.log(error);
       }).finally(()=>{
         setTempAuthenticatedUserLoading(false);
@@ -88,11 +93,12 @@ export default function Profile() {
     }, 600);
   }
 
-  const updateInfo = async () => {
-    if(!isValidEmail(tempAuthenticatedUser.universityEmail)){
+  const updateInfo = async (newEmail) => {
+    if(!isValidEmail(newEmail)){
       toast.error("Email is not valid");
       return;
     }
+    setAuthenticatedUser((prev)=>({...prev,universityEmail:newEmail}))
     setSaveLoading(true);
     if(showChangeEmailModal) setChangeEmailLoading(true);
     await axios.put(`${API_BACKEND_URL}/profile/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
@@ -276,7 +282,7 @@ export default function Profile() {
                   ) :
                     <div className="right_enabled flex gap-2.5 mt-5 flex-col sm:mt-0 sm:flex-row w-full sm:w-fit">
                       {!saveLoading ? (
-                        <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" onClick={() => { updateInfo() }} style={{ background: "#16a34a" }}>
+                        <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" onClick={() => { updateInfo(tempAuthenticatedUser.universityEmail) }} style={{ background: "#16a34a" }}>
                           <>
                             <Save className="w-4" />
                             <button className="ml-1" >Save</button>

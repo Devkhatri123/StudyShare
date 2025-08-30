@@ -21,7 +21,6 @@ export default function PendingNotesApproval() {
   const adminContext = useContext(AdminContext);
 
   useEffect(() => {
-    if(Object.entries(adminContext.count).length > 0){
     if (!hasMore) return;
     axios.get(`${API_BACKEND_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
       .then((response) => {
@@ -29,14 +28,10 @@ export default function PendingNotesApproval() {
           setApprovalPendingNotes((prev) => ([...prev, ...response.data]));
         } else sethasMore(false);
       }).catch((error) => {
-        // if(error.status == 403){
-        //   toast.error(error.response.data);
-        // }
         console.log(error);
       }).finally(() => {
         setLoading(false);
       });
-    }else setLoading(false)
   }, [pageNumber]);
 
   const handleScroll = () => {
@@ -72,7 +67,7 @@ export default function PendingNotesApproval() {
         adminContext.setCount({});
       }
       }).catch((error) => {
-        console.log(error.response);
+        console.log(error.response.data);
         toast.error("Error in approving note");
       }).finally(() => {
         setApproveLoading(false);

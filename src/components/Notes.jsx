@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import UploadNote from "./UploadNote";
 import { AuthContext } from "../ContextApi/AuthContext";
 import { Link } from "react-router-dom";
+import API_BACKEND_URL from "../utils/API";
 
 export default function Notes() {
   const bodyRef = useRef();
@@ -27,14 +28,14 @@ export default function Notes() {
     timerRef.current = setTimeout(async() => {
      const fetchNotes = async () => {
       if(!hasMore) return;
-      await axios.get(`http://localhost:8080/v1/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=3&query=${query}`)
+      await axios.get(`${API_BACKEND_URL}/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=3&query=${query}`)
         .then((response) => {
-          if(subject == null) setSubject(response.data[0].subject);
           if(!response.data.length>0){
             setHasMore(false);
            }
             if(pageNumber == 0) setNotes([...response.data]);
             else setNotes((prev)=>([...prev,...response.data]));
+            if(subject == null) setSubject(response.data[0]?.subject);
         }).catch((error) => {
           console.log(error);
         }).finally(() => {
@@ -66,7 +67,6 @@ export default function Notes() {
       }
 
   return (
-    !loading ? (
       <>
         <Navbar />
 
@@ -131,7 +131,9 @@ export default function Notes() {
             </div>
           </div>
           {showUploadModal && <UploadNote setShowUploadModal={setShowUploadModal}/>}
-          {subject !== null && 
+          {!loading ? (
+            <>
+          {subject != null && 
            <>
               <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 py-4 sm:py-6 lg:py-8">
                 <div className="bg-white rounded-lg sm:rounded-xl shadow-sm border border-gray-200 p-4 sm:p-6 lg:p-8 mb-4 sm:mb-6">
@@ -155,17 +157,17 @@ export default function Notes() {
                     </div>
 
                     <div className="flex-1 text-center sm:text-left">
-                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3 leading-tight">
+                      <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-0 leading-tight">
                         {subject?.subjectName}
                       </h1>
-                      <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{subject.shortDescription}</p>
+                      <p className="text-base sm:text-lg text-gray-600 leading-relaxed">{subject?.shortDescription}</p>
                     </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-6 lg:space-x-8 text-sm pt-4 border-t border-gray-100">
                     <div className="flex items-center justify-center sm:justify-start space-x-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                      <span className="font-semibold text-gray-900">{subject.semester} Semester</span>
+                      <span className="font-semibold text-gray-900">{subject?.semester} Semester</span>
                     </div>
                     <div className="flex items-center justify-center sm:justify-start space-x-2">
                       <svg
@@ -232,19 +234,20 @@ export default function Notes() {
                 </div>
               </div>
                </>
-          }
-                <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pb-8">
+               }
+            {/**Notes Section */}
+            <div className="max-w-6xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 pb-8">
                 {notes.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                   {notes.map((note,i) => (
                     <Note key={i} note={note} />
                   ))}
                 </div>
-                ): <p className="text-center flex items-center justify-center text-xl font-bold" style={{ height: "50dvh" }}>No Notes found of {subjectName}</p>}
-               
+                ): !loading && <p className="text-center flex items-center justify-center text-xl font-bold" style={{ height: "50dvh" }}>No Notes found of {subjectName}</p>}
               </div>
+             </>
+             ) :<div className="h-[50vh] flex items-center"> <Loader /> </div>}
  </div>
       </>
-    ) : <Loader />
   )
 }

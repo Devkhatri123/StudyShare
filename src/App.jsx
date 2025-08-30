@@ -17,6 +17,8 @@ import Loader from './components/Loader';
 import AdminHome from './components/Admin/AdminHome';
 import Blocked from './components/Blocked';
 import { AdminProvider } from './ContextApi/AdminContext';
+import ResetPasswordModal from './components/Modals/User/ResetPasswordModal';
+import ResetPasswordForm from './components/Modals/User/ResetPasswordForm';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
@@ -56,10 +58,11 @@ function App() {
             </AdminProvider>
           } />
           <Route path="/note/:noteID" element={<ViewNote />} />
+
+          {/* Account Routes */}
           <Route path="/verify" element={<EmailVerificationCode />} />
-          
-
-
+          <Route path="/changePassword" element={<ResetPasswordModal />}/>
+          <Route path="/resetPasswordForm" element={<ResetPasswordForm />}/>
           <Route path='/signIn' element={<SignIn />} />
           <Route path='/register' element={<Register />} />
           <Route path="/blocked" element={<Blocked />} />

@@ -6,7 +6,7 @@ import { AuthContext } from "../ContextApi/AuthContext";
 import { toast } from "react-toastify";
 import Loader from "./Loader";
 
-export default function ReportModal({setShowModal,reportType,createdBy}){
+export default function ReportModal({setShowModal,reportType,createdBy,reportedNote}){
     
     const authContext = useContext(AuthContext);
     const [loading,setLoading] = useState(false);
@@ -14,13 +14,17 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
     const selectRef = useRef();
     const [Report,SetReport] = useState({
         reportedBy:authContext.AuthenticatedUser?.id,
-        reportedUser:createdBy.id,
+        reportedUser:"",
+        reportedNote:"",
         reason:"Spam or scam",
         additionalDetails:""
     });
 
     useEffect(()=>{
     document.body.style.overflowY = "hidden";
+    if(reportType == "user") SetReport((prev)=>({...prev,reportedUser:createdBy.id}));
+    else SetReport((prev)=>({...prev,reportedNote:reportedNote.id}));
+    SetReport((prev)=>({...prev,reportedBy:authContext.AuthenticatedUser?.id}));
     return () => document.body.style.overflowY = "unset";
     },[])
    const report = async() => {
@@ -32,9 +36,9 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
     //     toast.error("You can't report to yourself");
     //     return;
     // }
-    if(reportType === "user"){
-       setLoading(true);
-        await axios.post(`${API_BACKEND_URL}/report/user`,Report,{withCredentials:true})
+        if(validateInputs()){
+        setLoading(true);
+        await axios.post(`${API_BACKEND_URL}/report/${reportType == "user" ? "user":"note"}`,Report,{withCredentials:true})
         .then((response)=>{
         toast.success(response.data);
         setShowModal(false);
@@ -42,15 +46,23 @@ export default function ReportModal({setShowModal,reportType,createdBy}){
           console.log(error);
         }).finally(()=>{
             setLoading(false);
-        })
+        });
     }
    }
 
+   const validateInputs = () => {
+    if(Report.reason.trim().length == 0) {
+        toast.error("Select a reason");
+        return false;
+    }else if(Report.additionalDetails.trim().length == 0){
+        toast.error("Write additional Detail");
+        return false;
+    }
+    return true;
+   }
    const handleReportDescription = (e) => {
-    console.log(e.target.value.length)
     if(e.target.value.length <= 120){
         SetReport((prev)=>({...prev,additionalDetails:e.target.value}));
-        //return
     }
 
    }

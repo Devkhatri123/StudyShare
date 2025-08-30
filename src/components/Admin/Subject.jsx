@@ -62,7 +62,7 @@ export default function Subject() {
     
     const deleteSubject = async(id,i) => {
     setDeleteLoading(true);
-    await axios.delete(`${API_BACKEND_URL}/admin/subject/${id}`,{withCredentials:true})
+    await axios.delete(`${API_BACKEND_URL}/subject/admin/subject/${id}`,{withCredentials:true})
     .then((response)=>{
         toast.success(response.data);
         subjects.splice(i,1)

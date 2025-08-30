@@ -9,6 +9,7 @@ import axios from "axios";
 import API_BACKEND_URL from "../../utils/API";
 import { AdminContext } from "../../ContextApi/AdminContext";
 import Subject from "./Subject";
+import NotesReport from "./NotesReports";
 
 export default function AdminHome() {
   const [currentComponent, setCurrentComponent] = useState(<PendingNotesApproval />);
@@ -53,6 +54,9 @@ export default function AdminHome() {
     } else if (currenTab === "Subjects") {
       setCurrentComponent(<Subject />)
       setcurrentTabName("Subjects")
+    }else if (currenTab === "Notes_report"){
+      setCurrentComponent(<NotesReport/>)
+      setcurrentTabName("Notes_report");
     }
   }
   return (
@@ -68,7 +72,7 @@ export default function AdminHome() {
                 </div> */}
           </div>
         </header>
-        <div className="bg-[#f1f4f6] px-4">
+        <div className="bg-[#f1f4f6] px-4 h-[100vh]">
           <div className="body max-w-dvh mx-0 sm:max-w-2xl md:max-w-3xl  lg:max-w-5xl sm:mx-auto pt-10">
             <div className="stats grid-cols-1 grid sm:grid-cols-2 gap-4">
               <div className="pendingNotes flex bg-[#f4f7fe] shadow-sm rounded-md p-3.5">
@@ -132,6 +136,10 @@ export default function AdminHome() {
                   />
                 </svg>
                 <p>Subject</p>
+              </div>
+              <div className="Notes_reports flex gap-2 py-2 px-3 rounded-md hover:cursor-pointer items-center" onClick={() => returnComponent("Notes_report")} style={{ background: `${currentTabName === "Notes_report" ? "black" : ""}`, color: `${currentTabName === "Notes_report" ? "white" : "black"}` }}>
+                <FileText className="w-6 h-6 sm:w-5 sm:h-5" />
+                <p>Reports</p>
               </div>
             </div>
             <div className="main shadow-xl">

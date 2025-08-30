@@ -64,7 +64,10 @@ export default function EmailVerificationCode() {
             if(location?.state?.PrevURL !== "/"){
                 navigate("/signIn");
             }else {
-                authContext.setAuthenticatedUser(null);
+                authContext.setAuthenticatedUser((prev)=>({...prev,
+                    emailVerified:true,
+                    accountStatus:"Active"
+                }));
                 navigate("/")
             }
           }).catch((error)=>{
@@ -89,9 +92,9 @@ export default function EmailVerificationCode() {
         }
         axios.post(`${API_BACKEND_URL}/auth/resendVerificationCode?email=${location.state.email}`)
         .then((response)=>{
-            toast.success(response.data.message);
+            toast.success(response.data);
         }).catch((error)=>{
-            toast.error(error.response.data.message);
+            toast.error(error.response.data);
             console.log(error);
         })
     }
@@ -101,12 +104,12 @@ export default function EmailVerificationCode() {
             <div className="max-w-10/12 bg-white shadow-lg sm:max-w-7xl mx-auto text-center rounded-2xl">
                 <div>
                     <h1 className="overflow-hidden text-ellipsis text-2xl sm:text-3xl font-sans font-bold mt-12 pb-1.5 px-4">Email Verification</h1>
-                    <p className="overflow-hidden text-ellipsis mx-auto px-12 mt-2 max-w-[436px] text-slate-500">Enter the 4-digit verification code that was sent to your email.</p>
+                    <p className="overflow-hidden text-ellipsis mx-auto px-2 sm:px-12 mt-2 max-w-[436px] text-slate-500 line-clamp-2">Enter the 4-digit verification code that was sent to your email.</p>
                     <div ref={inputsRef} className="inputs flex justify-center gap-3 mt-5 mb-5">
-                        <input type="text" id="0" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
-                        <input type="text" id="1" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
-                        <input type="text" id="2" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
-                        <input type="text" id="3" className="input bg-slate-100 max-w-2/12 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
+                        <input type="text" id="0" className="input bg-slate-100 w-10 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
+                        <input type="text" id="1" className="input bg-slate-100 w-10 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
+                        <input type="text" id="2" className="input bg-slate-100 w-10 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
+                        <input type="text" id="3" className="input bg-slate-100 w-10 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
                     </div>
                     {!loading ? (
                     <button onClick={()=>sendOtp()} className="rounded-lg bg-indigo-500 text-white font-medium px-[2em] sm:px-28 py-1.5 mb-3 hover:bg-indigo-600 transition-colors duration-150 cursor-pointer">Verify</button>

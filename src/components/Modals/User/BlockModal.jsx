@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import Loader from "../Loader";
+import Loader from "../../Loader";
 
 export default function BlockModal({user,blockUser,setShowBlockModal,loading}){
     
