@@ -2,14 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../ContextApi/AuthContext';
 import axios from 'axios';
-import API_BACKEND_URL from '../utils/API';
 export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [showDropDown,setShowDropDown] = useState(false);
     const authContext = useContext(AuthContext);
  
     const signOut = () => {
-      axios.post(`${API_BACKEND_URL}/auth/logout`,{},{withCredentials:true})
+      axios.post(`${import.meta.env.VITE_API_URL}/auth/logout`,{},{withCredentials:true})
       .then((response)=>{
         authContext.setIsAuthenticated(false);
         authContext.setAuthenticatedUser(null);

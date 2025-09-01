@@ -1,7 +1,6 @@
 import axios from "axios";
 import { X } from "lucide-react"
 import { useEffect, useState } from "react"
-import API_BACKEND_URL from "../../../utils/API";
 import Loader from "../../Loader";
 import { toast } from "react-toastify";
 import { isValidSubjectCode } from "../../../utils/Validation";
@@ -31,7 +30,7 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
         if (validateInput()) {
 
             setLoading(true);
-            await axios.post(`${API_BACKEND_URL}/subject/admin/addSubject`, subject, { withCredentials: true })
+            await axios.post(`${import.meta.env.VITE_API_URL}/subject/admin/addSubject`, subject, { withCredentials: true })
                 .then((response) => {
                     toast.success(response.data.message);
                     setSubjects((prev) => ([...prev, response.data.NewSubject]));

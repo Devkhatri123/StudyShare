@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import Loader from "../Loader";
 import axios from "axios";
-import API_BACKEND_URL from "../../utils/API";
 import { BlocksIcon, StopCircle } from "lucide-react";
 import ViewNoteReports from "../Modals/Notes/ViewNoteReports";
 import { toast } from "react-toastify";
@@ -22,7 +21,7 @@ export default function NotesReport() {
     useEffect(() => {
         if (!hasMore) return;
         const getReportedNotes = async () => {
-            await axios.get(`${API_BACKEND_URL}/report/note/all?pageNumber=${pageNumber}&limit=${3}`, { withCredentials: true })
+            await axios.get(`${import.meta.env.VITE_API_URL}/report/note/all?pageNumber=${pageNumber}&limit=${3}`, { withCredentials: true })
                 .then((response) => {
                     setReportedNotes((prev) => [...prev, ...response.data]);
                     if (!response.data.length > 0) setHasMore(false);
@@ -49,7 +48,7 @@ export default function NotesReport() {
     // Discard Note reports
     const discardNoteReports = async(noteID) => {
      setDiscardLoading(true);
-     await axios.delete(`${API_BACKEND_URL}/admin/report/note/${noteID}`,{withCredentials:true})
+     await axios.delete(`${import.meta.env.VITE_API_URL}/admin/report/note/${noteID}`,{withCredentials:true})
      .then((response)=>{
         reportedNotes.splice(clickedReportIndex,1);
         toast.success(response.data);
@@ -64,7 +63,7 @@ export default function NotesReport() {
     // Remove Note
     const removeNote = async(noteId) => {
      setRemoveNoteLoading(true);
-     await axios.post(`${API_BACKEND_URL}/admin/remove/note/${noteId}?noteRemovalReason=${removalReason}`,{},{withCredentials:true})
+     await axios.post(`${import.meta.env.VITE_API_URL}/admin/remove/note/${noteId}?noteRemovalReason=${removalReason}`,{},{withCredentials:true})
      .then((response)=>{
         reportedNotes.splice(clickedReportIndex,1);
         toast.success(response.data);

@@ -2,7 +2,6 @@ import { Eye, UserCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import PreviewUserInfoUpdateModal from "../Modals/User/PreviewUserInfoUpdateModal";
 import axios from "axios";
-import API_BACKEND_URL from "../../utils/API";
 import { Link } from "react-router-dom";
 
 export default function UserInfoUpdate(){
@@ -17,7 +16,7 @@ export default function UserInfoUpdate(){
     useEffect(()=>{
       if(!hasMore) return;
         const getApprovalPendingUserUpdates = () => {
-            axios.get(`${API_BACKEND_URL}/profile/admin/ApprovalPendingUserInfo?pageNumber=${pageNumber}&limit=2`,{withCredentials:true})
+            axios.get(`${import.meta.env.VITE_API_URL}/profile/admin/ApprovalPendingUserInfo?pageNumber=${pageNumber}&limit=2`,{withCredentials:true})
             .then((response)=>{
               if(response.data.length > 0){
                 SetUpdates((prev) => [...prev,...response.data]);

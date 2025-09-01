@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Upload, X } from "lucide-react";
 import axios from "axios";
-import API_BACKEND_URL from "../../utils/API";
 import { toast } from "react-toastify";
 import Loader from "../Loader";
 import { AdminContext } from "../../ContextApi/AdminContext";
@@ -28,7 +27,7 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
     const sendRemark = async () => {
         if(validateInputs()){
         setLoading(true);
-        await axios.post(`${API_BACKEND_URL}/notes/admin/sendRemarkForNote`, remarkRequest, { withCredentials: true })
+        await axios.post(`${import.meta.env.VITE_API_URL}/notes/admin/sendRemarkForNote`, remarkRequest, { withCredentials: true })
             .then((response) => {
                 if (response.status == 200) {
                     toast.success(response.data);

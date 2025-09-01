@@ -1,6 +1,5 @@
 import axios from "axios";
 import { Eye, Plus, Trash } from "lucide-react";
-import API_BACKEND_URL from "../../utils/API";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../ContextApi/AuthContext";
 import { returnFullFormOfDepartment } from "../../utils/Validation";
@@ -29,7 +28,7 @@ export default function Subject() {
         timer.current = setTimeout(() => {
             if (!hasMore) return;
             const getCurrentSubjects = async () => {
-                await axios.get(`${API_BACKEND_URL}/subject/adminDepartmentSubjects?pageNumber=${pageNumber}&pageSize=3&query=${query}&department=${authContext.AuthenticatedUser.department}`, { withCredentials: true })
+                await axios.get(`${import.meta.env.VITE_API_URL}/subject/adminDepartmentSubjects?pageNumber=${pageNumber}&pageSize=3&query=${query}&department=${authContext.AuthenticatedUser.department}`, { withCredentials: true })
                     .then((response) => {
                         if (pageNumber == 0) setSubjects([...response.data]);
                         else setSubjects((prev) => [...prev, ...response.data]);
@@ -62,7 +61,7 @@ export default function Subject() {
     
     const deleteSubject = async(id,i) => {
     setDeleteLoading(true);
-    await axios.delete(`${API_BACKEND_URL}/subject/admin/subject/${id}`,{withCredentials:true})
+    await axios.delete(`${import.meta.env.VITE_API_URL}/subject/admin/subject/${id}`,{withCredentials:true})
     .then((response)=>{
         toast.success(response.data);
         subjects.splice(i,1)

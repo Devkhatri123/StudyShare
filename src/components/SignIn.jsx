@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Eye, EyeOff, BookOpen } from "lucide-react"
 import axios from "axios";
 import Loader from "./Loader";
-import API_BACKEND_URL from "../utils/API";
 import { isValidEmail } from "../utils/Validation";
 import { toast } from "react-toastify";
 export default function SignIn() {
@@ -33,7 +32,7 @@ export default function SignIn() {
        }
         setLoading(true);
        axios.defaults.withCredentials = true;
-       await axios.post(`${API_BACKEND_URL}/auth/login`,user)
+       await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`,user)
       .then((response)=>{
         if(Object.keys(response.data).length > 0){
         AuthenticationContext.setAuthenticatedUser(response.data);

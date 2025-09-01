@@ -4,7 +4,6 @@ import { BookOpen } from "lucide-react";
 import Loader from "../../Loader";
 import { toast } from "react-toastify";
 import axios from "axios";
-import API_BACKEND_URL from "../../../utils/API";
 
 export default function ResetPasswordForm(){
     const [email,setEmail] = useState("");
@@ -15,7 +14,7 @@ export default function ResetPasswordForm(){
           if(isValidEmail(email)){
          // toast.error("Write only email to reset you password");
           setLoading(true);
-          await axios.post(`${API_BACKEND_URL}/auth/resetPasswordToken/${email}`)
+          await axios.post(`${import.meta.env.VITE_API_URL}/auth/resetPasswordToken/${email}`)
           .then((response)=>{
             toast.success(response.data)
             console.log(response);

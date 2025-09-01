@@ -2,7 +2,6 @@ import { Check, CircleX, Clock, Cross, Delete, Edit, Info, Save, Settings, Timer
 import { useContext, useRef, useState } from "react";
 import { AuthContext } from "../ContextApi/AuthContext";
 import axios from "axios";
-import API_BACKEND_URL from "../utils/API";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import DeleteNoteModal from "./DeleteNoteModal";
@@ -44,7 +43,7 @@ export default function Profile() {
     // Fetch user profile
     if(authContext.AuthenticatedUser != null){
     const getProfile = async() => {
-      await axios.get(`${API_BACKEND_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
+      await axios.get(`${import.meta.env.VITE_API_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
       .then((response)=>{
         setAuthenticatedUser(response.data);
         usernameRef.current = response.data.username;
@@ -75,7 +74,7 @@ export default function Profile() {
   const getMyNotes = async () => {
     timer.current = setTimeout(async () => {
       if (!hasMore) return;
-      await axios.get(`${API_BACKEND_URL}/notes/myNotes?userId=${tempAuthenticatedUser.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+      await axios.get(`${import.meta.env.VITE_API_URL}/notes/myNotes?userId=${tempAuthenticatedUser.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
         .then((response) => {
           if (!response.data.myNotes.length > 0) setHasMore(false);
           setCount(response.data.count)
@@ -105,7 +104,7 @@ export default function Profile() {
     setAuthenticatedUser((prev)=>({...prev,username:username}));
     setSaveLoading(true);
     if(showChangeEmailModal) setChangeEmailLoading(true);
-    await axios.put(`${API_BACKEND_URL}/profile/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
+    await axios.put(`${import.meta.env.VITE_API_URL}/profile/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
       .then((response) => {
         toast.success(response.data);
         setAccountStatus({ status: "Pending", remark: "Update Request Pending Review" })
@@ -174,7 +173,7 @@ export default function Profile() {
 
   const getAccountStatus = () => {
     if(tempAuthenticatedUser != null && tempAuthenticatedUser.id === authContext.AuthenticatedUser.id){
-    axios.get(`${API_BACKEND_URL}/profile/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`, { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_API_URL}/profile/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`, { withCredentials: true })
       .then((response) => {
         if (response.data.status == "Declined") {
           setAccountStatus({ status: "Declined", remark:"Reason: "+response.data.remark });
@@ -189,7 +188,7 @@ export default function Profile() {
   useEffect(() => {
     if(tempAuthenticatedUser != null && tempAuthenticatedUser.id === authContext.AuthenticatedUser.id){
     if (accountStatus.status === "Approved" || accountStatus.status === "Declined") {
-      axios.delete(`${API_BACKEND_URL}/profile/UpdateInfoInfo/${tempAuthenticatedUser.id}`, { withCredentials: true })
+      axios.delete(`${import.meta.env.VITE_API_URL}/profile/UpdateInfoInfo/${tempAuthenticatedUser.id}`, { withCredentials: true })
         .then((response) => {
         //  setAccountStatus({});
         }).catch((error) => {
@@ -201,7 +200,7 @@ export default function Profile() {
 
 
   const editNote = (id, idx) => {
-    axios.get(`${API_BACKEND_URL}/notes/note/${id}`)
+    axios.get(`${import.meta.env.VITE_API_URL}/notes/note/${id}`)
       .then((response) => {
         setNoteToUpdate(response.data);
         setcurrentNoteIndex(idx);

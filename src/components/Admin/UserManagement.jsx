@@ -2,7 +2,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import Loader from "../Loader";
 import { Blocks, Search, StopCircle, User2, UserCheck } from "lucide-react";
 import axios from "axios";
-import API_BACKEND_URL from "../../utils/API";
 import { AuthContext } from "../../ContextApi/AuthContext";
 import { toast } from "react-toastify";
 import BlockModal from "../Modals/User/BlockModal";
@@ -30,7 +29,7 @@ export default function UserManagement() {
             const fetchProfiles = async () => {
                 if (!hasMore) return;
                 setLoading(true);
-                await axios.get(`${API_BACKEND_URL}/profile/all?pageNumber=${pageNumber}&limit=2&query=${query}`, { withCredentials: true })
+                await axios.get(`${import.meta.env.VITE_API_URL}/profile/all?pageNumber=${pageNumber}&limit=2&query=${query}`, { withCredentials: true })
                     .then((response) => {
                        if (pageNumber == 0) setProfiles([...response.data]);
                         else setProfiles((prev) => [...prev, ...response.data]);
@@ -68,7 +67,7 @@ export default function UserManagement() {
 
     const unBlockUser = async (userId, index) => {
         setLoading2(true);
-        await axios.post(`${API_BACKEND_URL}/profile/admin/unblock/user/${userId}`, {}, { withCredentials: true })
+        await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/unblock/user/${userId}`, {}, { withCredentials: true })
             .then((response) => {
                 if (Profiles[index].emailVerified == false) {
                     Profiles[index].accountStatus = "Disabled";
@@ -85,7 +84,7 @@ export default function UserManagement() {
     const promoteUserToAdmin = async (index, userId) => {
         setCurrentProfile(index);
         setLoading3(true);
-        await axios.post(`${API_BACKEND_URL}/manager/promoteUserToAdmin/${userId}`, {}, { withCredentials: true })
+        await axios.post(`${import.meta.env.VITE_API_URL}/manager/promoteUserToAdmin/${userId}`, {}, { withCredentials: true })
             .then((response) => {
                 Profiles[index].roles.push("ADMIN");
                 toast.success("success!!!");
@@ -120,7 +119,7 @@ export default function UserManagement() {
     }
 
     const removeAdminRole = async (userId, i) => {
-        await axios.post(`${API_BACKEND_URL}/manager/removeAdminRole/${userId}`, {}, { withCredentials: true })
+        await axios.post(`${import.meta.env.VITE_API_URL}/manager/removeAdminRole/${userId}`, {}, { withCredentials: true })
             .then((response) => {
                 const idx = Profiles[i].roles.indexOf("ADMIN");
                 Profiles[i].roles.splice(idx, 1);
@@ -133,7 +132,7 @@ export default function UserManagement() {
 
     // Activating user's disabled account
     const activateUser = async (profileId, i) => {
-        await axios.post(`${API_BACKEND_URL}/profile/admin/activate/user/${profileId}`, {}, { withCredentials: true })
+        await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/activate/user/${profileId}`, {}, { withCredentials: true })
             .then((response) => {
                 Profiles[i].accountStatus = "Active";
                 toast.success(response.data)

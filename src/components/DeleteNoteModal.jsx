@@ -1,6 +1,5 @@
 import axios from "axios";
 import { X } from "lucide-react";
-import API_BACKEND_URL from "../utils/API";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import Loader from "../components/Loader"
@@ -10,7 +9,7 @@ export default function DeleteNoteModal({setShowDeleteModal,setcurrentNoteIndex,
 
     const deleteNote = () =>{
       setLoading(true);
-      axios.delete(`${API_BACKEND_URL}/notes/${noteID}`,{withCredentials:true})
+      axios.delete(`${import.meta.env.VITE_API_URL}/notes/${noteID}`,{withCredentials:true})
       .then((response)=>{
         if(response.status == 200){
             const noneDeletedNotes = Notes.filter((note)=>{

@@ -5,7 +5,6 @@ import Navbar from "./Navbar"
 import axios from "axios";
 import { Link } from "react-router-dom"
 import Loader from "./Loader";
-import API_BACKEND_URL from "../utils/API.JSX";
 import { AuthContext } from "../ContextApi/AuthContext";
 import { returnFullFormOfDepartment } from "../utils/Validation";
 
@@ -21,7 +20,7 @@ export default function StudyShareHomepage() {
     timer.current = setTimeout(() => {
     const getSubjects = async () => {
     if(!hasMore) return;
-    await axios.get(`${API_BACKEND_URL}/subject/all?pageNumber=${limit}&pageSize=3&query=${query}`,{withCredentials:true})
+    await axios.get(`${import.meta.env.VITE_API_URL}/subject/all?pageNumber=${limit}&pageSize=3&query=${query}`,{withCredentials:true})
     .then((response)=>{
       if(limit == 0) setSubjects([...response.data]);
       else setSubjects((prev) =>[...prev,...response.data]);

@@ -1,7 +1,6 @@
 import axios from "axios";
 import { Clock, Eye, FileText, UserCheck, X } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import RemarkModal from "./RemarkModal";
 import PreviewNote from "../Modals/Notes/PreviewNote";
@@ -22,7 +21,7 @@ export default function PendingNotesApproval() {
 
   useEffect(() => {
     if (!hasMore) return;
-    axios.get(`${API_BACKEND_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+    axios.get(`${import.meta.env.VITE_API_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
       .then((response) => {
        if (response.data.length > 0) {
           setApprovalPendingNotes((prev) => ([...prev, ...response.data]));
@@ -56,7 +55,7 @@ export default function PendingNotesApproval() {
 
   const approveNote = async (i) => {
     setApproveLoading(true);
-    await axios.post(`${API_BACKEND_URL}/notes/${ApprovalPendingNotes[i].id}/approve`,{},{withCredentials:true})
+    await axios.post(`${import.meta.env.VITE_API_URL}/notes/${ApprovalPendingNotes[i].id}/approve`,{},{withCredentials:true})
       .then((response) => {
         if(response.status == 200){
         toast.success("Note Approved!!!");

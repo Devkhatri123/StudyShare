@@ -4,7 +4,6 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
 import { AuthContext } from "../ContextApi/AuthContext";
 export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
@@ -18,7 +17,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     const authContext = useContext(AuthContext);
     const [noteData, setnoteData] = useState(
         {
-            id:"",
+            id: "",
             title: "",
             description: "",
             subjectcode: "",
@@ -62,19 +61,19 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             const blob2 = convertBase64ToPdfBlob(noteToUpdate.notePdfData);
             setnoteData((prev) => ({ ...prev, notePdfData: blob2 }));
 
-         }
+        }
     }, [noteToUpdate]);
 
     useEffect(() => {
-          if (noteToUpdate == null) {
-           setnoteData((prev) => ({...prev,subjectcode:subjectCode}));
-         }
+        if (noteToUpdate == null) {
+            setnoteData((prev) => ({ ...prev, subjectcode: subjectCode }));
+        }
 
         document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = "scroll";
         }
-     
+
     }, []);
 
 
@@ -95,8 +94,8 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             return;
         }
         const droppedThumbnail = e.dataTransfer.files[0];
-        setnoteData((prev)=>({ ...prev, imgThumbNail: droppedThumbnail }));
-        setnoteData((prev)=>({ ...prev, thumbnailFilename: droppedThumbnail.name }))
+        setnoteData((prev) => ({ ...prev, imgThumbNail: droppedThumbnail }));
+        setnoteData((prev) => ({ ...prev, thumbnailFilename: droppedThumbnail.name }))
     }
 
     const pickThumbnail = (e) => {
@@ -104,8 +103,8 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             toast.error("Only png/jpg/jpeg images are allowed for thumbnail");
             return;
         }
-        setnoteData((prev)=>({ ...prev, imgThumbNail: e.target.files[0] }));
-        setnoteData((prev)=>({ ...prev, thumbnailFilename: e.target.files[0].name }))
+        setnoteData((prev) => ({ ...prev, imgThumbNail: e.target.files[0] }));
+        setnoteData((prev) => ({ ...prev, thumbnailFilename: e.target.files[0].name }))
     }
 
     // Pdf Upload Drag And Drop
@@ -150,12 +149,12 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             toast.error("Title is empty");
             return;
         }
-         
-         if (noteData.description.length == 0) {
+
+        if (noteData.description.length == 0) {
             toast.error("Description is empty");
             return;
         }
-        if(abortControllerRef.current){
+        if (abortControllerRef.current) {
             abortControllerRef.current.abort();
         }
         abortControllerRef.current = new AbortController();
@@ -165,22 +164,22 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         formData.append("thumbnail", noteData.imgThumbNail);
         formData.append("notes", noteData.notePdfData);
         formData.append("note", new Blob([JSON.stringify({
-            id:noteData.id,
+            id: noteData.id,
             title: noteData.title,
             description: noteData.description,
             subjectCode: noteData.subjectcode,
-            thumbnailFilename:noteData.thumbnailFilename,
-            pdfNoteFilename:noteData.pdfNoteFilename
+            thumbnailFilename: noteData.thumbnailFilename,
+            pdfNoteFilename: noteData.pdfNoteFilename
         })], { type: "application/json" }));
         setLoading(true);
-        await axios.post(`${API_BACKEND_URL}/notes/uploadNote`, formData, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
             withCredentials: true,
-            signal:signal
+            signal: signal
         })
             .then((response) => {
                 toast.success(response.data.message);
                 setShowUploadModal(false);
-               // window.location.reload();
+                // window.location.reload();
             }).catch((error) => {
                 console.log(error)
                 if (error.response.data.message) toast.error(error.response.data.message);
@@ -190,24 +189,24 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             })
     }
 
-   const handleDescription = (e) => {
-    if(e.target.value.length <= 300){
-       setnoteData({ ...noteData, description: e.target.value });
+    const handleDescription = (e) => {
+        if (e.target.value.length <= 300) {
+            setnoteData({ ...noteData, description: e.target.value });
+        }
     }
-   }
 
-   const handleTitle = (e) => {
-    
-    if(e.target.value.length <= 60){
-       setnoteData({ ...noteData, title: e.target.value });
+    const handleTitle = (e) => {
+
+        if (e.target.value.length <= 60) {
+            setnoteData({ ...noteData, title: e.target.value });
+        }
     }
-   }
 
-   const cancelUpload = () => {
-     if(abortControllerRef.current){
-        abortControllerRef.current.abort();
-     }
-   }
+    const cancelUpload = () => {
+        if (abortControllerRef.current) {
+            abortControllerRef.current.abort();
+        }
+    }
 
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }}>
@@ -230,7 +229,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                     </div>
                     <div className="Subject mt-1 px-5 py-2">
                         <p className="mb-1">Description *</p>
-                        <textarea value={noteData.description} onChange={(e)=>{handleDescription(e)}} className="w-full px-3 py-2 text-base rounded-md border-gray-300" name="description" id="" style={{ border: "0.2px solid gray", outline: "none", }} placeholder="Describe your notes..." ></textarea>
+                        <textarea value={noteData.description} onChange={(e) => { handleDescription(e) }} className="w-full px-3 py-2 text-base rounded-md border-gray-300" name="description" id="" style={{ border: "0.2px solid gray", outline: "none", }} placeholder="Describe your notes..." ></textarea>
                         <p className="text-gray-500 text-sm"> Description Length : {noteData.description.length} / 300</p>
                     </div>
 
@@ -287,14 +286,11 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                             </div>
                         }
                     </div>
-
-
-
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>
                         <div className="flex justify-end mx-2.5 sm:mx-0 sm:mr-2.5 flex-col gap-2 sm:flex-row">
                             {!loading ? (
                                 <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm justify-center" onClick={() => uploadNote()}><Upload className="text-sm mr-1 w-[13px]" />Upload Note</button>
-                            ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md sm:w-[100px]" disabled style={{opacity:"0.7"}}><Loader /></button>}
+                            ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md sm:w-[100px]" disabled style={{ opacity: "0.7" }}><Loader /></button>}
                         </div>
                     </div>
 

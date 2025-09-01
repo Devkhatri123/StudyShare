@@ -7,7 +7,6 @@ import Loader from "./Loader";
 import UploadNote from "./UploadNote";
 import { AuthContext } from "../ContextApi/AuthContext";
 import { Link } from "react-router-dom";
-import API_BACKEND_URL from "../utils/API";
 
 export default function Notes() {
   const bodyRef = useRef();
@@ -28,7 +27,7 @@ export default function Notes() {
     timerRef.current = setTimeout(async() => {
      const fetchNotes = async () => {
       if(!hasMore) return;
-      await axios.get(`${API_BACKEND_URL}/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=3&query=${query}`)
+      await axios.get(`${import.meta.env.VITE_API_URL}/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=3&query=${query}`)
         .then((response) => {
           if(!response.data.length>0){
             setHasMore(false);

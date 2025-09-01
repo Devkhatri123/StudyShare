@@ -3,7 +3,6 @@ import Loader from "../../Loader";
 import { BookOpen } from "lucide-react";
 import { toast } from "react-toastify";
 import axios from "axios";
-import API_BACKEND_URL from "../../../utils/API";
 import { useLocation, useNavigate } from "react-router-dom";
 
 export default function ResetPasswordModal(){
@@ -21,8 +20,6 @@ export default function ResetPasswordModal(){
     
     // Reset password
    const resetPassword = async() => {
-    console.log(token);
-    console.log(email);
     if(passwords.password.trim().length == 0 || passwords.confirmPassword.trim().length == 0){
         toast.error("Both passwords input must be non empty ");
         return;
@@ -31,10 +28,9 @@ export default function ResetPasswordModal(){
         return;
     }
      setLoading(true);
-     await axios.put(`${API_BACKEND_URL}/auth/resetPassword?token=${token}&email=${email}`,passwords)
+     await axios.put(`${import.meta.env.VITE_API_URL}/auth/resetPassword?token=${token}&email=${email}`,passwords)
      .then((response)=>{
         toast.success("Password reset successfully");
-        console.log(response);
         navigate("/signIn")
     }).catch((error)=>{
         toast.error(error.response.data);

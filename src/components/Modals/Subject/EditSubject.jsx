@@ -2,7 +2,6 @@ import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react"
 import Loader from "../../Loader";
 import axios from "axios";
-import API_BACKEND_URL from "../../../utils/API";
 import { toast } from "react-toastify";
 import { isValidSubjectCode } from "../../../utils/Validation";
 
@@ -19,7 +18,7 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
     const Edit = async() => {
         if(validateInput()){
      setLoading(true);
-     await axios.put(`${API_BACKEND_URL}/subject/admin/updateSubject`,subjectToEdit,{withCredentials:true})
+     await axios.put(`${import.meta.env.VITE_API_URL}/subject/admin/updateSubject`,subjectToEdit,{withCredentials:true})
      .then((response)=>{
         toast.success(response.data);
         setShowEditSubjectModal(false);

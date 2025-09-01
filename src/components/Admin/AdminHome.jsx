@@ -6,7 +6,6 @@ import Reports from "./Reports";
 import UserManagement from "./UserManagement";
 import { AuthContext } from "../../ContextApi/AuthContext";
 import axios from "axios";
-import API_BACKEND_URL from "../../utils/API.JSX";
 import { AdminContext } from "../../ContextApi/AdminContext";
 import Subject from "./Subject";
 import NotesReport from "./NotesReports";
@@ -23,7 +22,7 @@ export default function AdminHome() {
       if (authContext.AuthenticatedUser.roles.includes("ADMIN")) {
         if(authContext.AuthenticatedUser.emailVerified){
         if (!Object.entries(adminContext.count).length > 0) {
-          axios.get(`${API_BACKEND_URL}/admin/count`, { withCredentials: true })
+          axios.get(`${import.meta.env.VITE_API_URL}/admin/count`, { withCredentials: true })
             .then((response) => {
               adminContext.setCount(response.data)
             }).catch((error) => {

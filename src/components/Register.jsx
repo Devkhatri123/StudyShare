@@ -4,7 +4,6 @@ import { useState } from "react"
 import { Eye, EyeOff, BookOpen, ChevronDown } from "lucide-react"
 import { isValidEmail } from "../utils/Validation";
 import axios from "axios";
-import API_BACKEND_URL from "../utils/API";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -40,7 +39,7 @@ export default function Register() {
   const submitForm = async () => {
     if (Validation()) {
     setLoading(true);
-    await axios.post(`${API_BACKEND_URL}/auth/signUp`, user).then((response) => {
+    await axios.post(`${import.meta.env.VITE_API_URL}/auth/signUp`, user).then((response) => {
        toast.success(response.data);
       navigate("/verify",{state:{email:user.universityEmail,PrevURL:location.pathname}});
     }).catch((error) => {

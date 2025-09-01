@@ -1,7 +1,6 @@
 import axios from "axios";
 import { Blocks, StopCircle, StopCircleIcon, UserCheck } from "lucide-react";
 import { useContext, useEffect, useState } from "react";
-import API_BACKEND_URL from "../../utils/API";
 import Loader from "../Loader";
 import { toast } from "react-toastify";
 import BlockModal from "../Modals/User/BlockModal";
@@ -23,7 +22,7 @@ export default function Reports() {
     useEffect(() => {
         if (!hasMore) return;
         setloading(true);
-        axios.get(`${API_BACKEND_URL}/report/admin/profile/all?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+        axios.get(`${import.meta.env.VITE_API_URL}/report/admin/profile/all?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
             .then((response) => {
                 if (response.data.reports.length > 0) {
                     setReportedProfiles((prev) => ([...prev, ...response.data.reports]));

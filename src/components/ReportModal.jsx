@@ -1,6 +1,5 @@
 import axios from "axios";
 import { X } from "lucide-react";
-import API_BACKEND_URL from "../utils/API";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../ContextApi/AuthContext";
 import { toast } from "react-toastify";
@@ -32,13 +31,13 @@ export default function ReportModal({setShowModal,reportType,createdBy,reportedN
         toast.error("You are not signed In.");
         return;
     }
-    // if(authContext.AuthenticatedUser.id === createdBy.id){
-    //     toast.error("You can't report to yourself");
-    //     return;
-    // }
+    if(authContext.AuthenticatedUser.id === createdBy.id){
+        toast.error("You can't report to yourself");
+        return;
+    }
         if(validateInputs()){
         setLoading(true);
-        await axios.post(`${API_BACKEND_URL}/report/${reportType == "user" ? "user":"note"}`,Report,{withCredentials:true})
+        await axios.post(`${import.meta.env.VITE_API_URL}/report/${reportType == "user" ? "user":"note"}`,Report,{withCredentials:true})
         .then((response)=>{
         toast.success(response.data);
         setShowModal(false);

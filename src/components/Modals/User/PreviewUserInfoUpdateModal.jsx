@@ -2,7 +2,6 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { useContext, useEffect, useRef, useState } from "react";
 import { toast } from "react-toastify";
-import API_BACKEND_URL from "../../../utils/API";
 import Loader from "../../Loader";
 import { AdminContext } from "../../../ContextApi/AdminContext";
 
@@ -11,7 +10,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
     const [loading,setLoading] = useState(false);
     const [loading2,setLoading2] = useState(false);
     const adminContext = useContext(AdminContext);
-    const abortController_Ref = useRef(); 
 
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
@@ -20,7 +18,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
     useEffect(()=>{
      document.body.style.overflowY = "hidden";
-     return () =>  document.body.style.overflowY = "scroll";
+     return () => document.body.style.overflowY = "scroll";
     },[])
 
     const rejectUpdateRequestInfo = async(ID) => {
@@ -30,7 +28,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
       }
       setRemarkRequest((prev) => ({...prev,id:ID}))
       setLoading(true);
-      await axios.post(`${API_BACKEND_URL}/profile/admin/RejectInfoUpdateRequest/${ID}`,remarkRequest,{withCredentials:true})
+      await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/RejectInfoUpdateRequest/${ID}`,remarkRequest,{withCredentials:true})
       .then((response)=>{
         if(response.status === 200){
             toast.success(response.data);
@@ -50,13 +48,8 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
 
     const approveChanges = async(userId) => {
-       if(abortController_Ref.current){
-         abortController_Ref.current.abort();
-       }
-       abortController_Ref.current = new AbortController();
-       const signal = abortController_Ref.current.signal;
        setLoading2(true);
-        await axios.post(`${API_BACKEND_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true,signal:signal})
+        await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true,signal:signal})
        .then((response)=>{
          if(response.status === 200){
              toast.success(response.data);
@@ -69,10 +62,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
            
            }
        }).catch((error)=>{
-         if(axios.isCancel(error)){
-           toast.error("Operation cacelled");
-           return;
-         }
          if(error.response.data != undefined) toast.error(error.response.data);
        }).finally(()=>{
           setLoading2(false);
@@ -84,12 +73,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
               return profile.id !== userId;
       });
             setProfiles([...NonApprovedProfiles]);
-    }
-
-    const cancelRequest = () => {
-      if(abortController_Ref.current){
-        abortController_Ref.current.abort();
-      }
     }
     return (
         <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>
@@ -126,7 +109,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                     {!loading2 ? (
                     <>
                     <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={()=>{approveChanges(selectedUpdate.id)}}>Accept</button>
-                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm py-1" onClick={()=>{setEnableRemarkModal(true);cancelRequest()}}>Reject</button>  
+                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm py-1" onClick={()=>{setEnableRemarkModal(true);}}>Reject</button>  
                     </>
                   ):
                     <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm w-full sm:w-[70px]" disabled style={{opacity:"0.3"}}><Loader/></button>}

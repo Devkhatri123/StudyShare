@@ -19,14 +19,13 @@ import Blocked from './components/Blocked';
 import { AdminProvider } from './ContextApi/AdminContext';
 import ResetPasswordModal from './components/Modals/User/ResetPasswordModal';
 import ResetPasswordForm from './components/Modals/User/ResetPasswordForm';
-import API_BACKEND_URL from './utils/API.JSX';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     if(useAuth.AuthenticatedUser == null){
     const getUser = async () => {
-      await axios.get(`${API_BACKEND_URL}/auth/loggedInUser`,
+      await axios.get(`${import.meta.env.VITE_API_URL}/auth/loggedInUser`,
         { withCredentials: true }
       )
         .then((response) => {

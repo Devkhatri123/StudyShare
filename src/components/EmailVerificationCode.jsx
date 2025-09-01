@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import API_BACKEND_URL from "../utils/API.JSX";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { AuthContext } from "../ContextApi/AuthContext";
 import Loader from "./Loader";
@@ -58,7 +57,7 @@ export default function EmailVerificationCode() {
             verificationCode:Number(o)
         }
         setLoading(true);
-        axios.post(`${API_BACKEND_URL}/auth/verify`,verification)
+        axios.post(`${import.meta.env.VITE_API_URL}/auth/verify`,verification)
         .then((response)=>{
             toast.success(response.data);
             if(location?.state?.PrevURL !== "/"){
@@ -91,13 +90,11 @@ export default function EmailVerificationCode() {
             toast.error("Email is not present");
             return;
         }
-        axios.post(`${API_BACKEND_URL}/auth/resendVerificationCode?email=${location.state.email}`)
+        axios.post(`${import.meta.env.VITE_API_URL}/auth/resendVerificationCode?email=${location.state.email}`)
         .then((response)=>{
             toast.success(response.data);
         }).catch((error)=>{
-        
-            toast.error(error.response.data);
-            console.log(error);
+           toast.error(error.response.data);
         }).finally(()=>{
             setLoading(false);
         })

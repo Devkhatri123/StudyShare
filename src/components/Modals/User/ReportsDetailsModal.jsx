@@ -1,7 +1,6 @@
 import axios from "axios";
 import { User, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import API_BACKEND_URL from "../../../utils/API";
 
 export default function ReportsDetailsModal({ user, setShowModal, ShowModal }) {
     const [reports, setReports] = useState([]);
@@ -12,7 +11,7 @@ export default function ReportsDetailsModal({ user, setShowModal, ShowModal }) {
     useEffect(() => {
         if (!hasMore) return;
         setLoading(true);
-        axios.get(`${API_BACKEND_URL}/admin/user/${user.id}/reports?pageNumber=${pageNumber}&limit=3`, { withCredentials: true })
+        axios.get(`${import.meta.env.VITE_API_URL}/admin/user/${user.id}/reports?pageNumber=${pageNumber}&limit=3`, { withCredentials: true })
             .then((response) => {
                 if (response.data.length > 0) setReports((prev) => ([...prev, ...response.data]));
                 else setHasMore(false);
