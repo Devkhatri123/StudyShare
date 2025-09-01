@@ -109,9 +109,12 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
                         </div>
                         </div>
                         <div className="btns flex justify-end gap-2.5 flex-col sm:flex-row">
-                            <button className="border-gray-200 border py-2 px-3 rounded-md text-sm">Cancel</button>
+                            
                             {!loading ? (
+                            <>
                             <button className="bg-[#d64d0c] text-white py-2 px-3 rounded-md text-sm" onClick={()=>{Edit()}}>Edit Subject</button>
+                            <button className="border-gray-200 border py-2 px-3 rounded-md text-sm" onClick={()=>{setShowEditSubjectModal(false)}}>Cancel</button>
+                            </>
                             ):<button className="bg-[#d64d0c] text-white py-2 px-3 rounded-md text-sm w-full sm:w-20" style={{opacity:"0.5"}}><Loader/></button>}
                             </div>
                       </div>

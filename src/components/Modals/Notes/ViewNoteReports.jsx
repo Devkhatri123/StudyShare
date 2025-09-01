@@ -2,12 +2,14 @@ import axios from "axios";
 import { X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import API_BACKEND_URL from "../../../utils/API";
+import Loader from "../../Loader";
 
 export default function ViewNoteReports({noteId,setShowModal,reportedNote}){
      const [reports, setReports] = useState([]);
      const [loading, setLoading] = useState(false);
      const [pageNumber, setPageNumber] = useState(0);
      const [hasMore, setHasMore] = useState(true);
+     const [error,setError] = useState(false);
     const reportBody_Ref = useRef();
     useEffect(() => {
             if (!hasMore) return;
@@ -17,6 +19,7 @@ export default function ViewNoteReports({noteId,setShowModal,reportedNote}){
                     if (response.data.length > 0) setReports((prev) => ([...prev, ...response.data]));
                     else setHasMore(false);
                 }).catch((error) => {
+                    setError(true);
                     console.log(error);
                 }).finally(() => {
                     setLoading(false);
@@ -43,6 +46,9 @@ export default function ViewNoteReports({noteId,setShowModal,reportedNote}){
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }}>
                     <div className="UserDetailModal h-full sm:h-fit w-full max-w-[512px] fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5">
+                       {!loading ? (
+                        !error ? (
+                        <>
                         <div className="header flex justify-between">
                             <div className="flex items-baseline">
                                 <h2 className="font-medium  sm:text-lg">User Details:  </h2>
@@ -82,6 +88,9 @@ export default function ViewNoteReports({noteId,setShowModal,reportedNote}){
                                 })}
                             </div>
                         </div>
+                        </>
+                        ):<p>Something went wrong. Try again</p>
+                       ):<Loader/>}
                     </div>
                 </div>
     )

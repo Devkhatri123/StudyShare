@@ -10,7 +10,6 @@ import { toast } from "react-toastify";
 export default function SignIn() {
     const [showPassword, setShowPassword] = useState(false);
     const [loading,setLoading] = useState(false);
-    const [error,setError] = useState('');
     const [user,setUser] = useState({
         email:"",
         password:"",
@@ -36,7 +35,6 @@ export default function SignIn() {
        axios.defaults.withCredentials = true;
        await axios.post(`${API_BACKEND_URL}/auth/login`,user)
       .then((response)=>{
-        console.log(response)
         if(Object.keys(response.data).length > 0){
         AuthenticationContext.setAuthenticatedUser(response.data);
         AuthenticationContext.setIsAuthenticated(true);
@@ -124,7 +122,7 @@ export default function SignIn() {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
-                <Link to={"/resetPasswordForm"} className="font-semibold text-indigo-600 hover:text-indigo-300">Forget password</Link>
+                <Link to={"/resetPasswordForm"} className="font-semibold text-indigo-600 hover:text-indigo-300 text-sm">Forgot password?</Link>
               </div>
 
                {/* Submit button */}

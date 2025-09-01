@@ -57,7 +57,11 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
         if(remarkRequest.message.trim().length == 0){
             toast.error("Description is empty");
             return false;
-        }else if (remarkRequest.id.trim().length == 0){
+        }else if(remarkRequest.message.trim().length > 300){
+           toast.error("Remark message should be of 300 characters");
+           return false;   
+        }
+        else if (remarkRequest.id.trim().length == 0){
             toast.error("something is wrong. Try again by closing and opening the modal again.");
             return false;
         }
@@ -81,6 +85,7 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
                     <div className="Subject mt-1 px-5 py-2">
                         <p className="mb-1">Description *</p>
                         <textarea onChange={(e) => { setremarkRequest({ ...remarkRequest, message: e.target.value }) }} value={remarkRequest.message} className="w-full px-3 py-2 text-base rounded-md  border-gray-300" style={{ border: "0.2px solid gray", outline: "none" }} placeholder="Write Remark..." maxLength={512}></textarea>
+                        <p>Message length : {remarkRequest.message.length} / 300</p>
                     </div>
 
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>

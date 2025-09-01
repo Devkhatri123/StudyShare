@@ -36,7 +36,6 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
                     toast.success(response.data.message);
                     setSubjects((prev) => ([...prev, response.data.NewSubject]));
                     setShowAddSubjectModal(false);
-                    console.log(response);
                 }).catch((error) => {
                     if(error.response.data)  toast.error(error.response.data)
                     else toast.error("Something went wrong");

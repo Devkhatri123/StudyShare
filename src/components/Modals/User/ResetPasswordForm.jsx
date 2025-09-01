@@ -25,7 +25,7 @@ export default function ResetPasswordForm(){
           }).finally(()=>{
             setLoading(false);
           });
-          }
+          }else toast.error("Email is not valid");
         }
 
 

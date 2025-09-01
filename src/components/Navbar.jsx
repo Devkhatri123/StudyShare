@@ -11,6 +11,8 @@ export default function Navbar() {
     const signOut = () => {
       axios.post(`${API_BACKEND_URL}/auth/logout`,{},{withCredentials:true})
       .then((response)=>{
+        authContext.setIsAuthenticated(false);
+        authContext.setAuthenticatedUser(null);
         window.location.reload();
       }).catch((error)=>{
         console.log(error);

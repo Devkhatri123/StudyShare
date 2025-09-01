@@ -32,12 +32,12 @@ const ViewNote = () => {
    setpdfURL(url);
    }).catch((error)=>{
       if(error.status == 404) {
-      setError("Note not found. May be this note wouldn't have been approved or this note doesn't exist");
+      setError("Note not found. May be this note wouldn't have been approved or removed by admin");
      }else {
       setError("Internal Server error");
      }
     }).finally(()=>{
-    setLoading(false);
+     setLoading(false);
    })
       }
        getNote();

@@ -86,6 +86,7 @@ export default function EmailVerificationCode() {
     }
 
     const resendVerificationCode = () => {
+        setLoading(true);
          if(location.state == null){
             toast.error("Email is not present");
             return;
@@ -94,8 +95,11 @@ export default function EmailVerificationCode() {
         .then((response)=>{
             toast.success(response.data);
         }).catch((error)=>{
+        
             toast.error(error.response.data);
             console.log(error);
+        }).finally(()=>{
+            setLoading(false);
         })
     }
 

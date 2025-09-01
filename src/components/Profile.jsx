@@ -10,7 +10,7 @@ import { Link, useLocation } from "react-router-dom";
 import UploadNote from "./UploadNote";
 import Loader from "./Loader";
 import { isValidEmail } from "../utils/Validation";
-import ChangeEmail from "./Modals/User/ChangeEmail";
+import ChangeEmailAndUserName from "./Modals/User/ChangeEmailAndUserName";
 
 export default function Profile() {
   const [isDisbaled, setIsDisabled] = useState(true);
@@ -38,13 +38,16 @@ export default function Profile() {
   });
   const [accountStatus, setAccountStatus] = useState({});
   const location = useLocation();
+  const usernameRef = useRef();
 
   useEffect(()=>{
+    // Fetch user profile
     if(authContext.AuthenticatedUser != null){
     const getProfile = async() => {
       await axios.get(`${API_BACKEND_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
       .then((response)=>{
         setAuthenticatedUser(response.data);
+        usernameRef.current = response.data.username;
       }).catch((error)=>{
         if(error.response == 404 ){
           toast.error("Profile not found");
@@ -63,7 +66,7 @@ export default function Profile() {
 
   useEffect(() => {
     getAccountStatus();
-  }, [location.state.userEmail]);
+  }, [tempAuthenticatedUser]);
 
   useEffect(() => {
     if (tempAuthenticatedUser != null) getMyNotes();
@@ -93,12 +96,13 @@ export default function Profile() {
     }, 600);
   }
 
-  const updateInfo = async (newEmail) => {
+  const updateInfo = async (newEmail,username) => {
     if(!isValidEmail(newEmail)){
       toast.error("Email is not valid");
       return;
     }
-    setAuthenticatedUser((prev)=>({...prev,universityEmail:newEmail}))
+    setAuthenticatedUser((prev)=>({...prev,universityEmail:newEmail}));
+    setAuthenticatedUser((prev)=>({...prev,username:username}));
     setSaveLoading(true);
     if(showChangeEmailModal) setChangeEmailLoading(true);
     await axios.put(`${API_BACKEND_URL}/profile/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
@@ -258,7 +262,7 @@ export default function Profile() {
                   <User className="text-blue-600 w-5 h-5 sm:w-8 sm:h-8" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-bold truncate">{tempAuthenticatedUser.username}</h1>
+                  <h1 className="text-xl font-bold truncate">{usernameRef.current}</h1>
                   <p className="">Dha Suffa University</p>
                 </div>
               </div>
@@ -266,8 +270,8 @@ export default function Profile() {
               <div className="flex-col mt-5 w-full sm:w-fit sm:flex-row sm:mt-0 flex items-center">
               {!Object.entries(accountStatus).length > 0 && !tempAuthenticatedUser.emailVerified && (
               <>
-              {showChangeEmailModal && <ChangeEmail setAuthenticatedUser={setAuthenticatedUser} tempAuthenticatedUser={tempAuthenticatedUser} updateEmail={updateInfo} setShowModal={setShowChangeEmailModal} loading={changeEmailLoading}/>}
-              <button className="mr-2 w-full sm:w-fit bg-gray-50 border border-gray-200 py-2 px-2 rounded-md" onClick={(e)=>{setShowChangeEmailModal(true);}}>Change Email</button>
+              {showChangeEmailModal && <ChangeEmailAndUserName setAuthenticatedUser={setAuthenticatedUser} tempAuthenticatedUser={tempAuthenticatedUser} updateEmail={updateInfo} setShowModal={setShowChangeEmailModal} loading={changeEmailLoading}/>}
+              <button className="mr-2 w-full text-sm sm:w-fit bg-gray-50 border border-gray-200 py-2 px-2 rounded-md" onClick={(e)=>{setShowChangeEmailModal(true);}}>Change Email And Username</button>
               </>
               )}
               
@@ -282,7 +286,7 @@ export default function Profile() {
                   ) :
                     <div className="right_enabled flex gap-2.5 mt-5 flex-col sm:mt-0 sm:flex-row w-full sm:w-fit">
                       {!saveLoading ? (
-                        <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" onClick={() => { updateInfo(tempAuthenticatedUser.universityEmail) }} style={{ background: "#16a34a" }}>
+                        <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" onClick={() => { updateInfo(tempAuthenticatedUser.universityEmail,tempAuthenticatedUser.username) }} style={{ background: "#16a34a" }}>
                           <>
                             <Save className="w-4" />
                             <button className="ml-1" >Save</button>
@@ -315,9 +319,9 @@ export default function Profile() {
                 <div className="fullnameInput flex flex-col mb-4">
                   <label htmlFor="Fullname">Username</label>
                   {isDisbaled ? (
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.username} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
+                    <input type="text" name="username" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser.username} disabled style={{ background: `${isDisbaled ? "rgb(249 250 251 /1)" : ""}` }} />
                   ) : <>
-                    <input type="text" name="fullname" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.username} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, username: e.target.value }) }} />
+                    <input type="text" name="username" className="border border-gray-200 px-3 py-2 rounded-lg" id="" value={tempAuthenticatedUser?.username} onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, username: e.target.value }) }} />
                   </>}
                 </div>
 

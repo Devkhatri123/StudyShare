@@ -1,8 +1,8 @@
 import axios from "axios";
 import API_BACKEND_URL from "../utils/API";
 
-export const BlockUser = async (userId) => {
-     return axios.post(`${API_BACKEND_URL}/profile/admin/block/user/${userId}`,
+export const BlockUser = async (userId,blockReason) => {
+     return axios.post(`${API_BACKEND_URL}/profile/admin/block/user/${userId}?blockReason=${blockReason}`,
         {}, { withCredentials: true })
 }
 export const DiscardUserReports = async(userId) => {

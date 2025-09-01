@@ -21,6 +21,7 @@ export default function AdminHome() {
   useEffect(() => {
     if (authContext.isAuthenticated) {
       if (authContext.AuthenticatedUser.roles.includes("ADMIN")) {
+        if(authContext.AuthenticatedUser.emailVerified){
         if (!Object.entries(adminContext.count).length > 0) {
           axios.get(`${API_BACKEND_URL}/admin/count`, { withCredentials: true })
             .then((response) => {
@@ -32,6 +33,7 @@ export default function AdminHome() {
               console.log(error);
             });
         }
+      }else setError(authContext.AuthenticatedUser.accountRemarks);
       }else setError("You don't have permission to see this page.");
     } else setError("You are not allowed to view admin page. You are not loggedin")
   }, [adminContext.count, authContext]);
@@ -72,7 +74,7 @@ export default function AdminHome() {
                 </div> */}
           </div>
         </header>
-        <div className="bg-[#f1f4f6] px-4 h-[100vh]">
+        <div className="bg-[#f1f4f6] px-4 min-h-[100vh]" >
           <div className="body max-w-dvh mx-0 sm:max-w-2xl md:max-w-3xl  lg:max-w-5xl sm:mx-auto pt-10">
             <div className="stats grid-cols-1 grid sm:grid-cols-2 gap-4">
               <div className="pendingNotes flex bg-[#f4f7fe] shadow-sm rounded-md p-3.5">
@@ -100,6 +102,15 @@ export default function AdminHome() {
                 <div className="numbers ml-2 leading-4">
                   <h1 className="mb-0 font-normal text-[#5e566c]">REPORTED USER</h1>
                   <p className="font-bold text-xl">{adminContext.count?.reportedUser}</p>
+                </div>
+              </div>
+               <div className="ReportedNotes flex shadow-sm rounded-md p-3.5">
+                <div className="rounded-lg px-2 py-2 h-10 bg-[#ea3c3c] shadow-md">
+                  <FileText className="text-white" />
+                </div>
+                <div className="numbers ml-2 leading-4">
+                  <h1 className="mb-0 font-normal text-[#5e566c]">REPORTED NOTES</h1>
+                  <p className="font-bold text-xl">{adminContext.count?.reportedNotes}</p>
                 </div>
               </div>
             </div>

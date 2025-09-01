@@ -1,9 +1,8 @@
 
-import { Star, Download, Eye, Heart, Share, Calendar, User, Blocks, Flag } from "lucide-react"
-import { useEffect, useState } from "react";
+import { Calendar, User, Flag } from "lucide-react"
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import ReportModal from "./ReportModal";
-import { convertBase64ToBlob } from "../utils/Validation";
 
 const Note = ({ note }) => {
   const [showReportModal, setShowReportModal] = useState(false);

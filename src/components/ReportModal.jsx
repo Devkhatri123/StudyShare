@@ -43,6 +43,15 @@ export default function ReportModal({setShowModal,reportType,createdBy,reportedN
         toast.success(response.data);
         setShowModal(false);
         }).catch((error)=>{
+            if(error.response.status == 404){
+            if(reportType == "note"){
+                toast.error("Note note found. This note may has been removed by admin");
+                return;
+            }else {
+               toast.error("User note found. This User may has been blocked by admin");
+                return;
+            }
+            }
           console.log(error);
         }).finally(()=>{
             setLoading(false);
@@ -89,12 +98,12 @@ export default function ReportModal({setShowModal,reportType,createdBy,reportedN
                 </div>
                 <div className="footer flex gap-3 justify-end">
                     {!loading ? (
-                     <div className="bg-black text-white rounded-sm px-2 py-1 text-sm" onClick={()=>{report()}}>
+                     <div className="bg-black text-white rounded-sm px-2 py-2 w-full text-sm sm:w-[70px] flex justify-center" onClick={()=>{report()}}>
                         <button className="text-sm">Submit Report</button>
                     </div>
                     ):
-                    <div className="bg-gray-200 text-white rounded-sm px-2 py-1 text-sm">
-                        <button className="text-sm"><Loader/></button>
+                    <div className="bg-gray-200 text-white rounded-sm px-2 py-2 w-full text-sm sm:w-[70px] flex justify-center">
+                        <button className="text-sm w-full sm:w-[70px]"><Loader/></button>
                     </div>
                     }
                 </div>

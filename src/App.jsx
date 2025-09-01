@@ -5,7 +5,7 @@ import Home from './components/home'
 import Notes from './components/Notes'
 import Register from './components/Register';
 import ViewNote from './components/ViewNote'
-import ProtectedRoute from "./utils/ProtectedRoute";
+import ProtectedRoute from "./ProtectedRoute";
 import SignIn from './components/SignIn';
 import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './ContextApi/AuthContext';
@@ -19,17 +19,17 @@ import Blocked from './components/Blocked';
 import { AdminProvider } from './ContextApi/AdminContext';
 import ResetPasswordModal from './components/Modals/User/ResetPasswordModal';
 import ResetPasswordForm from './components/Modals/User/ResetPasswordForm';
+import API_BACKEND_URL from './utils/API.JSX';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     if(useAuth.AuthenticatedUser == null){
     const getUser = async () => {
-      await axios.get("http://localhost:8080/v1/auth/loggedInUser",
+      await axios.get(`${API_BACKEND_URL}/auth/loggedInUser`,
         { withCredentials: true }
       )
         .then((response) => {
-          console.log(response.data)
           useAuth.setIsAuthenticated(response.data.isLoggedIn);
           useAuth.setAuthenticatedUser(response.data.user)
         }).catch((error) => {
@@ -46,18 +46,19 @@ function App() {
     <>
       {!loading ? (
         <Routes>
-
-          <Route path="/" element={<Home />} />
-          <Route path="/:subjectName/:subjectCode/notes" element={<Notes />}/>
-          <Route path="/profile" element={<Profile />}/>
-        
-
-          <Route path='/admin/home' element={
+          <Route element={<ProtectedRoute/> } >
+             <Route path="/" element={<Home />} />
+             <Route path="/:subjectName/:subjectCode/notes" element={<Notes />}/>
+             <Route path="/profile" element={<Profile />}/>
+             <Route path='/admin/home' element={
             <AdminProvider>
               <AdminHome />
             </AdminProvider>
           } />
-          <Route path="/note/:noteID" element={<ViewNote />} />
+           <Route path="/note/:noteID" element={<ViewNote />} />
+
+         </Route>
+           
 
           {/* Account Routes */}
           <Route path="/verify" element={<EmailVerificationCode />} />

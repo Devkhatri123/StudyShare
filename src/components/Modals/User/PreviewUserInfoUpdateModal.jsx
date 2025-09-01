@@ -5,7 +5,6 @@ import { toast } from "react-toastify";
 import API_BACKEND_URL from "../../../utils/API";
 import Loader from "../../Loader";
 import { AdminContext } from "../../../ContextApi/AdminContext";
-import { AuthContext } from "../../../ContextApi/AuthContext";
 
 export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,selectedUpdate,Profiles,setProfiles}){
     const [enableRemarkModal,setEnableRemarkModal] = useState(false);
@@ -18,6 +17,11 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
         id:"",
         message:""
     });
+
+    useEffect(()=>{
+     document.body.style.overflowY = "hidden";
+     return () =>  document.body.style.overflowY = "scroll";
+    },[])
 
     const rejectUpdateRequestInfo = async(ID) => {
       if(remarkRequest.message.length == 0){
@@ -46,33 +50,33 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
 
     const approveChanges = async(userId) => {
-      if(abortController_Ref.current){
-        abortController_Ref.current.abort();
-      }
-      abortController_Ref.current = new AbortController();
-      const signal = abortController_Ref.current.signal;
-        setLoading2(true);
-       await axios.post(`${API_BACKEND_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true,signal:signal})
-      .then((response)=>{
-        if(response.status === 200){
-            toast.success(response.data);
-            updatePendingProfilesArray(userId);
-            adminContext.setCount({});
+       if(abortController_Ref.current){
+         abortController_Ref.current.abort();
+       }
+       abortController_Ref.current = new AbortController();
+       const signal = abortController_Ref.current.signal;
+       setLoading2(true);
+        await axios.post(`${API_BACKEND_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true,signal:signal})
+       .then((response)=>{
+         if(response.status === 200){
+             toast.success(response.data);
+             updatePendingProfilesArray(userId);
+             adminContext.setCount({});
 
-            setEnableRemarkModal(false);
-            setPreviewUserInfoUpdate(false);
+             setEnableRemarkModal(false);
+             setPreviewUserInfoUpdate(false);
             
            
-          }
-      }).catch((error)=>{
-        if(axios.isCancel(error)){
-          toast.error("Operation cacelled");
-          return;
-        }
-        if(error.response.data != undefined) toast.error(error.response.data);
-      }).finally(()=>{
-         setLoading2(false);
-      })
+           }
+       }).catch((error)=>{
+         if(axios.isCancel(error)){
+           toast.error("Operation cacelled");
+           return;
+         }
+         if(error.response.data != undefined) toast.error(error.response.data);
+       }).finally(()=>{
+          setLoading2(false);
+       })
     }
 
     const updatePendingProfilesArray = (userId) => {
@@ -118,25 +122,28 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
                 </div>
                 </div>
                 {!enableRemarkModal ? (
-                <div className="flex justify-end gap-2 mt-2">
+                <div className="flex justify-end gap-2 mt-2 flex-col sm:flex-row">
                     {!loading2 ? (
                     <>
                     <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={()=>{approveChanges(selectedUpdate.id)}}>Accept</button>
-                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(true);cancelRequest()}}>Reject</button>  
+                    <button className="bg-gray-100 text-black px-2.5 rounded-md text-sm py-1" onClick={()=>{setEnableRemarkModal(true);cancelRequest()}}>Reject</button>  
                     </>
                   ):
-                    <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
+                    <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm w-full sm:w-[70px]" disabled style={{opacity:"0.3"}}><Loader/></button>}
                     
                 </div>
                  ):
                  <>
                  <div className="remarkModal mt-1.5">
                     <textarea className="text-sm w-full rounded-md border border-gray-300 py-1 px-1.5 outline-0" name="" id="" placeholder="Write rejection reason..." onChange={(e)=>setRemarkRequest((prev) => ({...prev,message:e.target.value}))}></textarea>
-                    <div className="flex justify-end gap-1.5">
+                    <div className="flex justify-end gap-1.5 flex-col sm:flex-row">
                         {!loading ? (
+                        <>
                         <button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" onClick={() => rejectUpdateRequestInfo(selectedUpdate.id)}>Confirm</button>
-                        ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm" disabled><Loader/></button>}
                         <button className="bg-gray-100 text-black py-1.5 px-2.5 rounded-md text-sm" onClick={()=>{setEnableRemarkModal(false)}}>Cancel</button>
+                        </>
+                        ):<button className="bg-gray-900 text-white px-2 p-1.5 rounded-md text-sm w-full sm:w-[70px]" disabled><Loader/></button>}
+                       
                     </div>
                  </div>
                  </>

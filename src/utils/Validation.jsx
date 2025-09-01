@@ -20,8 +20,7 @@ export const isValidEmail = (email) => {
     "CE":"^CE\\d{3,5}$"
   }
 export const isValidSubjectCode = (code,department) => {
-  console.log(regexObj[department])
-  if(regexObj.hasOwnProperty(department)){
+   if(regexObj.hasOwnProperty(department)){
     const Subject_Department_Code_REGEX = new RegExp(regexObj[department]);
     return Subject_Department_Code_REGEX.test(code);
   }else return false;
