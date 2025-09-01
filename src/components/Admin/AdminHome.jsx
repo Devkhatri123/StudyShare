@@ -6,7 +6,7 @@ import Reports from "./Reports";
 import UserManagement from "./UserManagement";
 import { AuthContext } from "../../ContextApi/AuthContext";
 import axios from "axios";
-import API_BACKEND_URL from "../../utils/API";
+import API_BACKEND_URL from "../../utils/API.JSX";
 import { AdminContext } from "../../ContextApi/AdminContext";
 import Subject from "./Subject";
 import NotesReport from "./NotesReports";

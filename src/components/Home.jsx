@@ -5,7 +5,7 @@ import Navbar from "./Navbar"
 import axios from "axios";
 import { Link } from "react-router-dom"
 import Loader from "./Loader";
-import API_BACKEND_URL from "../utils/API";
+import API_BACKEND_URL from "../utils/API.JSX";
 import { AuthContext } from "../ContextApi/AuthContext";
 import { returnFullFormOfDepartment } from "../utils/Validation";
 
