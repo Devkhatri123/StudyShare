@@ -1,7 +1,7 @@
 
 import './App.css'
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
-import Home from './components/home'
+import Home from './components/Home'
 import Notes from './components/Notes'
 import Register from './components/Register';
 import ViewNote from './components/ViewNote'
