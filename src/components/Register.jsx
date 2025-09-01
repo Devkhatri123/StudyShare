@@ -288,6 +288,7 @@ export default function Register() {
                     className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={user.password}
                     onChange={(e) => setUser({ ...user, password: e.target.value })}
+                    autoComplete="none"
                   />
                   <button
                     type="button"
@@ -312,6 +313,7 @@ export default function Register() {
                     className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={user.confirmPassword}
                     onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
+                    autoComplete="none"
                   />
                   <button
                     type="button"
