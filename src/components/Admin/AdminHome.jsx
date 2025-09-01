@@ -19,7 +19,7 @@ export default function AdminHome() {
 
   useEffect(() => {
     if (authContext.isAuthenticated) {
-      if (authContext.AuthenticatedUser.roles.includes("ADMIN")) {
+      if (authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) {
         if(authContext.AuthenticatedUser.emailVerified){
         if (!Object.entries(adminContext.count).length > 0) {
           axios.get(`${import.meta.env.VITE_API_URL}/admin/count`, { withCredentials: true })
