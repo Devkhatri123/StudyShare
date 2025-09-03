@@ -13,7 +13,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     const [isDragging, setIsDragging] = useState(false);
     const [isNoteDragging, setIsNoteDragging] = useState(false);
     const [loading, setLoading] = useState(false);
-    const abortControllerRef = useRef();
     const authContext = useContext(AuthContext);
     const [noteData, setnoteData] = useState(
         {
@@ -29,6 +28,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     );
 
     useEffect(() => {
+        // Checking if existing note going to be updated
         if (noteToUpdate != null && Object.entries(noteToUpdate).length > 0) {
             setnoteData((prev) => ({ ...prev, id: noteToUpdate.id }));
             setnoteData((prev) => ({ ...prev, title: noteToUpdate.title }));
@@ -56,7 +56,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                 for (let i = 0; i < length; i++) {
                     uint8array[i] = bytes.charCodeAt(i);
                 }
-                return new Blob([uint8array], { type: "applicaton/pdf" })
+                return new Blob([uint8array], { type: "application/pdf" })
             }
             const blob2 = convertBase64ToPdfBlob(noteToUpdate.notePdfData);
             setnoteData((prev) => ({ ...prev, notePdfData: blob2 }));
@@ -65,10 +65,10 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }, [noteToUpdate]);
 
     useEffect(() => {
+        // If it is new note then setting subjectCode from Url
         if (noteToUpdate == null) {
             setnoteData((prev) => ({ ...prev, subjectcode: subjectCode }));
         }
-
         document.body.style.overflow = "hidden";
         return () => {
             document.body.style.overflow = "scroll";
@@ -154,11 +154,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             toast.error("Description is empty");
             return;
         }
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
-        }
-        abortControllerRef.current = new AbortController();
-        const signal = abortControllerRef.current.signal;
 
         const formData = new FormData();
         formData.append("thumbnail", noteData.imgThumbNail);
@@ -174,16 +169,16 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         setLoading(true);
         await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
             withCredentials: true,
-            signal: signal
         })
             .then((response) => {
                 toast.success(response.data.message);
-                setShowUploadModal(false);
+                if(noteToUpdate != null) window.location.reload();
+              //  setShowUploadModal(false);
                 // window.location.reload();
             }).catch((error) => {
                 console.log(error)
-                if (error.response.data.message) toast.error(error.response.data.message);
-                else toast.error(error.message);
+                if (error.response.data) toast.error(error.response.data);
+              //  else toast.error(error.message);
             }).finally(() => {
                 setLoading(false);
             })
@@ -199,12 +194,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
 
         if (e.target.value.length <= 60) {
             setnoteData({ ...noteData, title: e.target.value });
-        }
-    }
-
-    const cancelUpload = () => {
-        if (abortControllerRef.current) {
-            abortControllerRef.current.abort();
         }
     }
 

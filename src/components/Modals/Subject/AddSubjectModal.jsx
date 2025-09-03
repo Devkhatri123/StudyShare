@@ -72,7 +72,7 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
 
     return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "fixed", top: "0", left: "0", width: "100%", height: "100%", zIndex: "1000", background: "rgba(0, 0, 0, 0.5)" }} >
-            <div className={`w-full max-w-[450px] fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5`}>
+            <div className={`w-full sm:max-w-[450px] h-full sm:h-fit fixed sm:top-[50%] sm:translate-y-[-50%] bg-white rounded-md px-3 py-5`}>
                 <div className="header flex justify-between">
                     <h2 className="font-bold text-lg">Add New Subject</h2>
                     <X onClick={() => { setShowAddSubjectModal(false) }} className="w-5 text-gray-400" />

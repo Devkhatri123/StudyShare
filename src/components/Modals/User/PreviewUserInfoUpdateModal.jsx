@@ -49,7 +49,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
     const approveChanges = async(userId) => {
        setLoading2(true);
-        await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true,signal:signal})
+        await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true})
        .then((response)=>{
          if(response.status === 200){
              toast.success(response.data);

@@ -7,6 +7,7 @@ import Loader from "./Loader";
 import UploadNote from "./UploadNote";
 import { AuthContext } from "../ContextApi/AuthContext";
 import { Link } from "react-router-dom";
+import { returnFullSemester } from "../utils/Validation";
 
 export default function Notes() {
   const bodyRef = useRef();
@@ -166,7 +167,7 @@ export default function Notes() {
                   <div className="flex flex-col sm:flex-row sm:items-center space-y-3 sm:space-y-0 sm:space-x-6 lg:space-x-8 text-sm pt-4 border-t border-gray-100">
                     <div className="flex items-center justify-center sm:justify-start space-x-2">
                       <div className="w-2 h-2 bg-green-500 rounded-full flex-shrink-0"></div>
-                      <span className="font-semibold text-gray-900">{subject?.semester} Semester</span>
+                      <span className="font-semibold text-gray-900">{returnFullSemester(subject?.semester)} Semester</span>
                     </div>
                     <div className="flex items-center justify-center sm:justify-start space-x-2">
                       <svg

@@ -1,12 +1,14 @@
 
 import { Calendar, User, Flag } from "lucide-react"
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import ReportModal from "./ReportModal";
+import { AuthContext } from "../ContextApi/AuthContext";
 
 const Note = ({ note }) => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportType, setReportType] = useState('');
+  const authContext = useContext(AuthContext);
 
   return (
     <div className="w-1/1 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
@@ -49,7 +51,8 @@ const Note = ({ note }) => {
           </div>
         </div>
       </Link>
-      <div className="note_bottom flex-col gap-1.5 sm:1 sm:flex-row flex items-center justify-center mb-2">
+      {authContext.AuthenticatedUser != null && (
+      <div className="note_bottom px-5 flex-col gap-1.5 sm:1 sm:flex-row flex items-center justify-center mb-2">
         <div className="flex w-full text-white bg-[#ef4444] justify-center sm:w-fit items-center border border-gray-200 rounded-lg py-2 px-3" onClick={() => { setReportType("user"); setShowReportModal(true) }}>
           <User className="w-4 mr-2" />
           <button className="text-sm">Report User</button>
@@ -61,6 +64,7 @@ const Note = ({ note }) => {
         </div>
         {showReportModal && reportType == "note" && <ReportModal setShowModal={setShowReportModal} reportType={reportType} createdBy={null} reportedNote={note} />}
       </div>
+      )}
     </div>
   )
 }

@@ -8,10 +8,11 @@ import DeleteNoteModal from "./DeleteNoteModal";
 import { Link, useLocation } from "react-router-dom";
 import UploadNote from "./UploadNote";
 import Loader from "./Loader";
-import { isValidEmail } from "../utils/Validation";
+import { isValidEmail, validateEmailAndDepartment } from "../utils/Validation";
 import ChangeEmailAndUserName from "./Modals/User/ChangeEmailAndUserName";
 
 export default function Profile() {
+  const departments = ["CS","CE"];
   const [isDisbaled, setIsDisabled] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentNoteIndex, setcurrentNoteIndex] = useState(null);
@@ -64,8 +65,8 @@ export default function Profile() {
 
 
   useEffect(() => {
-    getAccountStatus();
-  }, [tempAuthenticatedUser]);
+    if(authContext.AuthenticatedUser != null)  getAccountStatus();
+  }, [authContext.AuthenticatedUser,tempAuthenticatedUser]);
 
   useEffect(() => {
     if (tempAuthenticatedUser != null) getMyNotes();
@@ -100,6 +101,10 @@ export default function Profile() {
       toast.error("Email is not valid");
       return;
     }
+    if(!validateEmailAndDepartment(newEmail,tempAuthenticatedUser.department)){
+      toast.error("Your selected department email is invalid");
+      return;
+    }
     setAuthenticatedUser((prev)=>({...prev,universityEmail:newEmail}));
     setAuthenticatedUser((prev)=>({...prev,username:username}));
     setSaveLoading(true);
@@ -108,13 +113,13 @@ export default function Profile() {
       .then((response) => {
         toast.success(response.data);
         setAccountStatus({ status: "Pending", remark: "Update Request Pending Review" })
-        setIsDisabled(true);
       }).catch((error) => {
         toast.error(error.response.data)
         console.log(error);
       }).finally(() => {
         setSaveLoading(false);
         setChangeEmailLoading(false);
+        setIsDisabled(true);
       })
   }
 
@@ -285,17 +290,20 @@ export default function Profile() {
                   ) :
                     <div className="right_enabled flex gap-2.5 mt-5 flex-col sm:mt-0 sm:flex-row w-full sm:w-fit">
                       {!saveLoading ? (
+                        <>
                         <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer" onClick={() => { updateInfo(tempAuthenticatedUser.universityEmail,tempAuthenticatedUser.username) }} style={{ background: "#16a34a" }}>
                           <>
                             <Save className="w-4" />
                             <button className="ml-1" >Save</button>
                           </>
                         </div>
-                      ) : <div className="flex text-white p-2.5 rounded-md justify-center cursor-pointer"><button className="ml-1" disabled><Loader /></button></div>}
-                      <div className="flex items-center text-white p-2.5 rounded-md justify-center cursor-pointer" style={{ background: "#6b7280" }} onClick={() => setIsDisabled(true)}>
+                        <div className="flex items-center text-white p-2.5 rounded-md justify-center cursor-pointer" style={{ background: "#6b7280" }} onClick={() => setIsDisabled(true)}>
                         <X className="w-4" />
                         <button className="ml-2">Cancel</button>
                       </div>
+                      </>
+                      ) : <div className="flex text-white bg-black p-2.5 rounded-md justify-center cursor-pointer" style={{opacity:"0.4"}}><button className="ml-1"><Loader /></button></div>}
+                      
                     </div>
 
                 ) : <div className="right_disabled group relative bg-gray-300 justify-center w-full gap-1.5 mt-4 sm:w-fit sm:mt-0 px-4 py-2 rounded-md flex items-center cursor-pointer" onMouseOver={() => { setShowAccountRemarkMessage(true) }} onMouseLeave={() => { setShowAccountRemarkMessage(false) }}>
@@ -358,8 +366,8 @@ export default function Profile() {
                   ) :
                     <>
                       <select name="Department" id="" className="border border-gray-200 px-3 py-2 rounded-lg" onChange={(e) => { setAuthenticatedUser({ ...tempAuthenticatedUser, department: e.target.value }) }}>
-                        <option value="CS">{tempAuthenticatedUser.department}</option>
-                        <option value={tempAuthenticatedUser.department === "CS" ? "CE" : "CS"}>{tempAuthenticatedUser.department === "CS" ? "CE" : "CS"}</option>
+                        <option value={"CS"}>CS</option>
+                        <option value={"CE"}>CE</option>
                       </select>
                     </>}
                 </div>

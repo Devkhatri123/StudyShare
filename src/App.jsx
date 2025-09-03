@@ -24,11 +24,13 @@ function App() {
   const [loading, setLoading] = useState(true);
   useEffect(() => {
     if(useAuth.AuthenticatedUser == null){
+      console.log("user is null");
     const getUser = async () => {
       await axios.get(`${import.meta.env.VITE_API_URL}/auth/loggedInUser`,
         { withCredentials: true }
       )
         .then((response) => {
+          console.log(response)
           useAuth.setIsAuthenticated(response.data.isLoggedIn);
           useAuth.setAuthenticatedUser(response.data.user)
         }).catch((error) => {

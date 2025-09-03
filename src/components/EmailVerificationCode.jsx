@@ -59,14 +59,12 @@ export default function EmailVerificationCode() {
         setLoading(true);
         axios.post(`${import.meta.env.VITE_API_URL}/auth/verify`,verification)
         .then((response)=>{
+            authContext.setAuthenticatedUser(null);
             toast.success(response.data);
             if(location?.state?.PrevURL !== "/"){
                 navigate("/signIn");
             }else {
-                authContext.setAuthenticatedUser((prev)=>({...prev,
-                    emailVerified:true,
-                    accountStatus:"Active"
-                }));
+                
                 navigate("/")
             }
           }).catch((error)=>{

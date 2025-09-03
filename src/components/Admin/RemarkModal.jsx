@@ -89,9 +89,12 @@ export default function RemarkModal({ currentNote, setCurretNoteIndex, setRemark
 
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>
                         <div className="flex justify-end mx-3 sm:mr-2.5 flex-col gap-2.5 sm:flex-row sm:gap-0">
-                            <button className="border-black sm:mr-3 bg-gray-100  text-black py-1 px-2.5 rounded-md">cancel</button>
+                            
                             {!loading ? (
+                                <>
+                                <button className="border-black sm:mr-3 bg-gray-100  text-black py-1 px-2.5 rounded-md" onClick={()=>{setRemarkModal(false)}}>cancel</button>
                                 <button onClick={(e) => { sendRemark() }} className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md"><Upload className="text-sm mr-1 w-[15px]" />Send</button>
+                           </>
                             ) : <button className="flex bg-gray-900 text-white px-2 p-1.5 rounded-md w-full sm:w-[70px]" style={{opacity:"0.5"}}><Loader /></button>}
                         </div>
                     </div>

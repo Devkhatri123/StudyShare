@@ -1,8 +1,6 @@
 import { FileText, X } from "lucide-react";
 import PDFViewer from "../../PDFViewer";
 import { useEffect, useState } from "react";
-import Note from "../../Note";
-
 export default function PreviewNote({currentNote,setShowPreviewModal,setCurretNoteIndex}){
    const [pdfUrl,setPdfUrl] = useState('');
 
