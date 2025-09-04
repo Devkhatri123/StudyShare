@@ -21,7 +21,7 @@ const Note = ({ note }) => {
         // style={{backgroundImage:`url(${URL.createObjectURL(convertBase64ToBlob(note.thumbnail,"image/jpeg"))})`,}}
         >
           <img src={`data:image/jpeg;base64,${note.thumbnail}`}
-            className="w-full h-52 " style={{ objectFit: "cover" }}
+            className="w-full h-52 " style={{ objectFit: "fill" }}
           />
 
         </div>

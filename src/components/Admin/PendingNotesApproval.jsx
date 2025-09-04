@@ -99,8 +99,9 @@ export default function PendingNotesApproval() {
               style={{ maxWidth: "-webkit-fill-available" }}
             >
               <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
-                style={{ backgroundImage: `url(${URL.createObjectURL(convertBase64ToBlob(note.thumbnail, "image/jpeg"))})`, }}
+                
               >
+                <img src={`${URL.createObjectURL(convertBase64ToBlob(note.thumbnail, "image/jpeg"))}`} alt="" className="h-[208px]" />
               </div>
 
               {/* Content Section */}

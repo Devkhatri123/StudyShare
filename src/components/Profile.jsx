@@ -12,7 +12,6 @@ import { isValidEmail, validateEmailAndDepartment } from "../utils/Validation";
 import ChangeEmailAndUserName from "./Modals/User/ChangeEmailAndUserName";
 
 export default function Profile() {
-  const departments = ["CS","CE"];
   const [isDisbaled, setIsDisabled] = useState(true);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [currentNoteIndex, setcurrentNoteIndex] = useState(null);
@@ -46,10 +45,13 @@ export default function Profile() {
     const getProfile = async() => {
       await axios.get(`${import.meta.env.VITE_API_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
       .then((response)=>{
-        setAuthenticatedUser(response.data);
-        usernameRef.current = response.data.username;
+        setAuthenticatedUser(response.data.profile);
+        usernameRef.current = response.data.profile.username;
+        getAccountStatus(location.state.userEmail);
+       // getMyNotes();
+        usernameRef.current = response.data.profile.username;
       }).catch((error)=>{
-        if(error.response == 404 ){
+        if(error.response == 404){
           toast.error("Profile not found");
           return;
         }
@@ -61,21 +63,17 @@ export default function Profile() {
     }
     getProfile();
   }
+
   },[])
 
-
   useEffect(() => {
-    if(authContext.AuthenticatedUser != null)  getAccountStatus();
-  }, [authContext.AuthenticatedUser,tempAuthenticatedUser]);
-
-  useEffect(() => {
-    if (tempAuthenticatedUser != null) getMyNotes();
-  }, [tempAuthenticatedUser, pageNumber, hasMore])
+    getMyNotes();
+  }, [ pageNumber, hasMore])
 
   const getMyNotes = async () => {
     timer.current = setTimeout(async () => {
       if (!hasMore) return;
-      await axios.get(`${import.meta.env.VITE_API_URL}/notes/myNotes?userId=${tempAuthenticatedUser.id}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+      await axios.get(`${import.meta.env.VITE_API_URL}/notes/myNotes?userId=${location.state.userEmail}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
         .then((response) => {
           if (!response.data.myNotes.length > 0) setHasMore(false);
           setCount(response.data.count)
@@ -176,9 +174,9 @@ export default function Profile() {
     else setnotesCount((prev) => ({ ...prev, Pending: count.Pending }));
   }
 
-  const getAccountStatus = () => {
-    if(tempAuthenticatedUser != null && tempAuthenticatedUser.id === authContext.AuthenticatedUser.id){
-    axios.get(`${import.meta.env.VITE_API_URL}/profile/UserInfoUpdateRequestStatus/${tempAuthenticatedUser.id}`, { withCredentials: true })
+  const getAccountStatus = (userId) => {
+    if(userId != null && userId === authContext.AuthenticatedUser.id){
+    axios.get(`${import.meta.env.VITE_API_URL}/profile/UserInfoUpdateRequestStatus/${userId}`, { withCredentials: true })
       .then((response) => {
         if (response.data.status == "Declined") {
           setAccountStatus({ status: "Declined", remark:"Reason: "+response.data.remark });
