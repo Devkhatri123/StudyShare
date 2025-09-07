@@ -11,7 +11,7 @@ import Subject from "./Subject";
 import NotesReport from "./NotesReports";
 
 export default function AdminHome() {
-  const [currentComponent, setCurrentComponent] = useState(<PendingNotesApproval />);
+  const [currentComponent, setCurrentComponent] = useState(null);
   const [currentTabName, setcurrentTabName] = useState("Notes");
   const adminContext = useContext(AdminContext);
   const authContext = useContext(AuthContext);
@@ -19,12 +19,12 @@ export default function AdminHome() {
 
   useEffect(() => {
     if (authContext.isAuthenticated) {
-      if (authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) {
-        if(authContext.AuthenticatedUser.emailVerified){
+      if((authContext.AuthenticatedUser.emailVerified && authContext.AuthenticatedUser.accountStatus == "Active") || authContext.AuthenticatedUser.roles.includes("MANAGER")) {
         if (!Object.entries(adminContext.count).length > 0) {
           axios.get(`${import.meta.env.VITE_API_URL}/admin/count`, { withCredentials: true })
             .then((response) => {
-              adminContext.setCount(response.data)
+              adminContext.setCount(response.data);
+              setCurrentComponent(<PendingNotesApproval />)
             }).catch((error) => {
               if (error.status == 403) {
                 setError("You are not allowed to view admin page. May be your account is disabled or blocked.");
@@ -32,8 +32,7 @@ export default function AdminHome() {
               console.log(error);
             });
         }
-      }else setError(authContext.AuthenticatedUser.accountRemarks);
-      }else setError("You don't have permission to see this page.");
+      }else setError("Your account might be blocked or email isn't verified or you would have update you profile and your profile update request would be under review or you dont have permission.");
     } else setError("You are not allowed to view admin page. You are not loggedin")
   }, [adminContext.count, authContext]);
 

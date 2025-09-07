@@ -1,6 +1,6 @@
 import axios from "axios";
 import { X } from "lucide-react";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Loader from "../../Loader";
 import { AdminContext } from "../../../ContextApi/AdminContext";
@@ -10,7 +10,6 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
     const [loading,setLoading] = useState(false);
     const [loading2,setLoading2] = useState(false);
     const adminContext = useContext(AdminContext);
-
     const [remarkRequest,setRemarkRequest] = useState({
         id:"",
         message:""
@@ -21,6 +20,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
      return () => document.body.style.overflowY = "scroll";
     },[])
 
+    {/* Reject update request changes */}
     const rejectUpdateRequestInfo = async(ID) => {
       if(remarkRequest.message.length == 0){
         toast.error("Message text area is empty");
@@ -46,7 +46,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
     }
 
-
+     {/* Approve update request changes */}
     const approveChanges = async(userId) => {
        setLoading2(true);
         await axios.post(`${import.meta.env.VITE_API_URL}/profile/admin/approveChanges/${userId}`,{},{withCredentials:true})
@@ -58,9 +58,7 @@ export default function PreviewUserInfoUpdateModal({setPreviewUserInfoUpdate,sel
 
              setEnableRemarkModal(false);
              setPreviewUserInfoUpdate(false);
-            
-           
-           }
+            }
        }).catch((error)=>{
          if(error.response.data != undefined) toast.error(error.response.data);
        }).finally(()=>{

@@ -13,7 +13,6 @@ export default function Navbar() {
     axios.post(`${import.meta.env.VITE_API_URL}/auth/logout`, {}, { withCredentials: true })
       .then((response) => {
         authContext.setIsAuthenticated(false);
-        authContext.setAuthenticatedUser(null);
         window.location.reload();
       }).catch((error) => {
         console.log(error);
@@ -77,7 +76,7 @@ export default function Navbar() {
             </div>
             {showDropDown && (
               <div className="absolute right-3 top-16 py-2.5 px-6 dropdown shadow-lg bg-white  rounded-lg">
-                <li className='list-none cursor-pointer'><Link to={"/profile"} state={{ userEmail: authContext.AuthenticatedUser.id }}>Profile</Link></li>
+                <li className='list-none cursor-pointer'><Link to={"/profile"} state={{ userId: authContext.AuthenticatedUser.id }}>Profile</Link></li>
                 {/* Show verify option when profile is not verified */}
                 {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{ email: authContext.AuthenticatedUser.universityEmail }}>Verify Email</Link></li>}
                 {/* Show admin button when user has admin/manager role */}
@@ -113,7 +112,7 @@ export default function Navbar() {
             {/* Mobile Navigation */}
             {authContext.AuthenticatedUser != null && (
               <nav className="flex flex-col space-y-3">
-                <li className='list-none cursor-pointer'><Link to={"/profile"} state={{ userEmail: authContext.AuthenticatedUser.id }} className="block w-full">Profile</Link></li>
+                <li className='list-none cursor-pointer'><Link to={"/profile"} state={{ userId: authContext.AuthenticatedUser.id }} className="block w-full">Profile</Link></li>
                 {!authContext.AuthenticatedUser.emailVerified && <li className='list-none cursor-pointer'><Link to={"/verify"} state={{ email: authContext.AuthenticatedUser.universityEmail }} className="block w-full">Verify Email</Link></li>}
                 {(authContext.AuthenticatedUser.roles.includes("ADMIN") || authContext.AuthenticatedUser.roles.includes("MANAGER")) && <li className='list-none cursor-pointer'><Link to={"/admin/home"} className="block w-full">Admin</Link></li>}
                 <li className='list-none cursor-pointer' onClick={() => { signOut() }}>SignOut</li>

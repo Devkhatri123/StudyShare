@@ -59,7 +59,7 @@ export default function EmailVerificationCode() {
         setLoading(true);
         axios.post(`${import.meta.env.VITE_API_URL}/auth/verify`,verification)
         .then((response)=>{
-            authContext.setAuthenticatedUser(null);
+            authContext.setIsAuthenticated(false);
             toast.success(response.data);
             if(location?.state?.PrevURL !== "/"){
                 navigate("/signIn");

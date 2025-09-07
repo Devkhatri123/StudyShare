@@ -27,7 +27,6 @@ export default function Profile() {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [showAccountRemarkMessage, setShowAccountRemarkMessage] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const timer = useRef();
   const [changeEmailLoading,setChangeEmailLoading] = useState(false);
   const [showChangeEmailModal,setShowChangeEmailModal] = useState(false);
   const [notesCount, setnotesCount] = useState({
@@ -38,16 +37,16 @@ export default function Profile() {
   const [accountStatus, setAccountStatus] = useState({});
   const location = useLocation();
   const usernameRef = useRef();
-
+  const timer = useRef();
   useEffect(()=>{
     // Fetch user profile
     if(authContext.AuthenticatedUser != null){
     const getProfile = async() => {
-      await axios.get(`${import.meta.env.VITE_API_URL}/profile/${location.state.userEmail}`,{withCredentials:true})
+      await axios.get(`${import.meta.env.VITE_API_URL}/profile/${location.state.userId}`,{withCredentials:true})
       .then((response)=>{
         setAuthenticatedUser(response.data.profile);
         usernameRef.current = response.data.profile.username;
-        getAccountStatus(location.state.userEmail);
+        getUpdateInfoRequestStatus(location.state.userId);
        // getMyNotes();
         usernameRef.current = response.data.profile.username;
       }).catch((error)=>{
@@ -67,13 +66,14 @@ export default function Profile() {
   },[])
 
   useEffect(() => {
-    getMyNotes();
+    getNotes();
   }, [ pageNumber, hasMore])
 
-  const getMyNotes = async () => {
+  {/* Fetch user notes */}
+  const getNotes = async () => {
     timer.current = setTimeout(async () => {
       if (!hasMore) return;
-      await axios.get(`${import.meta.env.VITE_API_URL}/notes/myNotes?userId=${location.state.userEmail}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+      await axios.get(`${import.meta.env.VITE_API_URL}/notes/myNotes?userId=${location.state.userId}&status=${noteStatus.status}&pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
         .then((response) => {
           if (!response.data.myNotes.length > 0) setHasMore(false);
           setCount(response.data.count)
@@ -110,7 +110,8 @@ export default function Profile() {
     await axios.put(`${import.meta.env.VITE_API_URL}/profile/${tempAuthenticatedUser.id}`, tempAuthenticatedUser, { withCredentials: true })
       .then((response) => {
         toast.success(response.data);
-        setAccountStatus({ status: "Pending", remark: "Update Request Pending Review" })
+        setAccountStatus({ status: "Pending", remark: "Update Request Pending Review" });
+        authContext.setIsAuthenticated(false);
       }).catch((error) => {
         toast.error(error.response.data)
         console.log(error);
@@ -174,14 +175,14 @@ export default function Profile() {
     else setnotesCount((prev) => ({ ...prev, Pending: count.Pending }));
   }
 
-  const getAccountStatus = (userId) => {
+  {/* if profile owner is authenticated user then fetch info update request status */}
+  const getUpdateInfoRequestStatus = (userId) => {
     if(userId != null && userId === authContext.AuthenticatedUser.id){
     axios.get(`${import.meta.env.VITE_API_URL}/profile/UserInfoUpdateRequestStatus/${userId}`, { withCredentials: true })
       .then((response) => {
-        if (response.data.status == "Declined") {
-          setAccountStatus({ status: "Declined", remark:"Reason: "+response.data.remark });
-        } else if (response.data.status == "Approved") setAccountStatus({ status: "Approved", remark: "Your Update Request was Approved,changes has been applied" });
-        else setAccountStatus(response.data)
+        if(response.data != ""){
+          setAccountStatus(response.data)
+        }
       }).catch((error) => {
         console.log(error);
       });

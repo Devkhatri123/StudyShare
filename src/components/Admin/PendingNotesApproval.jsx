@@ -165,7 +165,7 @@ export default function PendingNotesApproval() {
             </div>
 
           })
-        ):<p>{error}</p>
+        ):<p className="text-sm">{error}</p>
         ) : <Loader />}
       </div>
     </div>
