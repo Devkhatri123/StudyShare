@@ -64,7 +64,6 @@ export default function EmailVerificationCode() {
             if(location?.state?.PrevURL !== "/"){
                 navigate("/signIn");
             }else {
-                
                 navigate("/")
             }
           }).catch((error)=>{
