@@ -1,6 +1,6 @@
 
 import './App.css'
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Home from './components/Home'
 import Notes from './components/Notes'
 import Register from './components/Register';
@@ -12,7 +12,6 @@ import { AuthContext } from './ContextApi/AuthContext';
 import axios from 'axios';
 import EmailVerificationCode from './components/EmailVerificationCode';
 import Profile from './components/Profile';
-import { toast } from 'react-toastify';
 import Loader from './components/Loader';
 import AdminHome from './components/Admin/AdminHome';
 import Blocked from './components/Blocked';
