@@ -101,7 +101,7 @@ export default function PendingNotesApproval() {
               <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
                 
               >
-                <img src={`${URL.createObjectURL(convertBase64ToBlob(note.thumbnail, "image/jpeg"))}`} alt="" className="h-[208px] w-full" />
+                <img src={note.thumbnail} alt="" className="h-[208px] w-full" />
               </div>
 
               {/* Content Section */}
