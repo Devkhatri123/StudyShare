@@ -24,7 +24,8 @@ export default function PendingNotesApproval() {
     if (!hasMore) return;
     async function getApprovalPendingNote() {
       try {
-        let response = await axios.get(`${import.meta.env.VITE_API_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=4`, { withCredentials: true })
+        setLoading(true);
+        let response = await axios.get(`${import.meta.env.VITE_API_URL}/notes/admin/ApprovalPendingNotes?pageNumber=${pageNumber}&limit=6`, { withCredentials: true })
         if (response.data.length > 0) {
           setApprovalPendingNotes((prev) => ([...prev, ...response.data]));
         } else sethasMore(false);
@@ -91,8 +92,7 @@ export default function PendingNotesApproval() {
 
       </div>
       <div className="PendingNotesApproval_body mb-7 gap-5 mt-4 p-4 bg-white flex flex-wrap">
-        {!loading ? (
-          error == null ? (
+       {error == null ? (
           ApprovalPendingNotes && ApprovalPendingNotes.map((note, i) => {
 
             return <div key={i} className="w-1/1 bg-white rounded-xl sm:flex-[0_0_calc(100%_-_16px)] md:flex-[0_0_calc(50%_-_16px)] lg:flex-[0_0_calc(33.5%_-_16px)] shadow-sm hover:shadow-lg mb-5 transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm"
@@ -101,7 +101,7 @@ export default function PendingNotesApproval() {
               <div className="relative bg-gradient-to-br from-blue-50 border-b to-indigo-100 overflow-hidden bg-center bg-cover bg-no-repeat h-52 w-full"
                 
               >
-                <img src={`${URL.createObjectURL(convertBase64ToBlob(note.thumbnail, "image/jpeg"))}`} alt="" className="h-[208px]" />
+                <img src={`${URL.createObjectURL(convertBase64ToBlob(note.thumbnail, "image/jpeg"))}`} alt="" className="h-[208px] w-full" />
               </div>
 
               {/* Content Section */}
@@ -163,10 +163,10 @@ export default function PendingNotesApproval() {
               {remarkModal && curretNoteIndex == i && <RemarkModal currentNote={note} setCurretNoteIndex={setCurretNoteIndex} setRemarkModal={setRemarkModal} ApprovalPendingNotes={ApprovalPendingNotes} setApprovalPendingNotes={setApprovalPendingNotes} />}
               {showPreviewModal && curretNoteIndex == i && <PreviewNote currentNote={note} setShowPreviewModal={setShowPreviewModal} setCurretNoteIndex={setCurretNoteIndex} />}
             </div>
-
-          })
-        ):<p className="text-sm">{error}</p>
-        ) : <Loader />}
+       })
+        ):<p className="text-sm">{error}</p>}
+       
+        {loading && <Loader/>}
       </div>
     </div>
   )
