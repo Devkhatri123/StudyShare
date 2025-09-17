@@ -62,7 +62,7 @@ const Note = ({ note }) => {
           <Flag className="w-4 mr-2" />
           <button className="text-sm">Report Note</button>
         </div>
-        {showReportModal && reportType == "note" && <ReportModal setShowModal={setShowReportModal} reportType={reportType} createdBy={null} reportedNote={note} />}
+        {showReportModal && reportType == "note" && <ReportModal setShowModal={setShowReportModal} reportType={reportType} createdBy={note.createdBy} reportedNote={note} />}
       </div>
       )}
     </div>

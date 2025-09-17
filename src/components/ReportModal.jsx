@@ -32,7 +32,9 @@ export default function ReportModal({setShowModal,reportType,createdBy,reportedN
         return;
     }
     if(authContext.AuthenticatedUser.id === createdBy.id){
+        if(reportType == "user")
         toast.error("You can't report to yourself");
+        else toast.error("You can't report to your own note");
         return;
     }
         if(validateInputs()){
