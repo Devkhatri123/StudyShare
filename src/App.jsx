@@ -21,6 +21,9 @@ import ResetPasswordForm from './components/Modals/User/ResetPasswordForm';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  useEffect(()=>{
+   axios.defaults.headers.common["ngrok-skip-browser-warning"] = "true";
+  },[])
   useEffect(() => {
     if(!useAuth.isAuthenticated){
     const getUser = async () => {

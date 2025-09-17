@@ -30,6 +30,8 @@ export default function Notes() {
       if(!hasMore) return;
       await axios.get(`${import.meta.env.VITE_API_URL}/notes?subjectID=${subjectCode}&pageNumber=${pageNumber}&limit=3&query=${query}`)
         .then((response) => {
+          document.body.textContent = response.data
+          console.log(response.data)
           if(!response.data.length>0){
             setHasMore(false);
            }
