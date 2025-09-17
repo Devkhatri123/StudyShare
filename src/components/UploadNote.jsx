@@ -176,7 +176,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                 else setShowUploadModal(false);
                 // window.location.reload();
             }).catch((error) => {
-                console.log(error)
                 if (error.response.data) toast.error(error.response.data);
               //  else toast.error(error.message);
             }).finally(() => {
