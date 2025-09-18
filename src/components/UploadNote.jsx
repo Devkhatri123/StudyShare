@@ -239,7 +239,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                                     <img src={URL.createObjectURL(noteData.imgThumbNail)} style={{ height: "30px", width: "30px" }} />
                                     <p className="truncate">{noteData.thumbnailFilename}</p>
                                 </div>
-                                <X />
                             </div>
                         }
                     </div>
@@ -270,8 +269,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                                     </svg>
                                     <p>{noteData.pdfNoteFilename}</p>
                                 </div>
-                                <X />
-                            </div>
+                             </div>
                         }
                     </div>
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>

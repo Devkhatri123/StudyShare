@@ -1,6 +1,6 @@
 
 import { Calendar, User, Flag } from "lucide-react"
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import ReportModal from "./ReportModal";
 import { AuthContext } from "../ContextApi/AuthContext";
@@ -9,7 +9,6 @@ const Note = ({ note }) => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [reportType, setReportType] = useState('');
   const authContext = useContext(AuthContext);
-
   return (
     <div className="w-1/1 bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-100 hover:border-gray-200 max-w-sm mx-auto"
       style={{ maxWidth: "-webkit-fill-available" }}
@@ -20,7 +19,7 @@ const Note = ({ note }) => {
         bg-center bg-cover bg-no-repeat h-52 w-full"
         // style={{backgroundImage:`url(${URL.createObjectURL(convertBase64ToBlob(note.thumbnail,"image/jpeg"))})`,}}
         >
-          <img src={`data:image/jpeg;base64,${note.thumbnail}`}
+          <img src={`${note.thumbnail}`}
             className="w-full h-52 " style={{ objectFit: "fill" }}
           />
 
