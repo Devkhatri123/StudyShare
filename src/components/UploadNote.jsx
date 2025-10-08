@@ -23,46 +23,49 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             imgThumbNail: null,
             notePdfData: null,
             thumbnailFilename: "",
-            pdfNoteFilename: ""
+            pdfNoteFilename: "",
         }
     );
 
     useEffect(() => {
         // Checking if existing note going to be updated
         if (noteToUpdate != null && Object.entries(noteToUpdate).length > 0) {
-            setnoteData((prev) => ({ ...prev, id: noteToUpdate.id }));
-            setnoteData((prev) => ({ ...prev, title: noteToUpdate.title }));
-            setnoteData((prev) => ({ ...prev, description: noteToUpdate.description }));
-            setnoteData((prev) => ({ ...prev, subjectcode: noteToUpdate.subject.code }));
-            setnoteData((prev) => ({ ...prev, thumbnailFilename: noteToUpdate.thumbnailFilename }));
-            setnoteData((prev) => ({ ...prev, pdfNoteFilename: noteToUpdate.pdfNoteFilename }));
+            const prepareNoteData = async () => {
+                if (noteToUpdate && Object.keys(noteToUpdate).length > 0) {
+                    // Convert both URLs to blobs
+                    const [imgBlob, pdfBlob] = await Promise.all([
+                        convertImageUrlToBlob(noteToUpdate.imgThumbNail),
+                        convertPdfUrlToBlob(noteToUpdate.notePdfData),
+                    ]);
 
-            const convertBase64ToImgBlob = (base64) => {
-                const bytes = atob(base64);
-                const length = bytes.length;
-                const uint8array = new Uint8Array(length);
-                for (let i = 0; i < length; i++) {
-                    uint8array[i] = bytes.charCodeAt(i);
+                    // Update state only once after conversion
+                    setnoteData({
+                        ...noteToUpdate,
+                        imgThumbNail: imgBlob,
+                        notePdfData: pdfBlob,
+                    });
                 }
-                return new Blob([uint8array], { type: "image/png" })
+            };
+            const convertImageUrlToBlob = async (url) => {
+                const resposne = await fetch(url);
+                return resposne.blob();
             }
-            const blob = convertBase64ToImgBlob(noteToUpdate.imgThumbNail);
-            setnoteData((prev) => ({ ...prev, imgThumbNail: blob }));
-
-            const convertBase64ToPdfBlob = (base64) => {
-                const bytes = atob(base64);
-                const length = bytes.length;
-                const uint8array = new Uint8Array(length);
-                for (let i = 0; i < length; i++) {
-                    uint8array[i] = bytes.charCodeAt(i);
-                }
-                return new Blob([uint8array], { type: "application/pdf" })
+            const convertPdfUrlToBlob = async (url) => {
+                const resposne = await fetch(url);
+                let blob = resposne.blob();
+                blob = (await blob).type === "application/octet-stream" ? new Blob([blob], { type: "application/pdf" }) : blob;
+                return blob
             }
-            const blob2 = convertBase64ToPdfBlob(noteToUpdate.notePdfData);
-            setnoteData((prev) => ({ ...prev, notePdfData: blob2 }));
+            setnoteData(noteToUpdate);
+            setnoteData((prev)=>({...prev,subjectcode:noteToUpdate.subject.code}))
+            prepareNoteData()
+         }
 
-        }
     }, [noteToUpdate]);
+
+    useEffect(() => {
+        console.log(noteData)
+    }, [noteData])
 
     useEffect(() => {
         // If it is new note then setting subjectCode from Url
@@ -119,11 +122,12 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }
 
     const handlePDFDrop = (e) => {
+        console.log(e.dataTransfer.files[0]);
         e.preventDefault();
         setIsNoteDragging(false);
         if (e.dataTransfer.files[0].type === "application/pdf") {
-            setnoteData((prev) => ({ ...prev, notePdfData: e.target.files[0] }));
-            setnoteData((prev) => ({ ...prev, pdfNoteFilename: e.target.files[0].name }));
+            setnoteData((prev) => ({ ...prev, notePdfData: e.dataTransfer.files[0] }));
+            setnoteData((prev) => ({ ...prev, pdfNoteFilename: e.dataTransfer.files[0].name }));
         } else {
             toast.error("Only pdf file is allowed for notes");
         }
@@ -140,7 +144,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }
 
     const uploadNote = async () => {
-        if (authContext.isAuthenticated == false) {
+        if (!authContext.isAuthenticated) {
             toast.error("You are not logged in");
             return;
         }
@@ -148,9 +152,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         if (noteData.title.length == 0) {
             toast.error("Title is empty");
             return;
-        }
-
-        if (noteData.description.length == 0) {
+        } else if (noteData.description.length == 0) {
             toast.error("Description is empty");
             return;
         }
@@ -162,22 +164,23 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             id: noteData.id,
             title: noteData.title,
             description: noteData.description,
-            subjectCode: noteData.subjectcode,
+            subjectCode: noteData.subjectcode == null ? noteToUpdate.subject.code : noteData.subjectcode,
             thumbnailFilename: noteData.thumbnailFilename,
             pdfNoteFilename: noteData.pdfNoteFilename
         })], { type: "application/json" }));
+        console.log(formData);
         setLoading(true);
         await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
             withCredentials: true,
         })
             .then((response) => {
                 toast.success(response.data.message);
-                if(noteToUpdate != null) window.location.reload();
+                if (noteToUpdate != null) window.location.reload();
                 else setShowUploadModal(false);
                 // window.location.reload();
             }).catch((error) => {
                 if (error.response.data) toast.error(error.response.data);
-              //  else toast.error(error.message);
+                //  else toast.error(error.message);
             }).finally(() => {
                 setLoading(false);
             })
@@ -188,6 +191,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             setnoteData({ ...noteData, description: e.target.value });
         }
     }
+
 
     const handleTitle = (e) => {
 
@@ -236,7 +240,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                         {noteData.imgThumbNail != null &&
                             <div className="flex justify-between mt-4 rounded-sm p-3.5 shadow-md" style={{ border: "0.2px gray" }}>
                                 <div className="flex gap-3">
-                                    <img src={URL.createObjectURL(noteData.imgThumbNail)} style={{ height: "30px", width: "30px" }} />
+                                    {/* <img src={noteData.imgThumbNail} style={{ height: "30px", width: "30px" }} /> */}
                                     <p className="truncate">{noteData.thumbnailFilename}</p>
                                 </div>
                             </div>
@@ -269,7 +273,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                                     </svg>
                                     <p>{noteData.pdfNoteFilename}</p>
                                 </div>
-                             </div>
+                            </div>
                         }
                     </div>
                     <div className="upload_footer py-4" style={{ borderTop: "1px solid gray" }}>
