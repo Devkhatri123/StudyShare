@@ -83,7 +83,7 @@ export default function StudyShareHomepage() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-lg sm:text-xl font-semibold">10,000+ Notes</h3>
+              {/* <h3 className="mb-2 text-lg sm:text-xl font-semibold">10,000+ Notes</h3> */}
               <p className="text-sm text-blue-100">Comprehensive collection across all subjects</p>
             </div>
             <div className="text-center">
@@ -97,7 +97,7 @@ export default function StudyShareHomepage() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-lg sm:text-xl font-semibold">50+ Universities</h3>
+              {/* <h3 className="mb-2 text-lg sm:text-xl font-semibold">Universities</h3> */}
               <p className="text-sm text-blue-100">Connect with students worldwide</p>
             </div>
             <div className="text-center">
@@ -111,7 +111,7 @@ export default function StudyShareHomepage() {
                   />
                 </svg>
               </div>
-              <h3 className="mb-2 text-lg sm:text-xl font-semibold">Free Access</h3>
+              {/* <h3 className="mb-2 text-lg sm:text-xl font-semibold">Free Access</h3> */}
               <p className="text-sm text-blue-100">Download and share without limits</p>
             </div>
           </div>
