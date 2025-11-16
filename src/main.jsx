@@ -6,10 +6,12 @@ import { ErrorProvider } from './ContextApi/ErrorContext.jsx'
 import { AuthenticationProvider } from './ContextApi/AuthContext.jsx'
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify'
+import { Analytics } from '@vercel/analytics/react'
 createRoot(document.getElementById('root')).render(
    <BrowserRouter>
    <AuthenticationProvider>
     <App />
+    <Analytics/>
     <ToastContainer position='top-center' theme='colored'/>
     </AuthenticationProvider>
     </BrowserRouter>
