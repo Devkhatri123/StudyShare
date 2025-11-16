@@ -9,7 +9,7 @@ export default function SupportMeModal({ setOpen, open }) {
     },[open])
 
     const handleCopy = () => {
-        navigator.clipboard.writeText("03451234567");
+        navigator.clipboard.writeText("+923325217983");
         alert("Account number copied!");
     };
     return (
