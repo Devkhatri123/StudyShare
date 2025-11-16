@@ -18,6 +18,7 @@ import Blocked from './components/Blocked';
 import { AdminProvider } from './ContextApi/AdminContext';
 import ResetPasswordModal from './components/Modals/User/ResetPasswordModal';
 import ResetPasswordForm from './components/Modals/User/ResetPasswordForm';
+import { Analytics } from '@vercel/analytics/react';
 function App() {
   const useAuth = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
