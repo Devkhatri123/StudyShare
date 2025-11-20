@@ -26,6 +26,12 @@ export const isValidSubjectCode = (code, department) => {
   } else return false;
 }
 
+export const isValidDepartment = (department) => {
+  const departments = ["CS","CE"];
+  if (departments.includes(department)) {
+    return true;
+  } else return false;
+}
 
 
 export const convertBase64ToBlob = (base64, mime) => {

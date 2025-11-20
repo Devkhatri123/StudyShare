@@ -1,16 +1,19 @@
 import axios from "axios";
 import { X } from "lucide-react"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import Loader from "../../Loader";
 import { toast } from "react-toastify";
-import { isValidSubjectCode } from "../../../utils/Validation";
+import { isValidDepartment, isValidSubjectCode } from "../../../utils/Validation";
+import { AuthContext } from "../../../ContextApi/AuthContext";
 
 export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubjectModal, setSubjects, department }) {
+    const authContext = useContext(AuthContext);
     const [subject, setSubject] = useState({
         subjectName: "",
         shortDescription: "",
         semester: 1,
-        code: ""
+        code: "",
+        department:""
     });
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -28,7 +31,6 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
 
     const AddSubject = async () => {
         if (validateInput()) {
-
             setLoading(true);
             await axios.post(`${import.meta.env.VITE_API_URL}/subject/admin/addSubject`, subject, { withCredentials: true })
                 .then((response) => {
@@ -57,6 +59,12 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
         }else if (subject.shortDescription.trim().length > 120) {
             toast.error("Subject description should be of 120 character only");
             return false;
+        }else if (subject.department.trim().length > 2) {
+            toast.error("Department should be of 2 characters");
+            return false;
+        }else if (!isValidDepartment(subject.department.toUpperCase())){
+          toast.error("Invalid department");
+          return false;  
         }else if (!isValidSubjectCode(subject.code.toUpperCase(),department.toUpperCase())){
           toast.error("Subject Code is not valid");
           return false;  
@@ -89,6 +97,15 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
                         <textarea value={subject.shortDescription} type="text" name="" id="" placeholder="Subject Description" className="border border-[#ebebeb] py-1.5 pl-1.5  rounded-md" onChange={(e) => { handleDescription(e) }} maxLength={120} />
                         <p className="text-[14px] text-gray-400 mt-1">Description length : {subject.shortDescription.length} / 120</p>
                     </div>
+                     {authContext.AuthenticatedUser.roles.includes("MANAGER") && (
+                     <div className="flex flex-col my-2 w-full">
+                            <label htmlFor="Semester" className="text-sm text-[#4d5564]">Department *</label>
+                            <select value={subject.department} type="text" name="" id="" placeholder="Department" className="border border-[#ebebeb] py-1.5 pl-1.5  rounded-md" onChange={(e) => { setSubject({ ...subject, department: e.target.value }) }}>
+                                <option value={"CS"}>CS</option>
+                                <option value={"CE"}>CE</option>
+                             </select>
+                        </div>
+                     )}
                     <div className="flex gap-3">
                         <div className="flex flex-col my-2">
                             <label htmlFor="SubjectCode" className="text-sm text-[#4d5564]">Subject Code *</label>

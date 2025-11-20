@@ -1,11 +1,13 @@
 import { X } from "lucide-react";
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import Loader from "../../Loader";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { isValidSubjectCode } from "../../../utils/Validation";
+import { isValidDepartment, isValidSubjectCode } from "../../../utils/Validation";
+import { AuthContext } from "../../../ContextApi/AuthContext";
 
 export default function EditSubject({subject,setShowEditSubjectModal,index,subjects}){
+    const authContext = useContext(AuthContext);
     const [subjectToEdit,setSubjectToEdit] = useState(null);
     const [loading,setLoading] = useState(false);
     let subjectname = useRef();
@@ -56,6 +58,12 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
         }else if (subjectToEdit.shortDescription.trim().length > 120) {
             toast.error("Subject description should be of 120 character only");
             return false;
+        }else if (subjectToEdit.department.trim().length > 2) {
+            toast.error("Department should be of 2 characters");
+            return false;
+        }else if (!isValidDepartment(subjectToEdit.department.toUpperCase())){
+            toast.error("Invalid department");
+            return false;  
         }else if(!isValidSubjectCode(subjectToEdit.code,subjectToEdit.department)){
             toast.error("Subject Code is not valid");
             return false;  
@@ -88,6 +96,15 @@ export default function EditSubject({subject,setShowEditSubjectModal,index,subje
                             <textarea value={subjectToEdit.shortDescription} type="text" name="" id="" placeholder="Subject Description" className="border border-[#ebebeb] py-1.5 pl-1.5  rounded-md" onChange={(e)=>{handleDescription(e)}} maxLength={120}/>
                             <p className="text-[14px] text-gray-400 mt-1">Description length : {subjectToEdit.shortDescription.length} / 120</p>
                         </div>
+                         {authContext.AuthenticatedUser.roles.includes("MANAGER") && (
+                        <div className="flex flex-col my-2 w-full">
+                            <label htmlFor="Department" className="text-sm text-[#4d5564]">Department *</label>
+                            <select value={subjectToEdit.department} type="text" name="" id="" placeholder="Department" className="border border-[#ebebeb] py-1.5 pl-1.5  rounded-md" onChange={(e) => { setSubjectToEdit({ ...subjectToEdit, department: e.target.value }) }}>
+                                <option value={"CS"}>CS</option>
+                                <option value={"CE"}>CE</option>
+                             </select>
+                        </div>
+                     )}
                         <div className="flex gap-0 flex-col sm:flex-row sm:gap-3">
                          <div className="flex flex-col my-2">
                             <label htmlFor="SubjectCode" className="text-sm text-[#4d5564]">Subject Code *</label>
