@@ -21,16 +21,34 @@ export default function AdminHome() {
     if (authContext.isAuthenticated) {
       if((authContext.AuthenticatedUser.emailVerified && authContext.AuthenticatedUser.accountStatus == "Active") || authContext.AuthenticatedUser.roles.includes("MANAGER")) {
         if (!Object.entries(adminContext.count).length > 0) {
-          axios.get(`${import.meta.env.VITE_API_URL}/admin/count`, { withCredentials: true })
-            .then((response) => {
-              adminContext.setCount(response.data);
+          const xhr = new XMLHttpRequest();
+          xhr.open("GET",`${import.meta.env.VITE_API_URL}/admin/count`,true);
+          xhr.withCredentials=true;
+          xhr.onload = () => {
+            if(xhr.status == 200){
+              console.log(JSON.parse(xhr.responseText));
               setCurrentComponent(<PendingNotesApproval />)
-            }).catch((error) => {
-              if (error.status == 403) {
+              adminContext.setCount(JSON.parse(xhr.responseText))
+            }else{
+              if (xhr.status == 403) {
                 setError("You are not allowed to view admin page. May be your account is disabled or blocked.");
               }
-              console.log(error);
-            });
+            }
+          }
+          xhr.onerror = function() {
+           setError('Network error occurred.');
+    };
+    xhr.send();
+          // axios.get(`${import.meta.env.VITE_API_URL}/admin/count`, { withCredentials: true })
+          //   .then((response) => {
+          //     adminContext.setCount(response.data);
+          //     setCurrentComponent(<PendingNotesApproval />)
+          //   }).catch((error) => {
+          //     if (error.status == 403) {
+          //       setError("You are not allowed to view admin page. May be your account is disabled or blocked.");
+          //     }
+          //     console.log(error);
+          //   });
         }
       }else setError("Your account might be blocked or email isn't verified or you would have update you profile and your profile update request would be under review or you dont have permission.");
     } else setError("You are not allowed to view admin page. You are not loggedin")

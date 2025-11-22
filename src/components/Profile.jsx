@@ -87,6 +87,7 @@ export default function Profile() {
             }));
           }
         }).catch((error) => {
+          hasMore = false;
           console.log(error);
         }).finally(() => {
           setLoading(false);
