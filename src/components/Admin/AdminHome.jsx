@@ -26,7 +26,6 @@ export default function AdminHome() {
           xhr.withCredentials=true;
           xhr.onload = () => {
             if(xhr.status == 200){
-              console.log(JSON.parse(xhr.responseText));
               setCurrentComponent(<PendingNotesApproval />)
               adminContext.setCount(JSON.parse(xhr.responseText))
             }else{
