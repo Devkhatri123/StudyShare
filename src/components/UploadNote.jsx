@@ -64,10 +64,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }, [noteToUpdate]);
 
     useEffect(() => {
-        console.log(noteData)
-    }, [noteData])
-
-    useEffect(() => {
         // If it is new note then setting subjectCode from Url
         if (noteToUpdate == null) {
             setnoteData((prev) => ({ ...prev, subjectcode: subjectCode }));
@@ -122,7 +118,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
     }
 
     const handlePDFDrop = (e) => {
-        console.log(e.dataTransfer.files[0]);
         e.preventDefault();
         setIsNoteDragging(false);
         if (e.dataTransfer.files[0].type === "application/pdf") {
@@ -168,7 +163,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             thumbnailFilename: noteData.thumbnailFilename,
             pdfNoteFilename: noteData.pdfNoteFilename
         })], { type: "application/json" }));
-        console.log(formData);
         setLoading(true);
         await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
             withCredentials: true,
@@ -179,7 +173,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                 else setShowUploadModal(false);
                 // window.location.reload();
             }).catch((error) => {
-                if (error.response.data) toast.error(error.response.data);
+                 toast.error(error.message);
                 //  else toast.error(error.message);
             }).finally(() => {
                 setLoading(false);
