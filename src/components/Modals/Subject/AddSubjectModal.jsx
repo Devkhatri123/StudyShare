@@ -13,7 +13,7 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
         shortDescription: "",
         semester: 1,
         code: "",
-        department:""
+        department:"CS"
     });
     const [loading, setLoading] = useState(false);
     useEffect(() => {
@@ -100,7 +100,7 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
                      {authContext.AuthenticatedUser.roles.includes("MANAGER") && (
                      <div className="flex flex-col my-2 w-full">
                             <label htmlFor="Semester" className="text-sm text-[#4d5564]">Department *</label>
-                            <select value={subject.department} type="text" name="" id="" placeholder="Department" className="border border-[#ebebeb] py-1.5 pl-1.5  rounded-md" onChange={(e) => { setSubject({ ...subject, department: e.target.value }) }}>
+                            <select value={subject.department} type="text" name="" id="" placeholder="Department" className="border border-[#ebebeb] py-1.5 pl-1.5  rounded-md" onChange={(e) => { setSubject({ ...subject, department: e.target.value });}}>
                                 <option value={"CS"}>CS</option>
                                 <option value={"CE"}>CE</option>
                              </select>
@@ -126,7 +126,7 @@ export default function AddSubjectModal({ setShowAddSubjectModal, showAddSubject
                         </div>
                     </div>
                     <div className="btns flex justify-end gap-2.5">
-                        <button className="border-gray-200 border py-2 px-3 rounded-md text-sm">Cancel</button>
+                        <button className="border-gray-200 border py-2 px-3 rounded-md text-sm" onClick={()=>{setShowAddSubjectModal(false)}}>Cancel</button>
                         {!loading ? (
                             <button className="bg-[#d64d0c] text-white py-2 px-3 rounded-md text-sm" onClick={() => { AddSubject() }}>Add Subject</button>
                         ) : <button className="bg-[#d64d0c] text-white py-2 px-3 rounded-md text-sm w-28" style={{ opacity: "0.5" }}><Loader /></button>}
