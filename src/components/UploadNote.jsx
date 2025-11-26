@@ -165,7 +165,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         })], { type: "application/json" }));
         setLoading(true);
         await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
-            withCredentials: true, maxContentLength:Infinity,maxBodyLength:Infinity,
+            withCredentials: true,
             headers: {
                 "user_TimeZone":timeZone
             }
@@ -177,7 +177,6 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                 else setShowUploadModal(false);
             }).catch((error) => {
                  toast.error(error.message);
-                //  else toast.error(error.message);
             }).finally(() => {
                 setLoading(false);
             })
