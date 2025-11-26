@@ -151,7 +151,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
             toast.error("Description is empty");
             return;
         }
-
+        const {timeZone} = Intl.DateTimeFormat().resolvedOptions();
         const formData = new FormData();
         formData.append("thumbnail", noteData.imgThumbNail);
         formData.append("notes", noteData.notePdfData);
@@ -165,13 +165,16 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         })], { type: "application/json" }));
         setLoading(true);
         await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
-            withCredentials: true,
-        })
+            withCredentials: true, maxContentLength:Infinity,maxBodyLength:Infinity,
+            headers: {
+                "user_TimeZone":timeZone
+            }
+        }
+    )
             .then((response) => {
                 toast.success(response.data.message);
                 if (noteToUpdate != null) window.location.reload();
                 else setShowUploadModal(false);
-                // window.location.reload();
             }).catch((error) => {
                  toast.error(error.message);
                 //  else toast.error(error.message);
