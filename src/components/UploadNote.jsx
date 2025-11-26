@@ -167,7 +167,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         await axios.post(`${import.meta.env.VITE_API_URL}/notes/uploadNote`, formData, {
             withCredentials: true,
             headers: {
-                "user_TimeZone":timeZone
+                "user-TimeZone":timeZone
             }
         }
     )
