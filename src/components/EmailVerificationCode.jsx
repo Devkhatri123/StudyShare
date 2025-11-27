@@ -102,7 +102,7 @@ export default function EmailVerificationCode() {
             <div className="max-w-10/12 bg-white shadow-lg sm:max-w-7xl mx-auto text-center rounded-2xl">
                 <div>
                     <h1 className="overflow-hidden text-ellipsis text-2xl sm:text-3xl font-sans font-bold mt-12 pb-1.5 px-4">Email Verification</h1>
-                    <p className="overflow-hidden text-ellipsis mx-auto px-2 sm:px-12 mt-2 max-w-[436px] text-slate-500 line-clamp-2">Enter the 4-digit verification code that was sent to your email.</p>
+                    <p className="overflow-hidden text-ellipsis mx-auto px-2 sm:px-12 mt-2 max-w-[436px] text-slate-500 line-clamp-2">Enter the 6-digit verification code that was sent to your email.</p>
                     <div ref={inputsRef} className="inputs flex justify-center gap-3 mt-5 mb-5">
                         <input type="text" id="0" className="input bg-slate-100 w-10 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
                         <input type="text" id="1" className="input bg-slate-100 w-10 sm:max-w-14 h-14 rounded-md text-center text-2xl font-bold" maxLength={1} onKeyDown={(e) => handleNumberOnlyInput(e)} onChange={(e) => { setOtpVal(e) }} onKeyUp={(e) => handleKeyup(e)} />
