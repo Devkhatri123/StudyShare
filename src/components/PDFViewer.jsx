@@ -8,9 +8,7 @@ export default function PDFViewer(props){
     return (
       <div className={`${props.style?.height ? `md:h-[350px] h-full`:"h-[350px] sm:h-[400px] md:h-[500px] lg:h-[700px]"}`}>
        <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js">
-       
        <Viewer fileUrl={props.pdfURL} plugins={[defaultPluginInstance]}/>
-       
        </Worker>
      </div>
     )

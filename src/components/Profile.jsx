@@ -87,8 +87,7 @@ export default function Profile() {
             }));
           }
         }).catch((error) => {
-          hasMore = false;
-          console.log(error);
+          setHasMore(false);
         }).finally(() => {
           setLoading(false);
         });
@@ -115,7 +114,7 @@ export default function Profile() {
         authContext.setIsAuthenticated(false);
       }).catch((error) => {
         toast.error(error.response.data)
-        console.log(error);
+      //  console.log(error);
       }).finally(() => {
         setSaveLoading(false);
         setChangeEmailLoading(false);
@@ -185,7 +184,7 @@ export default function Profile() {
           setAccountStatus(response.data)
         }
       }).catch((error) => {
-        console.log(error);
+       // console.log(error);
       });
     }
   }
@@ -197,7 +196,7 @@ export default function Profile() {
         .then((response) => {
         //  setAccountStatus({});
         }).catch((error) => {
-          console.log(error);
+          //console.log(error);
         });
     }
   }
@@ -211,7 +210,7 @@ export default function Profile() {
         setcurrentNoteIndex(idx);
         setShowUploadModal(true);
       }).catch((error) => {
-        console.log(error);
+        //console.log(error);
       })
   }
 

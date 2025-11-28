@@ -2,27 +2,11 @@ import { FileText, X } from "lucide-react";
 import PDFViewer from "../../PDFViewer";
 import { useEffect, useState } from "react";
 export default function PreviewNote({currentNote,setShowPreviewModal,setCurretNoteIndex}){
-   const [pdfUrl,setPdfUrl] = useState('');
 
    useEffect(()=>{
     document.body.style.overflowY = "hidden";
     return () =>  document.body.style.overflowY = "scroll";
    },[])
-
-    useEffect(()=>{
-//     const convertBase64ToBlob = (base64)=>{
-//      const bytes = atob(base64);
-//      const length = bytes.length;
-//      const uint8array = new Uint8Array(length);
-//      for(let i = 0; i < length; i++){
-//       uint8array[i] = bytes.charCodeAt(i);
-//      }
-//      return new Blob([uint8array],{type: 'application/pdf'})
-//     }
-//     const blob = convertBase64ToBlob(currentNote.notes);
-//     const url = URL.createObjectURL(blob);
-//     setPdfUrl(url);
-    },[currentNote])
 
     return (
     <div style={{display:"flex",alignItems:"center",justifyContent:"center",position:"fixed",top:"0",left:"0",width:"100%",height:"100%",zIndex:"1000",background:"rgba(0, 0, 0, 0.5)"}}>

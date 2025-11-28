@@ -5,7 +5,6 @@ import UserInfoUpdate from "./UserInfoUpdate";
 import Reports from "./Reports";
 import UserManagement from "./UserManagement";
 import { AuthContext } from "../../ContextApi/AuthContext";
-import axios from "axios";
 import { AdminContext } from "../../ContextApi/AdminContext";
 import Subject from "./Subject";
 import NotesReport from "./NotesReports";
@@ -19,37 +18,27 @@ export default function AdminHome() {
 
   useEffect(() => {
     if (authContext.isAuthenticated) {
-      if((authContext.AuthenticatedUser.emailVerified && authContext.AuthenticatedUser.accountStatus == "Active") || authContext.AuthenticatedUser.roles.includes("MANAGER")) {
+      if ((authContext.AuthenticatedUser.emailVerified && authContext.AuthenticatedUser.accountStatus == "Active") || authContext.AuthenticatedUser.roles.includes("MANAGER")) {
         if (!Object.entries(adminContext.count).length > 0) {
           const xhr = new XMLHttpRequest();
-          xhr.open("GET",`${import.meta.env.VITE_API_URL}/admin/count`,true);
-          xhr.withCredentials=true;
+          xhr.open("GET", `${import.meta.env.VITE_API_URL}/admin/count`, true);
+          xhr.withCredentials = true;
           xhr.onload = () => {
-            if(xhr.status == 200){
+            if (xhr.status == 200) {
               setCurrentComponent(<PendingNotesApproval />)
               adminContext.setCount(JSON.parse(xhr.responseText))
-            }else{
+            } else {
               if (xhr.status == 403) {
                 setError("You are not allowed to view admin page. May be your account is disabled or blocked.");
               }
             }
           }
-          xhr.onerror = function() {
-           setError('Network error occurred.');
-    };
-    xhr.send();
-          // axios.get(`${import.meta.env.VITE_API_URL}/admin/count`, { withCredentials: true })
-          //   .then((response) => {
-          //     adminContext.setCount(response.data);
-          //     setCurrentComponent(<PendingNotesApproval />)
-          //   }).catch((error) => {
-          //     if (error.status == 403) {
-          //       setError("You are not allowed to view admin page. May be your account is disabled or blocked.");
-          //     }
-          //     console.log(error);
-          //   });
+          xhr.onerror = function () {
+            setError('Network error occurred.');
+          };
+          xhr.send();
         }
-      }else setError("Your account might be blocked or email isn't verified or you would have update you profile and your profile update request would be under review or you dont have permission.");
+      } else setError("Your account might be blocked or email isn't verified or you would have update you profile and your profile update request would be under review or you dont have permission.");
     } else setError("You are not allowed to view admin page. You are not loggedin")
   }, [adminContext.count, authContext]);
 
@@ -71,8 +60,8 @@ export default function AdminHome() {
     } else if (currenTab === "Subjects") {
       setCurrentComponent(<Subject />)
       setcurrentTabName("Subjects")
-    }else if (currenTab === "Notes_report"){
-      setCurrentComponent(<NotesReport/>)
+    } else if (currenTab === "Notes_report") {
+      setCurrentComponent(<NotesReport />)
       setcurrentTabName("Notes_report");
     }
   }
@@ -119,7 +108,7 @@ export default function AdminHome() {
                   <p className="font-bold text-xl">{adminContext.count?.reportedUser}</p>
                 </div>
               </div>
-               <div className="ReportedNotes flex shadow-sm rounded-md p-3.5">
+              <div className="ReportedNotes flex shadow-sm rounded-md p-3.5">
                 <div className="rounded-lg px-2 py-2 h-10 bg-[#ea3c3c] shadow-md">
                   <FileText className="text-white" />
                 </div>

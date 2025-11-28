@@ -17,18 +17,6 @@ const ViewNote = () => {
     await axios.get(`${import.meta.env.VITE_API_URL}/notes/note/${noteID}`)
    .then((response)=>{
     setNote(response.data);
-  //   const convertBase64ToBlob = (base64)=>{
-  //    const bytes = atob(base64);
-  //    const length = bytes.length;
-  //    const uint8array = new Uint8Array(length);
-  //    for(let i = 0; i < length; i++){
-  //     uint8array[i] = bytes.charCodeAt(i);
-  //    }
-  //    return new Blob([uint8array],{type:"applicaton/pdf"})
-  //   }
-  //   const blob = convertBase64ToBlob(response.data.notePdfData);
-  //   const url = URL.createObjectURL(blob);
-  //  setpdfURL(url);
    }).catch((error)=>{
       if(error.status == 404) {
       setError("Note not found. May be this note wouldn't have been approved or removed by admin");

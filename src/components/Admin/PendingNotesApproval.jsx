@@ -5,7 +5,6 @@ import Loader from "../Loader";
 import RemarkModal from "./RemarkModal";
 import PreviewNote from "../Modals/Notes/PreviewNote";
 import { toast } from "react-toastify";
-import { convertBase64ToBlob } from "../../utils/Validation";
 import { AdminContext } from "../../ContextApi/AdminContext";
 
 export default function PendingNotesApproval() {
