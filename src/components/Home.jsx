@@ -151,7 +151,7 @@ export default function StudyShareHomepage() {
       <section className="px-4 py-12 sm:py-16">
         <div className="mx-auto max-w-6xl">
           <div className="mb-8 text-center">
-            <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900">DHA Suffa University</h2>
+            {/* <h2 className="mb-2 text-2xl sm:text-3xl font-bold text-gray-900">DHA Suffa University</h2> */}
             <p className="text-gray-600 text-sm sm:text-base">Browse subjects and access lecture notes</p>
             <p className="mt-2 text-sm text-gray-500">{subjects.length} subjects available</p>
           </div>
