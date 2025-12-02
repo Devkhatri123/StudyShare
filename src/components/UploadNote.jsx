@@ -176,7 +176,7 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
                 if (noteToUpdate != null) window.location.reload();
                 else setShowUploadModal(false);
             }).catch((error) => {
-                 toast.error(error.message);
+                toast.error(error.response.data);
             }).finally(() => {
                 setLoading(false);
             })
@@ -188,10 +188,8 @@ export default function UploadNote({ noteToUpdate, setShowUploadModal }) {
         }
     }
 
-
-    const handleTitle = (e) => {
-
-        if (e.target.value.length <= 60) {
+     const handleTitle = (e) => {
+      if (e.target.value.length <= 60) {
             setnoteData({ ...noteData, title: e.target.value });
         }
     }
