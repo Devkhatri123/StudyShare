@@ -1,4 +1,4 @@
-# Notes sharing web app
+# Notes sharing web app (Spring boot, react.js, MySQL, AWS)
 
 I built a platform called StudyShare, using Spring Boot, ReactJS, MySQL, and AWS. This project taught me a lot about full-stack development, how to build APIs, secure endpoints, implement JWT, role-based access, integrate APIs in the frontend, and deploy the backend on AWS.
 
@@ -26,4 +26,5 @@ About the app:
 • Manager/Admin can disable accounts for violations
 • Admin can create subjects of thier own department
 • Users can view their own uploaded notes and update their profile
+
 
