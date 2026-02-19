@@ -28,3 +28,6 @@ About the app:
 • Users can view their own uploaded notes and update their profile
 
 
+
+# Backend Repo URL : https://github.com/Devkhatri123/notesSharingApp
+
